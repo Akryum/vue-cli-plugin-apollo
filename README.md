@@ -21,7 +21,7 @@ Make sure you have vue-cli 3.x.x:
 vue --version
 ```
 
-If you don't have a project create with vue-cli 3.x yet:
+If you don't have a project created with vue-cli 3.x yet:
 
 ```
 vue create my-new-app
