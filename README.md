@@ -13,7 +13,7 @@ Features:
   - mutation
   - realtime subscription
 
-## Usage
+## Getting started
 
 Make sure you have vue-cli 3.x.x:
 
@@ -62,3 +62,29 @@ Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 - **`vue-cli-service graphql-api`**
 
   Run the GraphQL API server located in `./graphql-api`.
+
+## Env variables
+
+- **`VUE_APP_GRAPHQL_ENDPOINT`**
+
+  The url to the graphql host, default: `http://localhost:4000`
+
+- **`VUE_APP_GRAPHQL_PATH`**
+
+  Url path to the graphql server query handler, default: `'/graphql'`
+
+- **`VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH`**
+
+  Url path to the graphql server subscription handler (websockets), default: `'/graphql'`
+
+- **`VUE_APP_GRAPHQL_PORT`**
+
+  Port of the GraphQL API Server, default: `4000`
+
+- **`VUE_APP_APOLLO_ENGINE_KEY`**
+
+  API key for [Apollo Engine](https://engine.apollographql.com)
+
+- **`VUE_APP_GRAPHQL_PLAYGROUND_PATH`**
+
+  Url path to the graphql server playground, default: `'/'`
