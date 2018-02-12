@@ -1,6 +1,9 @@
 // Config
-const PORT = process.env.GRAPHQL_PORT || 4000
-const ENGINE_KEY = process.env.APOLLO_ENGINE_KEY || null
+const PORT = process.env.VUE_APP_GRAPHQL_PORT || 4000
+const ENGINE_KEY = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
+const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
+const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
+const GRAPHQL_PLAYGROUND_PATH = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
 
 // Customize those files
 const typeDefs = require('./type-defs')
@@ -47,23 +50,23 @@ if (ENGINE_KEY) {
       },
     },
     graphqlPort: PORT,
-    endpoint: '/graphql',
+    endpoint: GRAPHQL_PATH,
     // dumpTraffic: process.env.NODE_ENV !== 'production',
   })
   engine.start()
 
   server.express.use(engine.expressMiddleware())
 } else {
-  console.log('Apollo Engine key not found. To enable Engine, set the `APOLLO_ENGINE_KEY` env variable.')
+  console.log('Apollo Engine key not found. To enable Engine, set the `VUE_APP_APOLLO_ENGINE_KEY` env variable.')
   console.log('Create a key on https://engine.apollographql.com')
   console.log('You may see `Error: Must provide document` errors (query persisting tries).')
 }
 
 server.start({
   port: PORT,
-  endpoint: '/graphql',
-  subscriptions: '/graphql',
-  playground: '/',
+  endpoint: GRAPHQL_PATH,
+  subscriptions: GRAPHQL_SUBSCRIPTIONS_PATH,
+  playground: GRAPHQL_PLAYGROUND_PATH,
 }).then(() => {
   const url = `http://localhost:${PORT}/`
   console.log(`Server is running on ${url}`)
