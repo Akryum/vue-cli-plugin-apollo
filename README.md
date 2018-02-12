@@ -38,7 +38,7 @@ npm i -D vue-cli-plugin-apollo
 Invoke the plugin:
 
 ```
-vue invoke vue-cli-plugin-apollo
+vue invoke apollo
 ```
 
 *An example `ApolloExample.vue` component will be added into your sources.*
