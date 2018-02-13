@@ -9,9 +9,11 @@ import { getMainDefinition } from 'apollo-utilities'
 import { createPersistedQueryLink } from 'apollo-link-persisted-queries'
 import { setContext } from 'apollo-link-context'
 
+// Config
 const GRAPHQL_ENDPOINT = process.env.VUE_APP_GRAPHQL_ENDPOINT || 'http://localhost:4000'
 const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
 const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
+const GRAPHQL_PERSIST_QUERIES = <%= addApolloEngine %>
 
 // Create the apollo client
 export function createApolloClient ({ ssr }) {
@@ -31,7 +33,10 @@ export function createApolloClient ({ ssr }) {
   }))
 
   // Concat all the http link parts
-  httpLink = createPersistedQueryLink().concat(authLink.concat(httpLink))
+  httpLink = authLink.concat(httpLink)
+  if (GRAPHQL_PERSIST_QUERIES) {
+    httpLink = createPersistedQueryLink().concat(httpLink)
+  }
 
   // Apollo cache
   const cache = new InMemoryCache()

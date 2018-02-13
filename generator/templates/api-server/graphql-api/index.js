@@ -1,10 +1,10 @@
 // Config
 const PORT = process.env.VUE_APP_GRAPHQL_PORT || 4000
-const ENGINE_KEY = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
 const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
 const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
 const GRAPHQL_PLAYGROUND_PATH = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
-
+<% if (addApolloEngine) { %>const ENGINE_KEY = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
+<% } %>
 // Customize those files
 const typeDefs = require('./type-defs')
 const resolvers = require('./resolvers')
@@ -18,6 +18,10 @@ const pubsub = new PubSub()
 // Graphcool Yoga
 const server = new GraphQLServer({ typeDefs, resolvers, context: { pubsub } })
 
+// Cross-Origin
+const cors = require('cors')
+server.express.use(cors())
+<% if (addApolloEngine) { %>
 // Apollo Engine
 if (ENGINE_KEY) {
   const { Engine } = require('apollo-engine')
@@ -58,11 +62,12 @@ if (ENGINE_KEY) {
   server.express.use(engine.expressMiddleware())
 } else {
   console.log('Apollo Engine key not found. To enable Engine, set the `VUE_APP_APOLLO_ENGINE_KEY` env variable.')
-  console.log('Create a key on https://engine.apollographql.com')
+  console.log('Create a key at https://engine.apollographql.com')
   console.log('You may see `Error: Must provide document` errors (query persisting tries).')
 }
-
+<% } %>
 server.start({
+  cors: false,
   port: PORT,
   endpoint: GRAPHQL_PATH,
   subscriptions: GRAPHQL_SUBSCRIPTIONS_PATH,

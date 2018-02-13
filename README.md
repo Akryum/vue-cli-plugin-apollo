@@ -7,7 +7,9 @@ vue-cli 3.x plugin to add Apollo and GraphQL
 Features:
 
 - vue-apollo auto-integration
-- included graphql api (using graphql-yoga)
+- included optional graphql api server
+  - subscriptions support
+  - optional Apollo Engine support
 - example component with:
   - watched query
   - mutation
@@ -49,7 +51,7 @@ Start your app:
 npm run serve
 ```
 
-Open a new terminal and start the GraphQL API:
+If you enabled the GraphQL API Server, open a new terminal and start it:
 
 ```
 npm run graphql-api
