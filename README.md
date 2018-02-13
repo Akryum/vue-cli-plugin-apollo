@@ -79,6 +79,8 @@ Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 
   Url path to the graphql server subscription handler (websockets), default: `'/graphql'`
 
+### With the GraphQL server enabled
+
 - **`VUE_APP_GRAPHQL_PORT`**
 
   Port of the GraphQL API Server, default: `4000`
