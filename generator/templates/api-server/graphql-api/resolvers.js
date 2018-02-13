@@ -1,18 +1,18 @@
-const { db } = require('./db')
 const shortid = require('shortid')
-const { processUpload } = require('./upload')
 
 module.exports = {
   Counter: {
     countStr: counter => `Current count: ${counter.count}`,
   },
+
   Query: {
-    hello: (_, { name }) => `Hello ${name || 'World'}`,
-    messages: () => db.get('messages').value(),
-    uploads: () => db.get('uploads').value(),
+    hello: (root, { name }) => `Hello ${name || 'World'}`,
+    messages: (root, args, { db }) => db.get('messages').value(),
+    uploads: (root, args, { db }) => db.get('uploads').value(),
   },
+
   Mutation: {
-    messageAdd: (root, { input }, { pubsub }) => {
+    messageAdd: (root, { input }, { pubsub, db }) => {
       const message = {
         id: shortid.generate(),
         text: input.text,
@@ -28,9 +28,11 @@ module.exports = {
 
       return message
     },
-    singleUpload: (root, { file }) => processUpload(file),
-    multipleUpload: (root, { files }) => Promise.all(files.map(processUpload)),
+
+    singleUpload: (root, { file }, { processUpload }) => processUpload(file),
+    multipleUpload: (root, { files }, { processUpload }) => Promise.all(files.map(processUpload)),
   },
+
   Subscription: {
     counter: {
       subscribe: (parent, args, { pubsub }) => {
@@ -40,6 +42,7 @@ module.exports = {
         return pubsub.asyncIterator(channel)
       },
     },
+
     messageAdded: {
       subscribe: (parent, args, { pubsub }) => pubsub.asyncIterator('messages'),
     },

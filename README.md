@@ -8,7 +8,8 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 
 - Automatically integrate [vue-apollo](https://github.com/Akryum/vue-apollo) into your Vue app
 - Included optional Graphql API Server:
-  - Easy-to-get-started [graphql-yoga](https://github.com/graphcool/graphql-yoga/)
+  - Dead simple GraphQL API sources generated into your project
+  - Upgradable service runing [graphql-yoga](https://github.com/graphcool/graphql-yoga/)
   - Websocket subscriptions support
   - Optional automatic mocking
   - Optional [Apollo Engine](https://www.apollographql.com/engine) support
@@ -36,7 +37,8 @@ Install the plugin into your project:
 ```
 cd my-new-app
 npm i -D vue-cli-plugin-apollo
-# OR: yarn add -D vue-cli-plugin-apollo
+# OR:
+yarn add -D vue-cli-plugin-apollo
 ```
 
 Invoke the plugin:
@@ -45,7 +47,7 @@ Invoke the plugin:
 vue invoke apollo
 ```
 
-*:information_source: An example `ApolloExample.vue` component will be added into your sources.*
+*:information_source: An example `ApolloExample.vue` component alongside some GraphQL query files will be added into your sources.*
 
 Start your app:
 
@@ -63,6 +65,23 @@ If you enabled the GraphQL API Server, open a new terminal and start it:
 npm run graphql-api
 ```
 
+You can edit the files generated in the `./graphql-api` folder:
+
+- `type-defs.js` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
+- `resolvers.js` declares the [Apollo resolvers](https://www.apollographql.com/docs/graphql-tools/resolvers.html).
+- `context.js` allows injecting a context object into all the resolvers (third argument).
+- `mocks.js` defines the custom resolvers used for mocking ([more info](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks)).
+
+The server will be automatically restarted when a change is detected.
+
+To run the server only once, use this command:
+
+```
+npm run run-graphql-api
+```
+
+**Updating `vue-cli-plugin-apollo` will also update the GraphQL Server service :+1:**
+
 ### Mocks
 
 You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./graphql-api/mocks.js` file generated in your project.
@@ -77,7 +96,28 @@ Create a key at https://engine.apollographql.com (it's free!).
 
 - **`vue-cli-service graphql-api`**
 
-  Run the GraphQL API server located in `./graphql-api`.
+  Run the GraphQL API server with info from `./graphql-api` and watch the files to restart itself automatically.
+
+- **`vue-cli-service run-graphql-api`**
+
+  Run the GraphQL API server with info from `./graphql-api` once.
+
+
+## Configuration
+
+The GraphQL API Server can be configured via the `pluginOptions` in `vue.config.js`:
+
+``` js
+module.exports = {
+  // Other options...
+  pluginOptions: {
+    // Enable automatic mocking
+    graphqlMock: true,
+    // Enable Apollo Engine
+    apolloEngine: true,
+  },
+}
+```
 
 ## Env variables
 

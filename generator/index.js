@@ -27,7 +27,6 @@ module.exports = (api, options, rootOptions) => {
 
   if (options.addServer) {
     Object.assign(pkg.dependencies, {
-      'graphql-yoga': '^1.2.5',
       'lowdb': '^1.0.0',
       'mkdirp': '^0.5.1',
       'shortid': '^2.2.8',
@@ -36,13 +35,8 @@ module.exports = (api, options, rootOptions) => {
     Object.assign(pkg, {
       scripts: {
         'graphql-api': 'vue-cli-service graphql-api',
+        'run-graphql-api': 'vue-cli-service run-graphql-api',
       },
-    })
-  }
-
-  if (options.addApolloEngine) {
-    Object.assign(pkg.dependencies, {
-      'apollo-engine': '^0.8.9',
     })
   }
 
@@ -62,24 +56,76 @@ module.exports = (api, options, rootOptions) => {
     const fs = require('fs')
 
     // Modify main.js
-    const tsPath = api.resolve('./src/main.ts')
-    const jsPath = api.resolve('./src/main.js')
+    {
+      const tsPath = api.resolve('./src/main.ts')
+      const jsPath = api.resolve('./src/main.js')
 
-    const mainPath = fs.existsSync(tsPath) ? tsPath : jsPath
-    let main = fs.readFileSync(mainPath, { encoding: 'utf8' })
+      const mainPath = fs.existsSync(tsPath) ? tsPath : jsPath
+      let content = fs.readFileSync(mainPath, { encoding: 'utf8' })
 
-    const lines = main.split(/\r?\n/g).reverse()
+      const lines = content.split(/\r?\n/g).reverse()
 
-    // Inject import
-    const lastImportIndex = lines.findIndex(line => line.match(/^import/))
-    lines[lastImportIndex] += `\nimport { apolloProvider } from './vue-apollo'`
+      // Inject import
+      const lastImportIndex = lines.findIndex(line => line.match(/^import/))
+      lines[lastImportIndex] += `\nimport { apolloProvider } from './vue-apollo'`
 
-    // Modify app
-    const appIndex = lines.findIndex(line => line.match(/new Vue/))
-    lines[appIndex] += `\n  provide: apolloProvider.provide(),`
+      // Modify app
+      const appIndex = lines.findIndex(line => line.match(/new Vue/))
+      lines[appIndex] += `\n  provide: apolloProvider.provide(),`
 
-    main = lines.reverse().join('\n')
-    fs.writeFileSync(mainPath, main, { encoding: 'utf8' })
+      content = lines.reverse().join('\n')
+      fs.writeFileSync(mainPath, content, { encoding: 'utf8' })
+    }
+
+    if (options.addServer) {
+      // Modify vue config
+      const code = `\n    graphqlMock: ${options.addMocking},` +
+        `\n    apolloEngine: ${options.addApolloEngine},`
+
+      const envPath = api.resolve('./vue.config.js')
+      let content
+
+      let generateNew = false
+
+      if (fs.existsSync(envPath)) {
+        content = fs.readFileSync(envPath, { encoding: 'utf8' })
+
+        const lines = content.split(/\r?\n/g).reverse()
+
+        const pluginOptionsIndex = lines.findIndex(line => line.match(/pluginOptions(\s*):/))
+        if (pluginOptionsIndex !== -1) {
+          lines[pluginOptionsIndex] += code
+        } else {
+          const lastLineIndex = lines.findIndex(line => line.trim().match(/^};?$/))
+          if (lastLineIndex !== -1) {
+            let line = lines[lastLineIndex + 1]
+            if (!line.trim().match(/,$/)) {
+              line += ','
+            }
+            line += `\n  pluginOptions: {` +
+              code + `\n` +
+              `  },`
+            lines[lastLineIndex + 1] = line
+          } else {
+            generateNew = true
+          }
+        }
+
+        if (!generateNew) content = lines.reverse().join('\n')
+      } else {
+        generateNew = true
+      }
+
+      if (generateNew) {
+        content = `module.exports = {\n` +
+          `  pluginOptions: {` +
+          code + `\n` +
+          `  },\n` +
+          `}`
+      }
+
+      fs.writeFileSync(envPath, content, { encoding: 'utf8' })
+    }
 
     if (options.addApolloEngine) {
       // Modify .env.local file

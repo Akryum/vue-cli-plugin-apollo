@@ -22,14 +22,6 @@ module.exports = {
     // https://github.com/vuejs/eslint-plugin-vue#priority-c-recommended-minimizing-arbitrary-choices-and-cognitive-overhead
     'plugin:vue/recommended',
   ],
-  plugins: [
-    'ejs',
-  ],
-  globals: {
-    'addServer': true,
-    'addApolloEngine': true,
-    'apolloEngineKey': true,
-  },
   rules: {
     'comma-dangle': ['error', 'always-multiline'],
 

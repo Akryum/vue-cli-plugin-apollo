@@ -1,4 +1,11 @@
+const {
+  log,
+  hasYarn,
+} = require('@vue/cli-shared-utils')
+const chalk = require('chalk')
+
 module.exports = (api, options) => {
+  const cmd = hasYarn() ? 'yarn' : 'npm'
   const useThreads = process.env.NODE_ENV === 'production' && options.parallel
   const cacheDirectory = api.resolve('node_modules/.cache/cache-loader')
 
@@ -28,24 +35,57 @@ module.exports = (api, options) => {
   })
 
   api.registerCommand('graphql-api', args => {
-    const execa = require('execa')
-    const nodemonBinPath = require.resolve('nodemon/bin/nodemon')
-
-    const argv = [
-      'graphql-api/index.js',
-      '--ignore',
-      'graphql-api/live/',
-    ]
+    const nodemon = require('nodemon')
 
     return new Promise((resolve, reject) => {
-      const child = execa(nodemonBinPath, argv, {
-        cwd: api.resolve('.'),
-        stdio: 'inherit',
+      nodemon({
+        exec: `${cmd} run run-graphql-api`,
+        watch: [
+          api.resolve('./graphql-api/'),
+        ],
+        ignore: [
+          api.resolve('./graphql-api/live/'),
+        ],
       })
-      child.on('error', reject)
-      child.on('exit', () => {
+
+      nodemon.on('restart', () => {
+        log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
+      })
+
+      nodemon.on('crash', () => {
+        log(chalk.bold(chalk.red(`💥  GraphQL API crashed!`)))
+        log(chalk.red(`   Waiting for changes...`))
+      })
+
+      nodemon.on('stdout', (...args) => {
+        console.log(chalk.grey(...args))
+      })
+
+      nodemon.on('sdterr', (...args) => {
+        console.log(chalk.grey(...args))
+      })
+
+      nodemon.on('quit', () => {
         resolve()
+        process.exit()
       })
     })
+  })
+
+  api.registerCommand('run-graphql-api', args => {
+    const server = require('./graphql-server')
+
+    const opts = {
+      mock: options.pluginOptions.graphqlMock || args.mock,
+      apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
+      paths: {
+        typeDefs: api.resolve('./graphql-api/type-defs.js'),
+        resolvers: api.resolve('./graphql-api/resolvers.js'),
+        context: api.resolve('./graphql-api/context.js'),
+        mocks: api.resolve('./graphql-api/mocks.js'),
+      },
+    }
+
+    server(opts)
   })
 }
