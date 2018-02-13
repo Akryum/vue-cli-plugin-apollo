@@ -96,9 +96,12 @@ module.exports = (api, options, rootOptions) => {
 
     if (options.addServer) {
       setTimeout(() => {
-        log(`   Start the GraphQL API Server with ${chalk.grey(`${hasYarn() ? 'yarn' : 'npm'} run graphql-api`)}`)
+        log(`   Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run graphql-api`)}`)
+        if (options.addMocking) {
+          log(`   Customize the mocks in ${chalk.cyan('graphql-api/mocks.js')}`)
+        }
         if (options.addApolloEngine) {
-          log(`   The Apollo Engine API key has been added to ${chalk.grey('.local.env')}`)
+          log(`   The Apollo Engine API key has been added to ${chalk.cyan('.local.env')}`)
         }
         log('')
       }, 50)

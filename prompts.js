@@ -7,9 +7,16 @@ module.exports = [
   },
   {
     type: 'confirm',
-    name: 'addApolloEngine',
-    message: 'Add Apollo Engine support to the server?',
+    name: 'addMocking',
+    message: '(Server) Enable automatic mocking?',
     default: true,
+    when: answers => answers.addServer,
+  },
+  {
+    type: 'confirm',
+    name: 'addApolloEngine',
+    message: '(Server) Add Apollo Engine?',
+    default: false,
     when: answers => answers.addServer,
   },
   {

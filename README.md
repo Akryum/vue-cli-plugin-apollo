@@ -1,19 +1,21 @@
 # vue-cli-apollo
 
-vue-cli 3.x plugin to add Apollo and GraphQL
+**Start building a Vue app with Apollo and GraphQL in 2 minutes**
 
-> Start building a Vue app with Apollo and GraphQL in 2 minutes
+This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 
-Features:
+**Features:**
 
-- vue-apollo auto-integration
-- included optional graphql api server
-  - subscriptions support
-  - optional Apollo Engine support
-- example component with:
-  - watched query
-  - mutation
-  - realtime subscription
+- Automatically integrate [vue-apollo](https://github.com/Akryum/vue-apollo) into your Vue app
+- Included optional Graphql API Server:
+  - Easy-to-get-started [graphql-yoga](https://github.com/graphcool/graphql-yoga/)
+  - Websocket subscriptions support
+  - Optional automatic mocking
+  - Optional [Apollo Engine](https://www.apollographql.com/engine) support
+- Included example component with:
+  - Watched query
+  - Mutation
+  - Realtime subscription using Websocket
 
 ## Getting started
 
@@ -51,13 +53,25 @@ Start your app:
 npm run serve
 ```
 
+Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
+
+### GraphQL API Server
+
 If you enabled the GraphQL API Server, open a new terminal and start it:
 
 ```
 npm run graphql-api
 ```
 
-Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
+### Mocks
+
+You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./graphql-api/mocks.js` file generated in your project.
+
+### Apollo Engine
+
+[Apollo Engine](https://www.apollographql.com/engine) is a commercial product from Apollo. It enables lots of additional features like monitoring, error rerporting, caching and query persisting.
+
+Create a key at https://engine.apollographql.com (it's free!).
 
 ## Injected Commands
 

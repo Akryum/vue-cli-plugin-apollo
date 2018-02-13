@@ -66,6 +66,15 @@ if (ENGINE_KEY) {
   console.log('You may see `Error: Must provide document` errors (query persisting tries).')
 }
 <% } %>
+<% if (addMocking) { %>// Automatic mocking
+const { addMockFunctionsToSchema } = require('graphql-tools')
+const mocks = require('./mocks')
+addMockFunctionsToSchema({
+  schema: server.executableSchema,
+  mocks,
+  preserveResolvers: true,
+})
+<% } %>
 server.start({
   cors: false,
   port: PORT,
