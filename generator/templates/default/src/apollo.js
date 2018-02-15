@@ -13,7 +13,7 @@ import { setContext } from 'apollo-link-context'
 const GRAPHQL_ENDPOINT = process.env.VUE_APP_GRAPHQL_ENDPOINT || 'http://localhost:4000'
 const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
 const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
-const GRAPHQL_PERSIST_QUERIES = <%= addApolloEngine %>
+const GRAPHQL_PERSIST_QUERIES = <%= typeof addApolloEngine !== 'undefined' ? addApolloEngine : false %>
 
 function getAuth () {
   // get the authentication token from local storage if it exists
