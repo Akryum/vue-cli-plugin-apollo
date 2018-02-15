@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import { createApolloClient } from './apollo'
+import createApolloClient from './apollo'
 
 // Install the vue plugin
 Vue.use(VueApollo)

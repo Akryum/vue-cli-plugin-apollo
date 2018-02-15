@@ -79,52 +79,70 @@ module.exports = (api, options, rootOptions) => {
 
     if (options.addServer) {
       // Modify vue config
-      const code = `\n    graphqlMock: ${options.addMocking},` +
-        `\n    apolloEngine: ${options.addApolloEngine},`
+      {
+        const code = `\n    graphqlMock: ${options.addMocking},` +
+          `\n    apolloEngine: ${options.addApolloEngine},`
 
-      const envPath = api.resolve('./vue.config.js')
-      let content
+        const envPath = api.resolve('./vue.config.js')
+        let content
 
-      let generateNew = false
+        let generateNew = false
 
-      if (fs.existsSync(envPath)) {
-        content = fs.readFileSync(envPath, { encoding: 'utf8' })
+        if (fs.existsSync(envPath)) {
+          content = fs.readFileSync(envPath, { encoding: 'utf8' })
 
-        const lines = content.split(/\r?\n/g).reverse()
+          const lines = content.split(/\r?\n/g).reverse()
 
-        const pluginOptionsIndex = lines.findIndex(line => line.match(/pluginOptions(\s*):/))
-        if (pluginOptionsIndex !== -1) {
-          lines[pluginOptionsIndex] += code
-        } else {
-          const lastLineIndex = lines.findIndex(line => line.trim().match(/^};?$/))
-          if (lastLineIndex !== -1) {
-            let line = lines[lastLineIndex + 1]
-            if (!line.trim().match(/,$/)) {
-              line += ','
-            }
-            line += `\n  pluginOptions: {` +
-              code + `\n` +
-              `  },`
-            lines[lastLineIndex + 1] = line
+          const pluginOptionsIndex = lines.findIndex(line => line.match(/pluginOptions(\s*):/))
+          if (pluginOptionsIndex !== -1) {
+            lines[pluginOptionsIndex] += code
           } else {
-            generateNew = true
+            const lastLineIndex = lines.findIndex(line => line.trim().match(/^};?$/))
+            if (lastLineIndex !== -1) {
+              let line = lines[lastLineIndex + 1]
+              if (!line.trim().match(/,$/)) {
+                line += ','
+              }
+              line += `\n  pluginOptions: {` +
+                code + `\n` +
+                `  },`
+              lines[lastLineIndex + 1] = line
+            } else {
+              generateNew = true
+            }
           }
+
+          if (!generateNew) content = lines.reverse().join('\n')
+        } else {
+          generateNew = true
         }
 
-        if (!generateNew) content = lines.reverse().join('\n')
-      } else {
-        generateNew = true
+        if (generateNew) {
+          content = `module.exports = {\n` +
+            `  pluginOptions: {` +
+            code + `\n` +
+            `  },\n` +
+            `}`
+        }
+
+        fs.writeFileSync(envPath, content, { encoding: 'utf8' })
       }
 
-      if (generateNew) {
-        content = `module.exports = {\n` +
-          `  pluginOptions: {` +
-          code + `\n` +
-          `  },\n` +
-          `}`
-      }
+      // Git ignore
+      {
+        const gitignorePath = api.resolve('./.gitignore')
+        let content
 
-      fs.writeFileSync(envPath, content, { encoding: 'utf8' })
+        if (fs.existsSync(gitignorePath)) {
+          content = fs.readFileSync(gitignorePath, { encoding: 'utf8' })
+        } else {
+          content = ''
+        }
+
+        content += '\n/live/\n'
+
+        fs.writeFileSync(gitignorePath, content, { encoding: 'utf8' })
+      }
     }
 
     if (options.addApolloEngine) {
@@ -140,11 +158,19 @@ module.exports = (api, options, rootOptions) => {
       fs.writeFileSync(envPath, content, { encoding: 'utf8' })
     }
 
+    // Linting
+    try {
+      const lint = require('@vue/cli-plugin-eslint/lint')
+      lint({ silent: true }, api)
+    } catch (e) {
+      // No ESLint vue-cli plugin
+    }
+
     if (options.addServer) {
       setTimeout(() => {
         log(`   Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run graphql-api`)}`)
         if (options.addMocking) {
-          log(`   Customize the mocks in ${chalk.cyan('graphql-api/mocks.js')}`)
+          log(`   Customize the mocks in ${chalk.cyan('src/graphql-api/mocks.js')}`)
         }
         if (options.addApolloEngine) {
           log(`   The Apollo Engine API key has been added to ${chalk.cyan('.local.env')}`)

@@ -1,10 +1,9 @@
 const { createWriteStream } = require('fs')
 const mkdirp = require('mkdirp')
 const shortid = require('shortid')
-const { resolve } = require('path')
 const { db } = require('./db')
 
-const uploadDir = resolve(__dirname, '../live/uploads')
+const uploadDir = require('path').resolve(__dirname, '../../../live/uploads')
 
 // Ensure upload directory exists
 mkdirp.sync(uploadDir)

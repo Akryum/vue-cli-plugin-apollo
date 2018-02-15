@@ -69,7 +69,7 @@ If you enabled the GraphQL API Server, open a new terminal and start it:
 npm run graphql-api
 ```
 
-You can edit the files generated in the `./graphql-api` folder:
+You can edit the files generated in the `./src/graphql-api` folder:
 
 - `type-defs.js` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
 - `resolvers.js` declares the [Apollo resolvers](https://www.apollographql.com/docs/graphql-tools/resolvers.html).
@@ -88,7 +88,7 @@ npm run run-graphql-api
 
 ### Mocks
 
-You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./graphql-api/mocks.js` file generated in your project.
+You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./src/graphql-api/mocks.js` file generated in your project.
 
 ### Apollo Engine
 
@@ -100,11 +100,11 @@ Create a key at https://engine.apollographql.com (it's free!).
 
 - **`vue-cli-service graphql-api`**
 
-  Run the GraphQL API server with info from `./graphql-api` and watch the files to restart itself automatically.
+  Run the GraphQL API server with info from `./src/graphql-api` and watch the files to restart itself automatically.
 
 - **`vue-cli-service run-graphql-api`**
 
-  Run the GraphQL API server with info from `./graphql-api` once.
+  Run the GraphQL API server with info from `./src/graphql-api` once.
 
 
 ## Configuration

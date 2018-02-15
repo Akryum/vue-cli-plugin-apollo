@@ -41,10 +41,10 @@ module.exports = (api, options) => {
       nodemon({
         exec: `${cmd} run run-graphql-api`,
         watch: [
-          api.resolve('./graphql-api/'),
+          api.resolve('./src/graphql-api/'),
         ],
         ignore: [
-          api.resolve('./graphql-api/live/'),
+          api.resolve('./src/graphql-api/live/'),
         ],
       })
 
@@ -79,10 +79,10 @@ module.exports = (api, options) => {
       mock: options.pluginOptions.graphqlMock || args.mock,
       apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
       paths: {
-        typeDefs: api.resolve('./graphql-api/type-defs.js'),
-        resolvers: api.resolve('./graphql-api/resolvers.js'),
-        context: api.resolve('./graphql-api/context.js'),
-        mocks: api.resolve('./graphql-api/mocks.js'),
+        typeDefs: api.resolve('./src/graphql-api/type-defs.js'),
+        resolvers: api.resolve('./src/graphql-api/resolvers.js'),
+        context: api.resolve('./src/graphql-api/context.js'),
+        mocks: api.resolve('./src/graphql-api/mocks.js'),
       },
     }
 

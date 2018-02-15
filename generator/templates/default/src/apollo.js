@@ -15,9 +15,37 @@ const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
 const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
 const GRAPHQL_PERSIST_QUERIES = <%= addApolloEngine %>
 
+function getAuth () {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('apollo-token')
+  // return the headers to the context so httpLink can read them
+  return token ? `Bearer ${token}` : ''
+}
+
+function restartWebsockets (wsClient) {
+  // Copy current operations
+  const operations = Object.assign({}, wsClient.operations)
+
+  // Close connection
+  wsClient.close(true)
+
+  // Open a new one
+  wsClient.connect()
+
+  // Push all current operations to the new connection
+  Object.keys(operations).forEach(id => {
+    wsClient.sendMessage(
+      id,
+      MessageTypes.GQL_START,
+      operations[id].options,
+    )
+  })
+}
+
 // Create the apollo client
-export function createApolloClient ({ ssr }) {
-  let link, wsClient
+export default function createApolloClient ({ ssr }) {
+  let link
+  let wsClient
 
   let httpLink = new HttpLink({
     // You should use an absolute URL here
@@ -44,6 +72,7 @@ export function createApolloClient ({ ssr }) {
   if (!ssr) {
     // If on the client, recover the injected state
     if (typeof window !== 'undefined') {
+      // eslint-disable-next-line no-underscore-dangle
       const state = window.__APOLLO_STATE__
       if (state) {
         // If you have multiple clients, use `state.<client_id>`
@@ -118,31 +147,4 @@ export function createApolloClient ({ ssr }) {
   }
 
   return apolloClient
-}
-
-function getAuth () {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('apollo-token')
-  // return the headers to the context so httpLink can read them
-  return token ? `Bearer ${token}` : ''
-}
-
-function restartWebsockets (wsClient) {
-  // Copy current operations
-  const operations = Object.assign({}, wsClient.operations)
-
-  // Close connection
-  wsClient.close(true)
-
-  // Open a new one
-  wsClient.connect()
-
-  // Push all current operations to the new connection
-  Object.keys(operations).forEach(id => {
-    wsClient.sendMessage(
-      id,
-      MessageTypes.GQL_START,
-      operations[id].options,
-    )
-  })
 }
