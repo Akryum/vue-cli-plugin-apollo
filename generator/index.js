@@ -42,6 +42,19 @@ module.exports = (api, options, rootOptions) => {
 
   api.extendPackage(pkg)
 
+  // Vue config
+  if (options.addServer) {
+    // Modify vue config
+    api.extendPackage({
+      vue: {
+        pluginOptions: {
+          graphqlMock: options.addMocking,
+          apolloEngine: options.addApolloEngine,
+        },
+      },
+    })
+  }
+
   api.render('./templates/default', {
     ...options,
   })
@@ -78,56 +91,6 @@ module.exports = (api, options, rootOptions) => {
     }
 
     if (options.addServer) {
-      // Modify vue config
-      {
-        const code = `\n    graphqlMock: ${options.addMocking},` +
-          `\n    apolloEngine: ${options.addApolloEngine},`
-
-        const envPath = api.resolve('./vue.config.js')
-        let content
-
-        let generateNew = false
-
-        if (fs.existsSync(envPath)) {
-          content = fs.readFileSync(envPath, { encoding: 'utf8' })
-
-          const lines = content.split(/\r?\n/g).reverse()
-
-          const pluginOptionsIndex = lines.findIndex(line => line.match(/pluginOptions(\s*):/))
-          if (pluginOptionsIndex !== -1) {
-            lines[pluginOptionsIndex] += code
-          } else {
-            const lastLineIndex = lines.findIndex(line => line.trim().match(/^};?$/))
-            if (lastLineIndex !== -1) {
-              let line = lines[lastLineIndex + 1]
-              if (!line.trim().match(/,$/)) {
-                line += ','
-              }
-              line += `\n  pluginOptions: {` +
-                code + `\n` +
-                `  },`
-              lines[lastLineIndex + 1] = line
-            } else {
-              generateNew = true
-            }
-          }
-
-          if (!generateNew) content = lines.reverse().join('\n')
-        } else {
-          generateNew = true
-        }
-
-        if (generateNew) {
-          content = `module.exports = {\n` +
-            `  pluginOptions: {` +
-            code + `\n` +
-            `  },\n` +
-            `}`
-        }
-
-        fs.writeFileSync(envPath, content, { encoding: 'utf8' })
-      }
-
       // Git ignore
       {
         const gitignorePath = api.resolve('./.gitignore')
