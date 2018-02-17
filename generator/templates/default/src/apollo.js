@@ -9,12 +9,6 @@ import { getMainDefinition } from 'apollo-utilities'
 import { createPersistedQueryLink } from 'apollo-link-persisted-queries'
 import { setContext } from 'apollo-link-context'
 
-// Config
-const GRAPHQL_ENDPOINT = process.env.VUE_APP_GRAPHQL_ENDPOINT || 'http://localhost:4000'
-const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
-const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
-const GRAPHQL_PERSIST_QUERIES = <%= typeof addApolloEngine !== 'undefined' ? addApolloEngine : false %>
-
 function getAuth () {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem('apollo-token')
@@ -37,19 +31,19 @@ function restartWebsockets (wsClient) {
     wsClient.sendMessage(
       id,
       MessageTypes.GQL_START,
-      operations[id].options,
+      operations[id].options
     )
   })
 }
 
 // Create the apollo client
-export default function createApolloClient ({ ssr }) {
+export default function createApolloClient ({ ssr, base, endpoints, persisting }) {
   let link
   let wsClient
 
   let httpLink = new HttpLink({
     // You should use an absolute URL here
-    uri: GRAPHQL_ENDPOINT + GRAPHQL_PATH,
+    uri: base + endpoints.graphql,
   })
 
   // HTTP Auth header injection
@@ -62,7 +56,7 @@ export default function createApolloClient ({ ssr }) {
 
   // Concat all the http link parts
   httpLink = authLink.concat(httpLink)
-  if (GRAPHQL_PERSIST_QUERIES) {
+  if (persisting) {
     httpLink = createPersistedQueryLink().concat(httpLink)
   }
 
@@ -81,8 +75,8 @@ export default function createApolloClient ({ ssr }) {
     }
 
     // Web socket
-    wsClient = new SubscriptionClient(GRAPHQL_ENDPOINT.replace(/^https?/i, 'ws' + (process.env.NODE_ENV === 'production' ? 's' : '')) +
-    GRAPHQL_SUBSCRIPTIONS_PATH, {
+    wsClient = new SubscriptionClient(base.replace(/^https?/i, 'ws' + (process.env.NODE_ENV === 'production' ? 's' : '')) +
+    endpoints.subscription, {
       reconnect: true,
       connectionParams: () => ({
         'Authorization': getAuth(),
@@ -94,7 +88,7 @@ export default function createApolloClient ({ ssr }) {
 
     // File upload
     const uploadLink = authLink.concat(createUploadLink({
-      uri: GRAPHQL_ENDPOINT + GRAPHQL_PATH,
+      uri: base + endpoints.graphql,
     }))
 
     // using the ability to split links, you can send data to each link
@@ -102,7 +96,7 @@ export default function createApolloClient ({ ssr }) {
     httpLink = split(
       operation => operation.getContext().upload,
       uploadLink,
-      httpLink,
+      httpLink
     )
 
     link = split(
