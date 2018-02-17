@@ -5,8 +5,19 @@ import createApolloClient from './apollo'
 // Install the vue plugin
 Vue.use(VueApollo)
 
+// Config
+const options = {
+  ssr: false,
+  base: process.env.VUE_APP_GRAPHQL_ENDPOINT || 'http://localhost:4000',
+  endpoints: {
+    graphql: process.env.VUE_APP_GRAPHQL_PATH || '/graphql',
+    subscription: process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql',
+  },
+  persisting: <%= typeof addApolloEngine !== 'undefined' ? addApolloEngine : false %>,
+}
+
 // Create apollo client
-export const apolloClient = createApolloClient({ ssr: false })
+export const apolloClient = createApolloClient(options)
 
 // Create vue apollo provider
 export const apolloProvider = new VueApollo({
