@@ -13,7 +13,7 @@ const options = {
     graphql: process.env.VUE_APP_GRAPHQL_PATH || '/graphql',
     subscription: process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql',
   },
-  persisting: <%= addApolloEngine %>,
+  persisting: <%= typeof addApolloEngine !== 'undefined' ? addApolloEngine : false %>,
 }
 
 // Create apollo client
