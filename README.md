@@ -13,14 +13,14 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 - Automatically integrate [vue-apollo](https://github.com/Akryum/vue-apollo) into your Vue app
 - Included optional Graphql API Server:
   - Dead simple GraphQL API sources generated into your project
-  - Upgradable service runing [graphql-yoga](https://github.com/graphcool/graphql-yoga/)
+  - Upgradable service running [graphql-yoga](https://github.com/graphcool/graphql-yoga/)
   - Websocket subscriptions support
   - Optional automatic mocking
   - Optional [Apollo Engine](https://www.apollographql.com/engine) support
 - Included example component with:
   - Watched query
   - Mutation
-  - Realtime subscription using Websocket
+  - Realtime subscription using Websockets
 
 ## Getting started
 
@@ -92,7 +92,7 @@ You can enable automatic mocking on the GraphQL API Server. It can be [customize
 
 ### Apollo Engine
 
-[Apollo Engine](https://www.apollographql.com/engine) is a commercial product from Apollo. It enables lots of additional features like monitoring, error rerporting, caching and query persisting.
+[Apollo Engine](https://www.apollographql.com/engine) is a commercial product from Apollo. It enables lots of additional features like monitoring, error reporting, caching and query persisting.
 
 Create a key at https://engine.apollographql.com (it's free!).
 
