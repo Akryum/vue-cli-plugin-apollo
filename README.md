@@ -36,19 +36,10 @@ If you don't have a project created with vue-cli 3.x yet:
 vue create my-new-app
 ```
 
-Install the plugin into your project:
+Add the cli plugin:
 
 ```
-cd my-new-app
-npm i -D vue-cli-plugin-apollo
-# OR:
-yarn add -D vue-cli-plugin-apollo
-```
-
-Invoke the plugin:
-
-```
-vue invoke apollo
+vue add apollo
 ```
 
 *:information_source: An example `ApolloExample.vue` component alongside some GraphQL query files will be added into your sources.*

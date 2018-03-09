@@ -1,5 +1,4 @@
 const {
-  log,
   hasYarn,
 } = require('@vue/cli-shared-utils')
 const chalk = require('chalk')
@@ -22,6 +21,7 @@ module.exports = (api, options, rootOptions) => {
     },
     devDependencies: {
       'graphql-tag': '^2.5.0',
+      'eslint-plugin-graphql': '^1.5.0',
     },
   }
 
@@ -130,16 +130,13 @@ module.exports = (api, options, rootOptions) => {
     }
 
     if (options.addServer) {
-      setTimeout(() => {
-        log(`   Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run graphql-api`)}`)
-        if (options.addMocking) {
-          log(`   Customize the mocks in ${chalk.cyan('src/graphql-api/mocks.js')}`)
-        }
-        if (options.addApolloEngine) {
-          log(`   The Apollo Engine API key has been added to ${chalk.cyan('.local.env')}`)
-        }
-        log('')
-      }, 50)
+      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run graphql-api`)}`, 'info')
+      if (options.addMocking) {
+        api.exitLog(`Customize the mocks in ${chalk.cyan('src/graphql-api/mocks.js')}`, 'info')
+      }
+      if (options.addApolloEngine) {
+        api.exitLog(`The Apollo Engine API key has been added to ${chalk.cyan('.local.env')}`, 'info')
+      }
     }
   })
 }
