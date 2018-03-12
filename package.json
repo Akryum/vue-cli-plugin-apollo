@@ -1,6 +1,6 @@
 {
   "name": "vue-cli-plugin-apollo",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "vue-cli 3 plugin to add Apollo and GraphQL",
   "main": "index.js",
   "scripts": {
@@ -25,12 +25,22 @@
   },
   "homepage": "https://github.com/Akryum/vue-cli-plugin-apollo#readme",
   "dependencies": {
-    "apollo-engine": "^0.8.9",
-    "graphql-yoga": "^1.2.5",
+    "apollo-engine": "^1.0.1",
+    "apollo-server-express": "^1.3.2",
+    "apollo-upload-server": "^5.0.0",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "cross-env": "^5.1.4",
+    "express": "^4.16.2",
+    "graphql": "^0.13.1",
+    "graphql-tools": "^2.21.0",
+    "graphql-playground-middleware-express": "^1.5.7",
+    "graphql-subscriptions": "^0.5.8",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",
-    "nodemon": "^1.14.12",
-    "shortid": "^2.2.8"
+    "nodemon": "^1.17.1",
+    "shortid": "^2.2.8",
+    "subscriptions-transport-ws": "^0.9.6"
   },
   "devDependencies": {
     "babel": "^6.23.0",

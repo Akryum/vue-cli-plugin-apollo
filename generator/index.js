@@ -26,16 +26,11 @@ module.exports = (api, options, rootOptions) => {
   }
 
   if (options.addServer) {
-    Object.assign(pkg.dependencies, {
-      'lowdb': '^1.0.0',
-      'mkdirp': '^0.5.1',
-      'shortid': '^2.2.8',
-    })
-
     Object.assign(pkg, {
       scripts: {
         'graphql-api': 'vue-cli-service graphql-api',
         'run-graphql-api': 'vue-cli-service run-graphql-api',
+        'prod-graphql-api': 'cross-env NODE_ENV=production vue-cli-service run-graphql-api',
       },
     })
   }
