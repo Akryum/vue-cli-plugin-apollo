@@ -32,12 +32,18 @@ module.exports = options => {
   // Realtime subscriptions
   const pubsub = new PubSub()
 
+  const typeDefsString = buildTypeDefsString(typeDefs)
+
+  const uploadMixin = typeDefsString.includes('scalar Upload')
+    ? { Upload: GraphQLUpload }
+    : {}
+
   // Executable schema
   const schema = makeExecutableSchema({
     typeDefs,
     resolvers: {
       ...resolvers,
-      Upload: GraphQLUpload,
+      ...uploadMixin,
     },
   })
 
@@ -180,4 +186,28 @@ module.exports = options => {
   if (!apolloEnabled) {
     server.listen(PORT, doneCallback)
   }
+}
+
+function buildTypeDefsString (typeDefs) {
+  return mergeTypeDefs(typeDefs)
+}
+
+function mergeTypeDefs (typeDefs) {
+  if (typeof typeDefs === 'string') {
+    return typeDefs
+  }
+
+  if (typeof typeDefs === 'function') {
+    typeDefs = typeDefs()
+  }
+
+  if (isDocumentNode(typeDefs)) {
+    return print(typeDefs)
+  }
+
+  return typeDefs.reduce((acc, t) => acc + '\n' + mergeTypeDefs(t), '')
+}
+
+function isDocumentNode (node) {
+  return node.kind === 'Document'
 }
