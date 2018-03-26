@@ -15,7 +15,7 @@ module.exports = (api, options) => {
       .test(/\.(gql|graphql)$/)
       .include
       .add(api.resolve('src'))
-      .add(api.resolve('test'))
+      .add(api.resolve('tests'))
       .end()
       .use('cache-loader')
       .loader('cache-loader')
