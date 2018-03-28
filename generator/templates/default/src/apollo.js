@@ -37,11 +37,10 @@ function restartWebsockets (wsClient) {
 }
 
 // Create the apollo client
-export default function createApolloClient ({ ssr, base, endpoints, persisting }) {
-  let link
+export default function createApolloClient ({ ssr, base, endpoints, persisting, subscriptions }) {
   let wsClient
 
-  let httpLink = new HttpLink({
+  let link = new HttpLink({
     // You should use an absolute URL here
     uri: base + endpoints.graphql,
   })
@@ -55,9 +54,9 @@ export default function createApolloClient ({ ssr, base, endpoints, persisting }
   }))
 
   // Concat all the http link parts
-  httpLink = authLink.concat(httpLink)
+  link = authLink.concat(httpLink)
   if (persisting) {
-    httpLink = createPersistedQueryLink().concat(httpLink)
+    link = createPersistedQueryLink().concat(httpLink)
   }
 
   // Apollo cache
@@ -74,18 +73,6 @@ export default function createApolloClient ({ ssr, base, endpoints, persisting }
       }
     }
 
-    // Web socket
-    wsClient = new SubscriptionClient(base.replace(/^https?/i, 'ws' + (process.env.NODE_ENV === 'production' ? 's' : '')) +
-    endpoints.subscription, {
-      reconnect: true,
-      connectionParams: () => ({
-        'Authorization': getAuth(),
-      }),
-    })
-
-    // Create the subscription websocket link
-    const wsLink = new WebSocketLink(wsClient)
-
     // File upload
     const uploadLink = authLink.concat(createUploadLink({
       uri: base + endpoints.graphql,
@@ -93,25 +80,38 @@ export default function createApolloClient ({ ssr, base, endpoints, persisting }
 
     // using the ability to split links, you can send data to each link
     // depending on what kind of operation is being sent
-    httpLink = split(
+    link = split(
       operation => operation.getContext().upload,
       uploadLink,
-      httpLink
+      link
     )
 
-    link = split(
-      // split based on operation type
-      ({ query }) => {
-        const { kind, operation } = getMainDefinition(query)
-        return kind === 'OperationDefinition' &&
-          operation === 'subscription'
-      },
-      wsLink,
-      httpLink
-    )
+    // Web socket
+    if (subscriptions) {
+      wsClient = new SubscriptionClient(base.replace(/^https?/i, 'ws' + (process.env.NODE_ENV === 'production' ? 's' : '')) +
+      endpoints.subscription, {
+        reconnect: true,
+        connectionParams: () => ({
+          'Authorization': getAuth(),
+        }),
+      })
+
+      // Create the subscription websocket link
+      const wsLink = new WebSocketLink(wsClient)
+
+      link = split(
+        // split based on operation type
+        ({ query }) => {
+          const { kind, operation } = getMainDefinition(query)
+          return kind === 'OperationDefinition' &&
+            operation === 'subscription'
+        },
+        wsLink,
+        link
+      )
+    }
   } else {
-    // On the server, we don't want WebSockets
-    link = httpLink
+    // On the server, we don't want WebSockets and Upload links
   }
 
   const apolloClient = new ApolloClient({
@@ -129,11 +129,13 @@ export default function createApolloClient ({ ssr, base, endpoints, persisting }
     }),
   })
 
+  // Manually call this when user log in
   apolloClient.$onLogin = token => {
     localStorage.setItem('apollo-token', token)
     if (wsClient) restartWebsockets(wsClient)
   }
 
+  // Manually call this when user log out
   apolloClient.$onLogout = () => {
     localStorage.removeItem('apollo-token')
     if (wsClient) restartWebsockets(wsClient)
