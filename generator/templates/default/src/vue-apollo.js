@@ -14,6 +14,7 @@ const options = {
     subscription: process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql',
   },
   persisting: <%= typeof addApolloEngine !== 'undefined' ? addApolloEngine : false %>,
+  subscriptions: true
 }
 
 // Create apollo client

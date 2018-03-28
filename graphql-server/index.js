@@ -26,11 +26,20 @@ module.exports = options => {
   const typeDefs = require(options.paths.typeDefs)
   const resolvers = require(options.paths.resolvers)
   const context = require(options.paths.context)
+  let pubsub
+  try {
+    pubsub = require(options.paths.pubsub)
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(chalk.yellow('Using default PubSub implementation for subscriptions.'))
+      console.log(chalk.grey(`You should provide a different implementation in production (for example with Redis) by exporting it in 'src/graphql-api/pubsub.js'.`))
+    }
+  }
 
   // GraphQL API Server
 
   // Realtime subscriptions
-  const pubsub = new PubSub()
+  if (!pubsub) pubsub = new PubSub()
 
   const typeDefsString = buildTypeDefsString(typeDefs)
 
@@ -58,7 +67,11 @@ module.exports = options => {
       preserveResolvers: true,
     })
 
-    console.log(`✔️  Automatic mocking is enabled`)
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(`Automatic mocking is enabled, consider disabling it with the 'graphqlMock' option.`)
+    } else {
+      console.log(`✔️  Automatic mocking is enabled`)
+    }
   }
 
   const app = express()
@@ -67,6 +80,15 @@ module.exports = options => {
   app.use(cors({
     origin: GRAPHQL_CORS,
   }))
+
+  // Timeout
+  app.use(function (req, res, next) {
+    res.setTimeout(options.timeout, () => {
+      console.log(chalk.yellow('Request has timed out.'))
+      res.send(408)
+    })
+    next()
+  })
 
   // Uploads
   app.post(GRAPHQL_PATH, apolloUploadExpress())

@@ -115,6 +115,11 @@ module.exports = {
     graphqlMock: true,
     // Enable Apollo Engine
     apolloEngine: true,
+
+    /* Other options (with default values) */
+
+    // Requests timeout (ms)
+    graphqlTimeout: 120000,
   },
 }
 ```

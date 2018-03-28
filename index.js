@@ -78,11 +78,13 @@ module.exports = (api, options) => {
     const opts = {
       mock: options.pluginOptions.graphqlMock || args.mock,
       apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
+      timeout: options.pluginOptions.graphqlTimeout || 120000,
       paths: {
         typeDefs: api.resolve('./src/graphql-api/type-defs.js'),
         resolvers: api.resolve('./src/graphql-api/resolvers.js'),
         context: api.resolve('./src/graphql-api/context.js'),
         mocks: api.resolve('./src/graphql-api/mocks.js'),
+        pubsub: api.resolve('./src/graphql-api/pubsub.js'),
       },
     }
 
