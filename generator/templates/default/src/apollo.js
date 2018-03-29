@@ -54,9 +54,9 @@ export default function createApolloClient ({ ssr, base, endpoints, persisting, 
   }))
 
   // Concat all the http link parts
-  link = authLink.concat(httpLink)
+  link = authLink.concat(link)
   if (persisting) {
-    link = createPersistedQueryLink().concat(httpLink)
+    link = createPersistedQueryLink().concat(link)
   }
 
   // Apollo cache
