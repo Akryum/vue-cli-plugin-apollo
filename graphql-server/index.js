@@ -187,6 +187,13 @@ module.exports = options => {
         'persistedQueries': {
           'store': 'persistedQueries',
         },
+        frontends: [
+          {
+            overrideGraphqlResponseHeaders: {
+              'Access-Control-Allow-Origin': GRAPHQL_CORS,
+            },
+          },
+        ],
         // dumpTraffic: process.env.NODE_ENV !== 'production',
       })
 
