@@ -122,6 +122,12 @@ module.exports = options => {
   }
   app.get(GRAPHQL_PLAYGROUND_PATH, expressPlayground(playgroundOptions))
 
+  // Customize server
+  if (options.server) {
+    const serverModule = require(options.paths.server)
+    serverModule(app)
+  }
+
   // Subscriptions
   const server = createServer(app)
   // eslint-disable-next-line no-new
@@ -157,7 +163,7 @@ module.exports = options => {
   }
 
   // Apollo Engine
-  let apolloEnabled = false
+  let apolloEngineEnabled = false
   if (options.apolloEngine) {
     if (ENGINE_KEY) {
       const { ApolloEngine } = require('apollo-engine')
@@ -203,7 +209,7 @@ module.exports = options => {
         graphqlPaths: [GRAPHQL_PATH, GRAPHQL_SUBSCRIPTIONS_PATH],
       }, doneCallback)
 
-      apolloEnabled = true
+      apolloEngineEnabled = true
       console.log(`✔️  Apollo Engine is enabled (open dashboard on https://engine.apollographql.com/)`)
     } else {
       console.log(chalk.yellow('Apollo Engine key not found.') + `To enable Engine, set the ${chalk.cyan('VUE_APP_APOLLO_ENGINE_KEY')} env variable.`)
@@ -212,7 +218,7 @@ module.exports = options => {
     }
   }
 
-  if (!apolloEnabled) {
+  if (!apolloEngineEnabled) {
     server.listen(PORT, doneCallback)
   }
 }
