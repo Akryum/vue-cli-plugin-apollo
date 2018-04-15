@@ -123,9 +123,11 @@ module.exports = options => {
   app.get(GRAPHQL_PLAYGROUND_PATH, expressPlayground(playgroundOptions))
 
   // Customize server
-  if (options.server) {
+  try {
     const serverModule = require(options.paths.server)
     serverModule(app)
+  } catch (e) {
+    // No file found
   }
 
   // Subscriptions
