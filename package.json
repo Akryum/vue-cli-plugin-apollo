@@ -1,6 +1,6 @@
 {
   "name": "vue-cli-plugin-apollo",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "vue-cli 3 plugin to add Apollo and GraphQL",
   "main": "index.js",
   "scripts": {
@@ -56,7 +56,7 @@
     "eslint-plugin-vue": "^4.2.2"
   },
   "peerDependencies": {
-    "chalk": "^2.3.1",
-    "@vue/cli-shared-utils": "^3.0.0-beta.6"
+    "@vue/cli-shared-utils": "^3.0.0-beta.6",
+    "chalk": "^2.3.1"
   }
 }
