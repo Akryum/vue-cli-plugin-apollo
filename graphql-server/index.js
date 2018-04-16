@@ -13,6 +13,14 @@ const { PubSub } = require('graphql-subscriptions')
 
 const { autoCall } = require('./utils')
 
+function load (file) {
+  const module = require(file)
+  if (module.default) {
+    return module.default
+  }
+  return module
+}
+
 module.exports = options => {
   // Config
   const PORT = process.env.VUE_APP_GRAPHQL_PORT || 4000
@@ -23,12 +31,12 @@ module.exports = options => {
   const GRAPHQL_CORS = process.env.VUE_APP_GRAPHQL_CORS || '*'
 
   // Customize those files
-  const typeDefs = require(options.paths.typeDefs)
-  const resolvers = require(options.paths.resolvers)
-  const context = require(options.paths.context)
+  const typeDefs = load(options.paths.typeDefs)
+  const resolvers = load(options.paths.resolvers)
+  const context = load(options.paths.context)
   let pubsub
   try {
-    pubsub = require(options.paths.pubsub)
+    pubsub = load(options.paths.pubsub)
   } catch (e) {
     if (process.env.NODE_ENV !== 'production') {
       console.log(chalk.yellow('Using default PubSub implementation for subscriptions.'))
@@ -60,7 +68,7 @@ module.exports = options => {
   if (options.mock) {
     const { addMockFunctionsToSchema } = require('graphql-tools')
     // Customize this file
-    const mocks = require(options.paths.mocks)
+    const mocks = load(options.paths.mocks)
     addMockFunctionsToSchema({
       schema,
       mocks,
@@ -89,6 +97,15 @@ module.exports = options => {
     })
     next()
   })
+
+  // Customize server
+  try {
+    const serverModule = load(options.paths.server)
+    serverModule(app)
+  } catch (e) {
+    // No file found
+    console.log(e)
+  }
 
   // Uploads
   app.post(GRAPHQL_PATH, apolloUploadExpress())
@@ -121,14 +138,6 @@ module.exports = options => {
     subscriptionEndpoint: GRAPHQL_SUBSCRIPTIONS_PATH,
   }
   app.get(GRAPHQL_PLAYGROUND_PATH, expressPlayground(playgroundOptions))
-
-  // Customize server
-  try {
-    const serverModule = require(options.paths.server)
-    serverModule(app)
-  } catch (e) {
-    // No file found
-  }
 
   // Subscriptions
   const server = createServer(app)

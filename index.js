@@ -73,7 +73,10 @@ module.exports = (api, options) => {
   })
 
   api.registerCommand('run-graphql-api', args => {
-    const server = require('./graphql-server')
+    api.setMode(args.mode || process.env.NODE_ENV || 'development')
+
+    let server = require('./graphql-server')
+    server = server.default || server
 
     const opts = {
       mock: options.pluginOptions.graphqlMock || args.mock,
