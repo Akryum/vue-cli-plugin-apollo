@@ -21,7 +21,7 @@ function load (file) {
   return module
 }
 
-module.exports = options => {
+module.exports = (options, cb = null) => {
   // Config
   const PORT = process.env.VUE_APP_GRAPHQL_PORT || 4000
   const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
@@ -171,6 +171,8 @@ module.exports = options => {
     if (process.env.NODE_ENV !== 'production') {
       console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
     }
+
+    cb && cb()
   }
 
   // Apollo Engine
