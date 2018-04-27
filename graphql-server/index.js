@@ -104,7 +104,6 @@ module.exports = (options, cb = null) => {
     serverModule(app)
   } catch (e) {
     // No file found
-    console.log(e)
   }
 
   // Uploads
