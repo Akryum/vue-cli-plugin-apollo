@@ -38,7 +38,7 @@ module.exports = (options, cb = null) => {
   try {
     pubsub = load(options.paths.pubsub)
   } catch (e) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && !options.quiet) {
       console.log(chalk.yellow('Using default PubSub implementation for subscriptions.'))
       console.log(chalk.grey(`You should provide a different implementation in production (for example with Redis) by exporting it in 'src/graphql-api/pubsub.js'.`))
     }
@@ -75,10 +75,12 @@ module.exports = (options, cb = null) => {
       preserveResolvers: true,
     })
 
-    if (process.env.NODE_ENV === 'production') {
-      console.warn(`Automatic mocking is enabled, consider disabling it with the 'graphqlMock' option.`)
-    } else {
-      console.log(`✔️  Automatic mocking is enabled`)
+    if (!options.quiet) {
+      if (process.env.NODE_ENV === 'production') {
+        console.warn(`Automatic mocking is enabled, consider disabling it with the 'graphqlMock' option.`)
+      } else {
+        console.log(`✔️  Automatic mocking is enabled`)
+      }
     }
   }
 
@@ -166,9 +168,11 @@ module.exports = (options, cb = null) => {
   })
 
   const doneCallback = () => {
-    console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${PORT}/`)}`)
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
+    if (!options.quiet) {
+      console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${PORT}/`)}`)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
+      }
     }
 
     cb && cb()
@@ -222,8 +226,10 @@ module.exports = (options, cb = null) => {
       }, doneCallback)
 
       apolloEngineEnabled = true
-      console.log(`✔️  Apollo Engine is enabled (open dashboard on https://engine.apollographql.com/)`)
-    } else {
+      if (!options.quiet) {
+        console.log(`✔️  Apollo Engine is enabled (open dashboard on https://engine.apollographql.com/)`)
+      }
+    } else if (!options.quiet) {
       console.log(chalk.yellow('Apollo Engine key not found.') + `To enable Engine, set the ${chalk.cyan('VUE_APP_APOLLO_ENGINE_KEY')} env variable.`)
       console.log('Create a key at https://engine.apollographql.com/')
       console.log('You may see `Error: Must provide document` errors (query persisting tries).')
