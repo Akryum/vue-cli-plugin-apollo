@@ -30,7 +30,6 @@ module.exports = (api, options, rootOptions) => {
       scripts: {
         'graphql-api': 'vue-cli-service graphql-api',
         'run-graphql-api': 'vue-cli-service run-graphql-api',
-        'prod-graphql-api': 'cross-env NODE_ENV=production vue-cli-service run-graphql-api',
       },
     })
   }
@@ -64,7 +63,7 @@ module.exports = (api, options, rootOptions) => {
     const fs = require('fs')
 
     // Modify main.js
-    {
+    try {
       const tsPath = api.resolve('./src/main.ts')
       const jsPath = api.resolve('./src/main.js')
 
@@ -83,6 +82,8 @@ module.exports = (api, options, rootOptions) => {
 
       content = lines.reverse().join('\n')
       fs.writeFileSync(mainPath, content, { encoding: 'utf8' })
+    } catch (e) {
+      api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
     }
 
     if (options.addServer) {
@@ -97,9 +98,11 @@ module.exports = (api, options, rootOptions) => {
           content = ''
         }
 
-        content += '\n/live/\n'
+        if (content.indexOf('/live/') === -1) {
+          content += '\n/live/\n'
 
-        fs.writeFileSync(gitignorePath, content, { encoding: 'utf8' })
+          fs.writeFileSync(gitignorePath, content, { encoding: 'utf8' })
+        }
       }
     }
 
@@ -112,7 +115,11 @@ module.exports = (api, options, rootOptions) => {
         content = fs.readFileSync(envPath, { encoding: 'utf8' })
       }
 
-      content += `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`
+      if (content.indexOf('VUE_APP_APOLLO_ENGINE_KEY=') === -1) {
+        content += `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`
+      } else {
+        content = content.replace(/VUE_APP_APOLLO_ENGINE_KEY=(.*)\n/, `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}`)
+      }
       fs.writeFileSync(envPath, content, { encoding: 'utf8' })
     }
 
