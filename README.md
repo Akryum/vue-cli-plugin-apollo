@@ -98,11 +98,6 @@ Create a key at https://engine.apollographql.com (it's free!).
 
   Run the GraphQL API server with info from `./src/graphql-api` once.
 
-- **`vue-cli-service prod-graphql-api`**
-
-  Run the GraphQL API server with info from `./src/graphql-api` once in production mode.
-
-
 ## Configuration
 
 The GraphQL API Server can be configured via the `pluginOptions` in `vue.config.js`:
@@ -155,3 +150,35 @@ module.exports = {
 - **`VUE_APP_GRAPHQL_CORS`**
 
   Cors rules, default: `'*'`
+
+## Injected webpack-chain Rules
+
+- `config.rule('gql')`
+
+## Running the GraphQL server in production
+
+```
+NODE_ENV=production yarn run run-graphql-api
+```
+
+If your project is meant to be used as a package installed from npm, you will need to move `vue-cli-plugin-apollo` from the `devDependencies` field to `dependencies` in the `package.json` file.
+
+## Manual code changes
+
+In case the plugin isn't able to modify the file containing the root Vue instance:
+
+Import the provider:
+
+```js
+import { apolloProvider } from './vue-apollo'
+```
+
+Then in the root instance, set the `provide` option:
+
+```js
+new Vue({
+  el: '#app',
+  // Add this line
+  provide: apolloProvider.provide(),
+})
+```
