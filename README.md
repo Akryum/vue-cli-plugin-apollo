@@ -119,6 +119,14 @@ module.exports = {
 }
 ```
 
+You can set custom Apollo Engine options in a `src/graphql-api/engine.js` file:
+
+```js
+module.exports = {
+  // Custom apollo engine options here
+}
+```
+
 ## Env variables
 
 - **`VUE_APP_GRAPHQL_ENDPOINT`**
