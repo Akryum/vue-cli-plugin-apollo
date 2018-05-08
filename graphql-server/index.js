@@ -112,6 +112,12 @@ module.exports = (options, cb = null) => {
   app.post(GRAPHQL_PATH, apolloUploadExpress())
 
   // Queries
+
+  let apolloOptions
+  try {
+    apolloOptions = load(options.paths.apollo)
+  } catch (e) {}
+
   app.use(GRAPHQL_PATH,
     bodyParser.json(),
     graphqlExpress(async req => {
@@ -124,11 +130,17 @@ module.exports = (options, cb = null) => {
         throw e
       }
 
+      let moreOptions = {}
+      if (apolloOptions) {
+        moreOptions = await apolloOptions(req)
+      }
+
       return {
         schema,
         tracing: true,
         cacheControl: true,
         context: contextData,
+        ...moreOptions,
       }
     })
   )
