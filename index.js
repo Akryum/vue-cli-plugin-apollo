@@ -87,6 +87,7 @@ module.exports = (api, options) => {
         mocks: api.resolve('./src/graphql-api/mocks.js'),
         pubsub: api.resolve('./src/graphql-api/pubsub.js'),
         server: api.resolve('./src/graphql-api/server.js'),
+        engine: api.resolve('./src/graphql-api/engine.js'),
       },
     }
 

@@ -184,6 +184,12 @@ module.exports = (options, cb = null) => {
     if (ENGINE_KEY) {
       const { ApolloEngine } = require('apollo-engine')
 
+      let userOptions = {}
+
+      try {
+        userOptions = load(options.paths.engine)
+      } catch (e) {}
+
       const engine = new ApolloEngine({
         apiKey: ENGINE_KEY,
         logging: {
@@ -203,6 +209,9 @@ module.exports = (options, cb = null) => {
             },
           },
         ],
+        sessionAuth: {
+          header: 'Authorization',
+        },
         'queryCache': {
           'publicFullQueryStore': 'publicResponseCache',
         },
@@ -217,6 +226,7 @@ module.exports = (options, cb = null) => {
           },
         ],
         // dumpTraffic: process.env.NODE_ENV !== 'production',
+        ...userOptions,
       })
 
       engine.listen({
