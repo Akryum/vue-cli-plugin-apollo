@@ -207,9 +207,15 @@ module.exports = (options, cb = null) => {
         logging: {
           level: 'WARN',
         },
-        'stores': [
+        stores: [
           {
             'name': 'publicResponseCache',
+            'inMemory': {
+              'cacheSize': 10485760,
+            },
+          },
+          {
+            'name': 'privateResponseCache',
             'inMemory': {
               'cacheSize': 10485760,
             },
@@ -224,11 +230,12 @@ module.exports = (options, cb = null) => {
         sessionAuth: {
           header: 'Authorization',
         },
-        'queryCache': {
-          'publicFullQueryStore': 'publicResponseCache',
+        queryCache: {
+          publicFullQueryStore: 'publicResponseCache',
+          privateFullQueryStore: 'privateResponseCache',
         },
-        'persistedQueries': {
-          'store': 'persistedQueries',
+        persistedQueries: {
+          store: 'persistedQueries',
         },
         frontends: [
           {
