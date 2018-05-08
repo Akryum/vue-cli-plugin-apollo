@@ -119,11 +119,31 @@ module.exports = {
 }
 ```
 
+### Apollo Server
+
+You can set custom Apollo server options in a `src/graphql-api/apollo.js` file:
+
+```js
+module.exports = req => {
+  return {
+    // Custom apollo server options here
+    cacheControl: {
+      defaultMaxAge: 1000,
+    },
+  }
+}
+```
+
+### Apollo Engine
+
 You can set custom Apollo Engine options in a `src/graphql-api/engine.js` file:
 
 ```js
 module.exports = {
   // Custom apollo engine options here
+  stores: [
+    { /* ... */ },
+  ],
 }
 ```
 
