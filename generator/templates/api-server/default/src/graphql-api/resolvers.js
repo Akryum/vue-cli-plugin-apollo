@@ -13,7 +13,7 @@ module.exports = {
 <%_ } %>
 
   Query: {
-    hello: (root, { name }, context) => `Hello ${name || 'World'}!`,
+    hello: (root, { name }) => `Hello ${name || 'World'}!`,
 <% if (addExamples) { _%>
     messages: (root, args, { db }) => db.get('messages').value(),
     uploads: (root, args, { db }) => db.get('uploads').value(),
