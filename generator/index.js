@@ -1,3 +1,4 @@
+const fs = require('fs')
 const {
   hasYarn,
 } = require('@vue/cli-shared-utils')
@@ -11,7 +12,7 @@ module.exports = (api, options, rootOptions) => {
       'apollo-link': '^1.0.0',
       'apollo-link-context': '^1.0.5',
       'apollo-link-http': '^1.0.0',
-      'apollo-upload-client': '^7.0.0-alpha.4',
+      'apollo-upload-client': '^8.0.0',
       'apollo-link-persisted-queries': '^0.1.0',
       'apollo-link-ws': '^1.0.0',
       'apollo-utilities': '^1.0.1',
@@ -90,28 +91,26 @@ module.exports = (api, options, rootOptions) => {
     })
   }
 
-  api.onCreateComplete(() => {
-    const fs = require('fs')
+  // Modify main.js
+  try {
+    const tsPath = api.resolve('src/main.ts')
+    const jsPath = api.resolve('src/main.js')
 
-    // Modify main.js
-    try {
-      const tsPath = api.resolve('src/main.ts')
-      const jsPath = api.resolve('src/main.js')
+    const tsExists = fs.existsSync(tsPath)
+    const jsExists = fs.existsSync(jsPath)
 
-      const tsExists = fs.existsSync(tsPath)
-      const jsExists = fs.existsSync(jsPath)
-
-      if (!tsExists && !jsExists) {
-        throw new Error('No entry found')
-      }
-
-      const file = tsExists ? 'src/main.ts' : 'src/main.js'
-      api.injectImports(file, `import { apolloProvider } from './vue-apollo'`)
-      api.injectRootOptions(file, `provide: apolloProvider.provide(),`)
-    } catch (e) {
-      api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
+    if (!tsExists && !jsExists) {
+      throw new Error('No entry found')
     }
 
+    const file = tsExists ? 'src/main.ts' : 'src/main.js'
+    api.injectImports(file, `import { apolloProvider } from './vue-apollo'`)
+    api.injectRootOptions(file, `provide: apolloProvider.provide(),`)
+  } catch (e) {
+    api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
+  }
+
+  api.onCreateComplete(() => {
     if (options.addServer) {
       // Git ignore
       {
