@@ -85,24 +85,19 @@ module.exports = (api, options, rootOptions) => {
 
     // Modify main.js
     try {
-      const tsPath = api.resolve('./src/main.ts')
-      const jsPath = api.resolve('./src/main.js')
+      const tsPath = api.resolve('src/main.ts')
+      const jsPath = api.resolve('src/main.js')
 
-      const mainPath = fs.existsSync(tsPath) ? tsPath : jsPath
-      let content = fs.readFileSync(mainPath, { encoding: 'utf8' })
+      const tsExists = fs.existsSync(tsPath)
+      const jsExists = fs.existsSync(jsPath)
 
-      const lines = content.split(/\r?\n/g).reverse()
+      if (!tsExists && !jsExists) {
+        throw new Error('No entry found')
+      }
 
-      // Inject import
-      const lastImportIndex = lines.findIndex(line => line.match(/^import/))
-      lines[lastImportIndex] += `\nimport { apolloProvider } from './vue-apollo'`
-
-      // Modify app
-      const appIndex = lines.findIndex(line => line.match(/new Vue/))
-      lines[appIndex] += `\n  provide: apolloProvider.provide(),`
-
-      content = lines.reverse().join('\n')
-      fs.writeFileSync(mainPath, content, { encoding: 'utf8' })
+      const file = tsExists ? 'src/main.ts' : 'src/main.js'
+      api.injectImports(file, `import { apolloProvider } from './vue-apollo'`)
+      api.injectRootOptions(file, `provide: apolloProvider.provide(),`)
     } catch (e) {
       api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
     }
@@ -145,11 +140,13 @@ module.exports = (api, options, rootOptions) => {
     }
 
     // Linting
-    try {
-      const lint = require('@vue/cli-plugin-eslint/lint')
-      lint({ silent: true }, api)
-    } catch (e) {
-      // No ESLint vue-cli plugin
+    if (api.hasPlugin('eslint')) {
+      try {
+        const lint = require('@vue/cli-plugin-eslint/lint')
+        lint({ silent: true }, api)
+      } catch (e) {
+        // No ESLint vue-cli plugin
+      }
     }
 
     if (options.addServer) {
