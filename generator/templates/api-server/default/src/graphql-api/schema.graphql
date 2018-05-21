@@ -1,5 +1,17 @@
 scalar JSON
 
+<% if (addApolloEngine) { _%>
+directive @cacheControl(
+  maxAge: Int,
+  scope: CacheControlScope
+) on OBJECT | FIELD_DEFINITION
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+<%_ } %>
+
 <% if (addExamples) { _%>
 # It will increment!
 type Counter {
