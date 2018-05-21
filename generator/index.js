@@ -54,10 +54,30 @@ module.exports = (api, options, rootOptions) => {
     ...options,
   })
 
+  if (options.addExamples) {
+    api.render('./templates/examples', {
+      ...options,
+    })
+  }
+
   if (options.addServer) {
     api.render('./templates/api-server', {
       ...options,
     })
+
+    if (options.addExamples) {
+      api.extendPackage({
+        dependencies: {
+          'lowdb': '^1.0.0',
+          'mkdirp': '^0.5.1',
+          'shortid': '^2.2.8',
+        },
+      })
+
+      api.render('./templates/api-server-examples', {
+        ...options,
+      })
+    }
   }
 
   api.onCreateComplete(() => {

@@ -1,6 +1,11 @@
 module.exports = [
   {
     type: 'confirm',
+    name: 'addExamples',
+    message: 'Add example code',
+  },
+  {
+    type: 'confirm',
     name: 'addServer',
     message: 'Add a GraphQL API Server?',
     default: false,
