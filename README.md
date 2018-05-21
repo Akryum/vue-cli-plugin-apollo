@@ -21,6 +21,7 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - Watched query
   - Mutation
   - Realtime subscription using Websockets
+  - GraphQL validation using ESLint
 
 ## Getting started
 
@@ -63,7 +64,7 @@ npm run graphql-api
 
 You can edit the files generated in the `./src/graphql-api` folder:
 
-- `type-defs.js` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
+- `schema.graphql` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
 - `resolvers.js` declares the [Apollo resolvers](https://www.apollographql.com/docs/graphql-tools/resolvers.html).
 - `context.js` allows injecting a context object into all the resolvers (third argument).
 - `mocks.js` defines the custom resolvers used for mocking ([more info](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks)).
