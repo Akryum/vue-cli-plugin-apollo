@@ -10,7 +10,7 @@ module.exports = (api, options) => {
   const cacheDirectory = api.resolve('node_modules/.cache/cache-loader')
 
   api.chainWebpack(config => {
-    const module = config.module
+    const rule = config.module
       .rule('gql')
       .test(/\.(gql|graphql)$/)
       .include
@@ -23,18 +23,18 @@ module.exports = (api, options) => {
       .end()
 
     if (useThreads) {
-      module
+      rule
         .use('thread-loader')
         .loader('thread-loader')
     }
 
-    module
+    rule
       .use('gql-loader')
       .loader('graphql-tag/loader')
       .end()
 
     if (api.hasPlugin('eslint')) {
-      module
+      config.module
         .rule('eslint')
         .test(/\.(vue|(j|t)sx?|gql|graphql)$/)
     }
