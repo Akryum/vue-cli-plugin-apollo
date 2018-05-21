@@ -50,18 +50,18 @@ module.exports = (api, options, rootOptions) => {
     })
   }
 
-  api.render('./templates/default', {
+  api.render('./templates/vue-apollo/default', {
     ...options,
   })
 
   if (options.addExamples) {
-    api.render('./templates/examples', {
+    api.render('./templates/vue-apollo/examples', {
       ...options,
     })
   }
 
   if (options.addServer) {
-    api.render('./templates/api-server', {
+    api.render('./templates/api-server/default', {
       ...options,
     })
 
@@ -74,7 +74,7 @@ module.exports = (api, options, rootOptions) => {
         },
       })
 
-      api.render('./templates/api-server-examples', {
+      api.render('./templates/api-server/examples', {
         ...options,
       })
     }
