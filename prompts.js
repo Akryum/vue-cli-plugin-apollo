@@ -3,6 +3,7 @@ module.exports = [
     type: 'confirm',
     name: 'addExamples',
     message: 'Add example code',
+    default: false,
   },
   {
     type: 'confirm',
@@ -14,7 +15,7 @@ module.exports = [
     type: 'confirm',
     name: 'addMocking',
     message: '(Server) Enable automatic mocking?',
-    default: true,
+    default: false,
     when: answers => answers.addServer,
   },
   {
