@@ -91,15 +91,6 @@ module.exports = (options, cb = null) => {
     origin: GRAPHQL_CORS,
   }))
 
-  // Timeout
-  app.use(function (req, res, next) {
-    res.setTimeout(options.timeout, () => {
-      console.log(chalk.yellow('Request has timed out.'))
-      res.send(408)
-    })
-    next()
-  })
-
   // Customize server
   try {
     const serverModule = load(options.paths.server)
@@ -152,8 +143,11 @@ module.exports = (options, cb = null) => {
   }
   app.get(GRAPHQL_PLAYGROUND_PATH, expressPlayground(playgroundOptions))
 
-  // Subscriptions
+  // HTTP server
   const server = createServer(app)
+  server.setTimeout(options.timeout)
+
+  // Subscriptions
   // eslint-disable-next-line no-new
   new SubscriptionServer({
     execute,
