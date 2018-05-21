@@ -4,7 +4,7 @@ const {
 const chalk = require('chalk')
 
 module.exports = (api, options, rootOptions) => {
-  const pkg = {
+  api.extendPackage({
     dependencies: {
       'apollo-cache-inmemory': '^1.0.0',
       'apollo-client': '^2.0.1',
@@ -22,25 +22,17 @@ module.exports = (api, options, rootOptions) => {
     },
     devDependencies: {
       'graphql-tag': '^2.5.0',
-      'eslint-plugin-graphql': '^1.5.0',
     },
-  }
-
-  if (options.addServer) {
-    Object.assign(pkg, {
-      scripts: {
-        'graphql-api': 'vue-cli-service graphql-api',
-        'run-graphql-api': 'vue-cli-service run-graphql-api',
-      },
-    })
-  }
-
-  api.extendPackage(pkg)
+  })
 
   // Vue config
   if (options.addServer) {
     // Modify vue config
     api.extendPackage({
+      scripts: {
+        'graphql-api': 'vue-cli-service graphql-api',
+        'run-graphql-api': 'vue-cli-service run-graphql-api',
+      },
       vue: {
         pluginOptions: {
           graphqlMock: options.addMocking,
@@ -80,6 +72,24 @@ module.exports = (api, options, rootOptions) => {
     }
   }
 
+  if (api.hasPlugin('eslint')) {
+    api.extendPackage({
+      devDependencies: {
+        'eslint-plugin-graphql': '^2.1.1',
+      },
+      eslintConfig: {
+        plugins: [
+          'graphql',
+        ],
+        rules: {
+          'graphql/template-strings': ['error', {
+            env: 'literal',
+          }],
+        },
+      },
+    })
+  }
+
   api.onCreateComplete(() => {
     const fs = require('fs')
 
@@ -105,7 +115,7 @@ module.exports = (api, options, rootOptions) => {
     if (options.addServer) {
       // Git ignore
       {
-        const gitignorePath = api.resolve('./.gitignore')
+        const gitignorePath = api.resolve('.gitignore')
         let content
 
         if (fs.existsSync(gitignorePath)) {
@@ -124,7 +134,7 @@ module.exports = (api, options, rootOptions) => {
 
     if (options.addApolloEngine) {
       // Modify .env.local file
-      const envPath = api.resolve('./.env.local')
+      const envPath = api.resolve('.env.local')
       let content = ''
 
       if (fs.existsSync(envPath)) {
@@ -141,6 +151,25 @@ module.exports = (api, options, rootOptions) => {
 
     // Linting
     if (api.hasPlugin('eslint')) {
+      // ESlint ignore
+      {
+        const filePath = api.resolve('.eslintignore')
+        let content
+
+        if (fs.existsSync(filePath)) {
+          content = fs.readFileSync(filePath, { encoding: 'utf8' })
+        } else {
+          content = ''
+        }
+
+        if (content.indexOf('schema.graphql') === -1) {
+          content += '\nschema.graphql\n'
+
+          fs.writeFileSync(filePath, content, { encoding: 'utf8' })
+        }
+      }
+
+      // Lint generated/modified files
       try {
         const lint = require('@vue/cli-plugin-eslint/lint')
         lint({ silent: true }, api)
