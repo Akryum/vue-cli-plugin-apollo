@@ -1,6 +1,9 @@
+const GraphQLJSON = require('graphql-type-json')
 const shortid = require('shortid')
 
 module.exports = {
+  JSON: GraphQLJSON,
+
   Counter: {
     countStr: counter => `Current count: ${counter.count}`,
   },

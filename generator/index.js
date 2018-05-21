@@ -16,6 +16,7 @@ module.exports = (api, options, rootOptions) => {
       'apollo-link-ws': '^1.0.0',
       'apollo-utilities': '^1.0.1',
       'graphql': '^0.13.0',
+      'graphql-type-json': '^0.2.1',
       'subscriptions-transport-ws': '^0.9.5',
       'vue-apollo': '^3.0.0-alpha.1',
     },

@@ -1,4 +1,6 @@
 module.exports = `
+scalar JSON
+
 # It will increment!
 type Counter {
   # Number of increments
