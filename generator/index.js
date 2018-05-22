@@ -7,19 +7,7 @@ const chalk = require('chalk')
 module.exports = (api, options, rootOptions) => {
   api.extendPackage({
     dependencies: {
-      'apollo-cache-inmemory': '^1.0.0',
-      'apollo-client': '^2.0.1',
-      'apollo-link': '^1.0.0',
-      'apollo-link-context': '^1.0.5',
-      'apollo-link-http': '^1.0.0',
-      'apollo-upload-client': '^8.0.0',
-      'apollo-link-persisted-queries': '^0.1.0',
-      'apollo-link-ws': '^1.0.0',
-      'apollo-utilities': '^1.0.1',
-      'graphql': '^0.13.0',
-      'graphql-type-json': '^0.2.1',
-      'subscriptions-transport-ws': '^0.9.5',
-      'vue-apollo': '^3.0.0-alpha.1',
+      'vue-apollo': '^3.0.0-beta.10',
     },
     devDependencies: {
       'graphql-tag': '^2.5.0',
@@ -30,6 +18,9 @@ module.exports = (api, options, rootOptions) => {
   if (options.addServer) {
     // Modify vue config
     api.extendPackage({
+      dependencies: {
+        'graphql-type-json': '^0.2.1',
+      },
       scripts: {
         'graphql-api': 'vue-cli-service graphql-api',
         'run-graphql-api': 'vue-cli-service run-graphql-api',
@@ -104,8 +95,8 @@ module.exports = (api, options, rootOptions) => {
     }
 
     const file = tsExists ? 'src/main.ts' : 'src/main.js'
-    api.injectImports(file, `import { apolloProvider } from './vue-apollo'`)
-    api.injectRootOptions(file, `provide: apolloProvider.provide(),`)
+    api.injectImports(file, `import { createProvider } from './vue-apollo'`)
+    api.injectRootOptions(file, `provide: createProvider().provide(),`)
   } catch (e) {
     api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
   }
