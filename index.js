@@ -52,6 +52,7 @@ module.exports = (api, options) => {
         ignore: [
           api.resolve('./src/graphql-api/live/'),
         ],
+        ext: 'js mjs json graphql gql',
       })
 
       nodemon.on('restart', () => {
