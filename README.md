@@ -22,7 +22,7 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - Watched query
   - Mutation
   - Realtime subscription using Websockets
-  - GraphQL validation using ESLint
+- GraphQL validation using ESLint
 
 ## Getting started
 
