@@ -11,13 +11,14 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 **:star: Features:**
 
 - Automatically integrate [vue-apollo](https://github.com/Akryum/vue-apollo) into your Vue app
-- Included optional Graphql API Server:
+- Embed Apollo client config (upgradable)
+- Included optional Graphql API Server (upgradable):
   - Dead simple GraphQL API sources generated into your project
   - Upgradable service running [apollo-server](https://www.apollographql.com/docs/apollo-server/)
   - Websocket subscriptions support
   - Optional automatic mocking
   - Optional [Apollo Engine](https://www.apollographql.com/engine) support
-- Included example component with:
+- Included optional example component with:
   - Watched query
   - Mutation
   - Realtime subscription using Websockets
@@ -44,13 +45,15 @@ cd my-new-app
 vue add apollo
 ```
 
-*:information_source: An example `ApolloExample.vue` component alongside some GraphQL query files will be added into your sources.*
+*:information_source: An example `ApolloExample.vue` component alongside some GraphQL query files will be added into your sources if you chose to include the examples.*
 
 Start your app:
 
 ```
 npm run serve
 ```
+
+**Updating `vue-cli-plugin-apollo` will also update both Apollo Client and its configuration for you! :+1:**
 
 Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 
@@ -150,17 +153,13 @@ module.exports = {
 
 ## Env variables
 
-- **`VUE_APP_GRAPHQL_ENDPOINT`**
+- **`VUE_APP_GRAPHQL_HTTP`**
 
-  The url to the graphql host, default: `http://localhost:4000`
+  The url to the graphql HTTP endpoint, default: `http://localhost:4000`
 
-- **`VUE_APP_GRAPHQL_PATH`**
+- **`VUE_APP_GRAPHQL_WS`**
 
-  Url path to the graphql server query handler, default: `'/graphql'`
-
-- **`VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH`**
-
-  Url path to the graphql server subscription handler (websockets), default: `'/graphql'`
+  The url to the graphql Websockets endpoint for subscriptions, default: `ws://localhost:4000`
 
 ### With the GraphQL server enabled
 
@@ -199,7 +198,7 @@ In case the plugin isn't able to modify the file containing the root Vue instanc
 Import the provider:
 
 ```js
-import { apolloProvider } from './vue-apollo'
+import { createProvider } from './vue-apollo'
 ```
 
 Then in the root instance, set the `provide` option:
@@ -208,6 +207,6 @@ Then in the root instance, set the `provide` option:
 new Vue({
   el: '#app',
   // Add this line
-  provide: apolloProvider.provide(),
+  provide: createProvider().provide(),
 })
 ```
