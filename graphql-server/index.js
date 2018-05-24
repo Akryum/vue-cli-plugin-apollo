@@ -23,12 +23,14 @@ function load (file) {
 
 module.exports = (options, cb = null) => {
   // Config
-  const PORT = process.env.VUE_APP_GRAPHQL_PORT || 4000
-  const GRAPHQL_PATH = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
-  const GRAPHQL_SUBSCRIPTIONS_PATH = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
-  const GRAPHQL_PLAYGROUND_PATH = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
-  const ENGINE_KEY = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
-  const GRAPHQL_CORS = process.env.VUE_APP_GRAPHQL_CORS || '*'
+  const {
+    port,
+    graphqlPath,
+    graphqlSubscriptionsPath,
+    graphqlPlaygroundPath,
+    engineKey,
+    graphqlCors,
+  } = options
 
   // Customize those files
   const typeDefs = load(options.paths.typeDefs)
@@ -88,7 +90,7 @@ module.exports = (options, cb = null) => {
 
   // Cross-Origin
   app.use(cors({
-    origin: GRAPHQL_CORS,
+    origin: graphqlCors,
   }))
 
   // Customize server
@@ -100,7 +102,7 @@ module.exports = (options, cb = null) => {
   }
 
   // Uploads
-  app.post(GRAPHQL_PATH, apolloUploadExpress())
+  app.post(graphqlPath, apolloUploadExpress())
 
   // Queries
 
@@ -109,7 +111,7 @@ module.exports = (options, cb = null) => {
     apolloOptions = load(options.paths.apollo)
   } catch (e) {}
 
-  app.use(GRAPHQL_PATH,
+  app.use(graphqlPath,
     bodyParser.json(),
     graphqlExpress(async req => {
       let contextData
@@ -138,10 +140,10 @@ module.exports = (options, cb = null) => {
 
   // Playground
   const playgroundOptions = {
-    endpoint: GRAPHQL_PATH,
-    subscriptionEndpoint: GRAPHQL_SUBSCRIPTIONS_PATH,
+    endpoint: graphqlPath,
+    subscriptionEndpoint: graphqlSubscriptionsPath,
   }
-  app.get(GRAPHQL_PLAYGROUND_PATH, expressPlayground(playgroundOptions))
+  app.get(graphqlPlaygroundPath, expressPlayground(playgroundOptions))
 
   // HTTP server
   const server = createServer(app)
@@ -170,12 +172,12 @@ module.exports = (options, cb = null) => {
     },
   }, {
     server,
-    path: GRAPHQL_SUBSCRIPTIONS_PATH,
+    path: graphqlSubscriptionsPath,
   })
 
   const doneCallback = () => {
     if (!options.quiet) {
-      console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${PORT}/`)}`)
+      console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${port}/`)}`)
       if (process.env.NODE_ENV !== 'production') {
         console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
       }
@@ -187,7 +189,7 @@ module.exports = (options, cb = null) => {
   // Apollo Engine
   let apolloEngineEnabled = false
   if (options.apolloEngine) {
-    if (ENGINE_KEY) {
+    if (engineKey) {
       const { ApolloEngine } = require('apollo-engine')
 
       let userOptions = {}
@@ -197,7 +199,7 @@ module.exports = (options, cb = null) => {
       } catch (e) {}
 
       const engine = new ApolloEngine({
-        apiKey: ENGINE_KEY,
+        apiKey: engineKey,
         logging: {
           level: 'WARN',
         },
@@ -234,7 +236,7 @@ module.exports = (options, cb = null) => {
         frontends: [
           {
             overrideGraphqlResponseHeaders: {
-              'Access-Control-Allow-Origin': GRAPHQL_CORS,
+              'Access-Control-Allow-Origin': graphqlCors,
             },
           },
         ],
@@ -243,9 +245,9 @@ module.exports = (options, cb = null) => {
       })
 
       engine.listen({
-        port: PORT,
+        port,
         httpServer: server,
-        graphqlPaths: [GRAPHQL_PATH, GRAPHQL_SUBSCRIPTIONS_PATH],
+        graphqlPaths: [graphqlPath, graphqlSubscriptionsPath],
       }, doneCallback)
 
       apolloEngineEnabled = true
@@ -260,7 +262,7 @@ module.exports = (options, cb = null) => {
   }
 
   if (!apolloEngineEnabled) {
-    server.listen(PORT, doneCallback)
+    server.listen(port, doneCallback)
   }
 }
 

@@ -83,7 +83,20 @@ module.exports = (api, options) => {
     let server = require('./graphql-server')
     server = server.default || server
 
+    const port = process.env.VUE_APP_GRAPHQL_PORT || 4000
+    const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
+    const graphqlSubscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
+    const graphqlPlaygroundPath = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
+    const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
+    const graphqlCors = process.env.VUE_APP_GRAPHQL_CORS || '*'
+
     const opts = {
+      port,
+      graphqlPath,
+      graphqlSubscriptionsPath,
+      graphqlPlaygroundPath,
+      engineKey,
+      graphqlCors,
       mock: options.pluginOptions.graphqlMock || args.mock,
       apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
       timeout: options.pluginOptions.graphqlTimeout || 120000,
