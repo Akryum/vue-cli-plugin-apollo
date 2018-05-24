@@ -80,8 +80,6 @@ module.exports = (api, options) => {
   })
 
   api.registerCommand('run-graphql-api', args => {
-    if (api.setMode) api.setMode(args.mode || process.env.NODE_ENV || 'development')
-
     let server = require('./graphql-server')
     server = server.default || server
 
@@ -103,4 +101,8 @@ module.exports = (api, options) => {
 
     server(opts)
   })
+}
+
+module.exports.defaultModes = {
+  'run-graphql-api': 'development',
 }
