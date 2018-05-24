@@ -64,7 +64,7 @@ module.exports = (api, options, rootOptions) => {
     }
   }
 
-  if (api.hasPlugin('eslint')) {
+  if (options.addServer && api.hasPlugin('eslint')) {
     api.extendPackage({
       devDependencies: {
         'eslint-plugin-graphql': '^2.1.1',
@@ -142,7 +142,7 @@ module.exports = (api, options, rootOptions) => {
     // Linting
     if (api.hasPlugin('eslint')) {
       // ESlint ignore
-      {
+      if (options.addServer) {
         const filePath = api.resolve('.eslintignore')
         let content
 
