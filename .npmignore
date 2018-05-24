@@ -1,4 +1,5 @@
 node_modules/
+client-addon/
 .babelrc
 .eslintignore
 .eslintrc.js

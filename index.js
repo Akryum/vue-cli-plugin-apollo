@@ -1,6 +1,7 @@
 const {
   log,
   hasYarn,
+  IpcMessenger,
 } = require('@vue/cli-shared-utils')
 const chalk = require('chalk')
 
@@ -110,6 +111,19 @@ module.exports = (api, options) => {
         apollo: api.resolve('./src/graphql-api/apollo.js'),
         engine: api.resolve('./src/graphql-api/engine.js'),
       },
+    }
+
+    if (IpcMessenger) {
+      const ipc = new IpcMessenger()
+      ipc.connect()
+      ipc.send({
+        vueApollo: {
+          urls: {
+            playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
+          },
+        },
+      })
+      ipc.disconnect()
     }
 
     server(opts)

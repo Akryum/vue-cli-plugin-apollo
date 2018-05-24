@@ -1,3 +1,5 @@
 node_modules/
 templates/
 dist/
+client-addon/
+client-addon-dist/
