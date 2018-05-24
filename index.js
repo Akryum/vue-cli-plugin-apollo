@@ -104,5 +104,5 @@ module.exports = (api, options) => {
 }
 
 module.exports.defaultModes = {
-  'run-graphql-api': 'development'
+  'run-graphql-api': 'development',
 }
