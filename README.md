@@ -186,10 +186,10 @@ module.exports = {
 ## Running the GraphQL server in production
 
 ```
-NODE_ENV=production yarn run run-graphql-api
+cross-env NODE_ENV=production yarn run run-graphql-api --mode production
 ```
 
-If your project is meant to be used as a package installed from npm, you will need to move `vue-cli-plugin-apollo` from the `devDependencies` field to `dependencies` in the `package.json` file.
+If your project is meant to be used as a package installed from npm, you will need to move `vue-cli-plugin-apollo` from the `devDependencies` field to `dependencies` in your `package.json` file.
 
 ## Manual code changes
 
