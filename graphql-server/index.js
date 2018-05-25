@@ -36,6 +36,7 @@ module.exports = (options, cb = null) => {
   const typeDefs = load(options.paths.typeDefs)
   const resolvers = load(options.paths.resolvers)
   const context = load(options.paths.context)
+  const schemaDirectives = load(options.paths.directives)
   let pubsub
   try {
     pubsub = load(options.paths.pubsub)
@@ -64,6 +65,7 @@ module.exports = (options, cb = null) => {
       ...resolvers,
       ...uploadMixin,
     },
+    schemaDirectives,
   })
 
   // Automatic mocking
