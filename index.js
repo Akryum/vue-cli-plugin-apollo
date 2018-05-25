@@ -114,18 +114,20 @@ module.exports = (api, options) => {
     }
 
     server(opts, () => {
-      if (IpcMessenger) {
-        const ipc = new IpcMessenger()
-        ipc.connect()
-        ipc.send({
-          vueApollo: {
-            urls: {
-              playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
+      setTimeout(() => {
+        if (IpcMessenger) {
+          const ipc = new IpcMessenger()
+          ipc.connect()
+          ipc.send({
+            vueApollo: {
+              urls: {
+                playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
+              },
             },
-          },
-        })
-        ipc.disconnect()
-      }
+          })
+          ipc.disconnect()
+        }
+      }, 500)
     })
   })
 }
