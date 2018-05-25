@@ -35,9 +35,16 @@ module.exports = (api, options) => {
       .end()
 
     if (api.hasPlugin('eslint')) {
+      const id = generateCacheIdentifier(api.resolve('.'))
+
       config.module
         .rule('eslint')
         .test(/\.(vue|(j|t)sx?|gql|graphql)$/)
+        .use('eslint-loader')
+        .tap(options => ({
+          ...options,
+          cacheIdentifier: options.cacheIdentifier + id,
+        }))
     }
   })
 
@@ -110,6 +117,7 @@ module.exports = (api, options) => {
         server: api.resolve('./src/graphql-api/server.js'),
         apollo: api.resolve('./src/graphql-api/apollo.js'),
         engine: api.resolve('./src/graphql-api/engine.js'),
+        directives: api.resolve('./src/graphql-api/directives.js'),
       },
     }
 
@@ -132,4 +140,20 @@ module.exports = (api, options) => {
 
 module.exports.defaultModes = {
   'run-graphql-api': 'development',
+}
+
+function generateCacheIdentifier (context) {
+  const fs = require('fs')
+  const path = require('path')
+
+  const graphqlConfigFile = path.join(context, '.graphqlconfig')
+  if (fs.existsSync(graphqlConfigFile)) {
+    try {
+      const graphqlConfig = JSON.parse(fs.readFileSync(graphqlConfigFile, { encoding: 'utf8' }))
+      const schemaFile = path.join(context, graphqlConfig.schemaPath)
+      return fs.statSync(schemaFile).mtimeMs
+    } catch (e) {
+      console.error('Invalid .graphqlconfig file')
+    }
+  }
 }
