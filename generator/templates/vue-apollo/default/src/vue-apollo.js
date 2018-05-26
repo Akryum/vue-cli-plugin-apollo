@@ -44,20 +44,37 @@ export function createProvider (options = {}) {
   // Create vue apollo provider
   const apolloProvider = new VueApollo({
     defaultClient: apolloClient,
+    defaultOptions: {
+      $query: {
+        // fetchPolicy: 'cache-and-network',
+      },
+    },
+    errorHandler (error) {
+      console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
+    },
   })
 
   return apolloProvider
 }
 
 // Manually call this when user log in
-export function onLogin (apolloClient, token) {
+export async function onLogin (apolloClient, token) {
   localStorage.setItem(AUTH_TOKEN, token)
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
+  try {
+    await apolloClient.resetStore()
+  } catch (e) {
+    console.log('%cError on cache reset (login)', 'color: orange;', e.message)
+  }
 }
 
 // Manually call this when user log out
-export function onLogout (apolloClient) {
+export async function onLogout (apolloClient) {
   localStorage.removeItem(AUTH_TOKEN)
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
-  apolloClient.resetStore()
+  try {
+    await apolloClient.resetStore()
+  } catch (e) {
+    console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
+  }
 }
