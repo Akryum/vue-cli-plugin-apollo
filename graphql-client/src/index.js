@@ -1,5 +1,5 @@
 import { ApolloClient } from 'apollo-client'
-import { split } from 'apollo-link'
+import { split, from } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
@@ -8,6 +8,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { createPersistedQueryLink } from 'apollo-link-persisted-queries'
 import { setContext } from 'apollo-link-context'
+import { withClientState } from 'apollo-link-state'
 
 // Create the apollo client
 export function createApolloClient ({
@@ -21,8 +22,9 @@ export function createApolloClient ({
   link = null,
   cache = null,
   apollo = {},
+  clientState = null,
 }) {
-  let wsClient, authLink
+  let wsClient, authLink, stateLink
   const disableHttp = websocketsOnly && !ssr && wsEndpoint
 
   // Apollo cache
@@ -110,6 +112,14 @@ export function createApolloClient ({
     }
   }
 
+  if (clientState) {
+    stateLink = withClientState({
+      cache,
+      ...clientState,
+    })
+    link = from([stateLink, link])
+  }
+
   const apolloClient = new ApolloClient({
     link,
     cache,
@@ -126,9 +136,15 @@ export function createApolloClient ({
     ...apollo,
   })
 
+  // Re-write the client state defaults on cache reset
+  if (stateLink) {
+    apolloClient.onResetStore(stateLink.writeDefaults)
+  }
+
   return {
     apolloClient,
     wsClient,
+    stateLink,
   }
 }
 

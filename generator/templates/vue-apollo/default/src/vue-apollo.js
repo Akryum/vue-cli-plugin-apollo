@@ -24,12 +24,18 @@ const defaultOptions = {
   websocketsOnly: false,
   // Is being rendered on the server?
   ssr: false,
+
   // Override default http link
   // link: myLink,
+
   // Override default cache
   // cache: myCache,
+
   // Additional ApolloClient options
   // apollo: { ... }
+
+  // Client local data (see apollo-link-state)
+  // clientState: { resolvers: { ... }, defaults: { ... } }
 }
 
 // Call this in the Vue app file
