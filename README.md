@@ -12,6 +12,8 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 
 - Automatically integrate [vue-apollo](https://github.com/Akryum/vue-apollo) into your Vue app
 - Embed Apollo client config (upgradable)
+  - Websockets
+  - Client state with [apollo-link-state](https://github.com/apollographql/apollo-link-state)
 - Included optional Graphql API Server (upgradable):
   - Dead simple GraphQL API sources generated into your project
   - Upgradable service running [apollo-server](https://www.apollographql.com/docs/apollo-server/)
@@ -23,6 +25,24 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - Mutation
   - Realtime subscription using Websockets
 - GraphQL validation using ESLint
+
+## Table of contents
+
+- [Getting started](#getting-started)
+  - [Client state](#client-state)
+  - [GraphQL API Server](#graphql-api-server)
+  - [Mocks](#mocks)
+  - [Directives](#directives)
+- [Injected Commands](#injected-commands)
+- [Configuration](#configuration)
+  - [Apollo Server](#apollo-server)
+  - [Apollo Engine](#apollo-engine)
+- [Env variables](#env-variables)
+- [Injected webpack-chain Rules](#injected-webpack-chain-rules)
+- [Running the GraphQL server in production](#running-the-graphql-server-in-production)
+- [Manual code changes](#manual-code-changes)
+
+---
 
 ## Getting started
 
@@ -57,6 +77,48 @@ npm run serve
 
 Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 
+### Client state
+
+You can use [apollo-link-state](https://github.com/apollographql/apollo-link-state) for client-only local data:
+
+```js
+const options = {
+  // ...
+
+  clientState: {
+    defaults: {
+      connected: false,
+    },
+    resolvers: {
+      Mutation: {
+        connectedSet: (root, { value }, { cache }) => {
+          const data = {
+            connected: value,
+          }
+          cache.writeData({ data })
+        },
+      },
+    },
+  },
+}
+
+createApolloClient(options)
+```
+
+Then you need to use the `@client` directive:
+
+```graphql
+query isConnected {
+  connected @client
+}
+```
+
+```graphql
+mutation setConnected ($value: Boolean!) {
+  connectedSet (value: $value) @client
+}
+```
+
 ### GraphQL API Server
 
 If you enabled the GraphQL API Server, open a new terminal and start it:
@@ -86,11 +148,22 @@ npm run run-graphql-api
 
 You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./src/graphql-api/mocks.js` file generated in your project.
 
-### Apollo Engine
+### Directives
 
-[Apollo Engine](https://www.apollographql.com/engine) is a commercial product from Apollo. It enables lots of additional features like monitoring, error reporting, caching and query persisting.
+You can add custom GraphQL directives in the `./src/graphql-api/directives.sjs` file ([documentation](https://www.apollographql.com/docs/graphql-tools/schema-directives.html)).
 
-Create a key at https://engine.apollographql.com (it's free!).
+```js
+const { SchemaDirectiveVisitor } = require('graphql-tools')
+
+class PrivateDirective extends SchemaDirectiveVisitor {
+  // ...
+}
+
+module.exports = {
+  // Now you can use '@private' in the schema
+  private: PrivateDirective
+}
+```
 
 ## Injected Commands
 
@@ -139,6 +212,10 @@ module.exports = req => {
 ```
 
 ### Apollo Engine
+
+[Apollo Engine](https://www.apollographql.com/engine) is a commercial product from Apollo. It enables lots of additional features like monitoring, error reporting, caching and query persisting.
+
+Create a key at https://engine.apollographql.com (it's free!).
 
 You can set custom Apollo Engine options in a `src/graphql-api/engine.js` file:
 
