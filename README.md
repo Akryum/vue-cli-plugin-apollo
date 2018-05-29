@@ -29,14 +29,17 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 ## Table of contents
 
 - [Getting started](#getting-started)
-  - [Client state](#client-state)
   - [GraphQL API Server](#graphql-api-server)
-  - [Mocks](#mocks)
-  - [Directives](#directives)
 - [Injected Commands](#injected-commands)
 - [Configuration](#configuration)
+  - [Client state](#client-state)
+  - [Authorization Header](#authorization-header)
+  - [Plugin options](#plugin-options)
   - [Apollo Server](#apollo-server)
+  - [Mocks](#mocks)
+  - [Directives](#directives)
   - [Apollo Engine](#apollo-engine)
+  - [Express middlewares](#express-middlewares)
 - [Env variables](#env-variables)
 - [Injected webpack-chain Rules](#injected-webpack-chain-rules)
 - [Running the GraphQL server in production](#running-the-graphql-server-in-production)
@@ -77,11 +80,51 @@ npm run serve
 
 Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 
+### GraphQL API Server
+
+If you enabled the GraphQL API Server, open a new terminal and start it:
+
+```
+npm run graphql-api
+```
+
+You can edit the files generated in the `./src/graphql-api` folder:
+
+- `schema.graphql` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
+- `resolvers.js` declares the [Apollo resolvers](https://www.apollographql.com/docs/graphql-tools/resolvers.html).
+- `context.js` allows injecting a context object into all the resolvers (third argument).
+- `mocks.js` defines the custom resolvers used for mocking ([more info](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks)).
+- `directives.js` defines the custom schema directives ([more info](https://www.apollographql.com/docs/graphql-tools/schema-directives.html))).
+
+The server will be automatically restarted when a change is detected.
+
+To run the server only once, use this command:
+
+```
+npm run run-graphql-api
+```
+
+**Updating `vue-cli-plugin-apollo` will also update the GraphQL Server service :+1:**
+
+## Injected Commands
+
+- **`vue-cli-service graphql-api`**
+
+  Run the GraphQL API server with info from `./src/graphql-api` and watch the files to restart itself automatically.
+
+- **`vue-cli-service run-graphql-api`**
+
+  Run the GraphQL API server with info from `./src/graphql-api` once.
+
+## Configuration
+
 ### Client state
 
-You can use [apollo-link-state](https://github.com/apollographql/apollo-link-state) for client-only local data:
+You can use [apollo-link-state](https://github.com/apollographql/apollo-link-state) for client-only local data with the `clientState` option of `createApolloClient`:
 
 ```js
+import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+
 const options = {
   // ...
 
@@ -102,7 +145,7 @@ const options = {
   },
 }
 
-createApolloClient(options)
+const { apolloClient } = createApolloClient(options)
 ```
 
 Then you need to use the `@client` directive:
@@ -119,63 +162,23 @@ mutation setConnected ($value: Boolean!) {
 }
 ```
 
-### GraphQL API Server
+### Authorization Header
 
-If you enabled the GraphQL API Server, open a new terminal and start it:
-
-```
-npm run graphql-api
-```
-
-You can edit the files generated in the `./src/graphql-api` folder:
-
-- `schema.graphql` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
-- `resolvers.js` declares the [Apollo resolvers](https://www.apollographql.com/docs/graphql-tools/resolvers.html).
-- `context.js` allows injecting a context object into all the resolvers (third argument).
-- `mocks.js` defines the custom resolvers used for mocking ([more info](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks)).
-
-The server will be automatically restarted when a change is detected.
-
-To run the server only once, use this command:
-
-```
-npm run run-graphql-api
-```
-
-**Updating `vue-cli-plugin-apollo` will also update the GraphQL Server service :+1:**
-
-### Mocks
-
-You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./src/graphql-api/mocks.js` file generated in your project.
-
-### Directives
-
-You can add custom GraphQL directives in the `./src/graphql-api/directives.sjs` file ([documentation](https://www.apollographql.com/docs/graphql-tools/schema-directives.html)).
+By default, `createApolloClient` will retrieve the `Authorization` header value from `localStorage`. You can override this behavior with the `getAuth` option:
 
 ```js
-const { SchemaDirectiveVisitor } = require('graphql-tools')
-
-class PrivateDirective extends SchemaDirectiveVisitor {
+const options = {
   // ...
+
+  getAuth: (tokenName) => getUserToken(),
 }
 
-module.exports = {
-  // Now you can use '@private' in the schema
-  private: PrivateDirective
-}
+const { apolloClient } = createApolloClient(options)
 ```
 
-## Injected Commands
+If you use cookies, you can return `undefined`.
 
-- **`vue-cli-service graphql-api`**
-
-  Run the GraphQL API server with info from `./src/graphql-api` and watch the files to restart itself automatically.
-
-- **`vue-cli-service run-graphql-api`**
-
-  Run the GraphQL API server with info from `./src/graphql-api` once.
-
-## Configuration
+### Plugin options
 
 The GraphQL API Server can be configured via the `pluginOptions` in `vue.config.js`:
 
@@ -211,6 +214,27 @@ module.exports = req => {
 }
 ```
 
+### Mocks
+
+You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./src/graphql-api/mocks.js` file generated in your project.
+
+### Directives
+
+You can add custom GraphQL directives in the `./src/graphql-api/directives.sjs` file ([documentation](https://www.apollographql.com/docs/graphql-tools/schema-directives.html)).
+
+```js
+const { SchemaDirectiveVisitor } = require('graphql-tools')
+
+class PrivateDirective extends SchemaDirectiveVisitor {
+  // ...
+}
+
+module.exports = {
+  // Now you can use '@private' in the schema
+  private: PrivateDirective
+}
+```
+
 ### Apollo Engine
 
 [Apollo Engine](https://www.apollographql.com/engine) is a commercial product from Apollo. It enables lots of additional features like monitoring, error reporting, caching and query persisting.
@@ -225,6 +249,20 @@ module.exports = {
   stores: [
     { /* ... */ },
   ],
+}
+```
+
+### Express middlewares
+
+If you need to add express middlewares into the GraphQL server, you can create a `./src/graphql-api/server.js` file:
+
+```js
+const path = require('path')
+const express = require('express')
+const distPath = path.resolve(__dirname, '../../dist')
+
+module.exports = app => {
+  app.use(express.static(distPath))
 }
 ```
 
