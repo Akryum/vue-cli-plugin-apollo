@@ -26,10 +26,13 @@ const defaultOptions = {
   ssr: false,
 
   // Override default http link
-  // link: myLink,
+  // link: myLink
 
   // Override default cache
-  // cache: myCache,
+  // cache: myCache
+
+  // Override the way the Authorization header is set
+  // getAuth: (tokenName) => ...
 
   // Additional ApolloClient options
   // apollo: { ... }

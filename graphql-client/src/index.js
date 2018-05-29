@@ -23,6 +23,7 @@ export function createApolloClient ({
   cache = null,
   apollo = {},
   clientState = null,
+  getAuth = defaultGetAuth,
 }) {
   let wsClient, authLink, stateLink
   const disableHttp = websocketsOnly && !ssr && wsEndpoint
@@ -168,7 +169,7 @@ export function restartWebsockets (wsClient) {
   })
 }
 
-function getAuth (tokenName) {
+function defaultGetAuth (tokenName) {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem(tokenName)
   // return the headers to the context so httpLink can read them
