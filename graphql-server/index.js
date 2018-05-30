@@ -157,20 +157,17 @@ module.exports = (options, cb = null) => {
     execute,
     subscribe,
     schema,
-    onOperation: async (message, connection, webSocket) => {
-      let contextData
+    onConnect: async (connectionParams) => {
+      let contextData = {}
       try {
-        contextData = await autoCall(context, null, connection)
+        contextData = await autoCall(context, null, connectionParams)
         contextData = Object.assign({}, contextData, { pubsub })
       } catch (e) {
         console.error(e)
         throw e
       }
 
-      return {
-        ...connection,
-        context: contextData,
-      }
+      return contextData
     },
   }, {
     server,
