@@ -8,6 +8,14 @@
 
 This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
 
+<p>
+  <a href="https://www.patreon.com/akryum" target="_blank">
+    <img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patreon">
+  </a>
+</p>
+
+<br>
+
 **:star: Features:**
 
 - Automatically integrate [vue-apollo](https://github.com/Akryum/vue-apollo) into your Vue app
