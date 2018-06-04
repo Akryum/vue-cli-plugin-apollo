@@ -174,5 +174,5 @@ function defaultGetAuth (tokenName) {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem(tokenName)
   // return the headers to the context so httpLink can read them
-  return token
+  return token ? `Bearer ${token}` : ''
 }
