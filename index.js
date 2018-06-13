@@ -34,7 +34,7 @@ module.exports = (api, options) => {
       .loader('graphql-tag/loader')
       .end()
 
-    if (api.hasPlugin('eslint')) {
+    if (api.hasPlugin('eslint') && config.module.rules.has('eslint')) {
       const id = generateCacheIdentifier(api.resolve('.'))
 
       config.module
