@@ -177,7 +177,7 @@ module.exports = (options, cb = null) => {
   const doneCallback = () => {
     if (!options.quiet) {
       console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${port}/`)}`)
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production' && !process.env.VUE_CLI_API_MODE) {
         console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
       }
     }

@@ -302,6 +302,10 @@ module.exports = app => {
 
   Cors rules, default: `'*'`
 
+- **`VUE_APP_GRAPHQL_API_SRC`**
+
+  Base source folder for the GraphQL server, default: `'./src/graphql-api'`
+
 ## Injected webpack-chain Rules
 
 - `config.rule('gql')`

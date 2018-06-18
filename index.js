@@ -1,9 +1,14 @@
 const {
-  log,
   hasYarn,
   IpcMessenger,
 } = require('@vue/cli-shared-utils')
 const chalk = require('chalk')
+
+let ipc
+if (IpcMessenger) {
+  ipc = new IpcMessenger()
+  ipc.connect()
+}
 
 module.exports = (api, options) => {
   const cmd = hasYarn() ? 'yarn' : 'npm'
@@ -53,7 +58,7 @@ module.exports = (api, options) => {
 
     return new Promise((resolve, reject) => {
       nodemon({
-        exec: `${cmd} run run-graphql-api`,
+        exec: `${cmd} run run-graphql-api --delay`,
         watch: [
           api.resolve('./src/graphql-api/'),
         ],
@@ -63,13 +68,32 @@ module.exports = (api, options) => {
         ext: 'js mjs json graphql gql',
       })
 
+      ipc && ipc.send({
+        vueApollo: {
+          error: false,
+        },
+      })
+
       nodemon.on('restart', () => {
-        log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
+        console.log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
+
+        ipc && ipc.send({
+          vueApollo: {
+            error: false,
+          },
+        })
       })
 
       nodemon.on('crash', () => {
-        log(chalk.bold(chalk.red(`💥  GraphQL API crashed!`)))
-        log(chalk.red(`   Waiting for changes...`))
+        console.log(chalk.bold(chalk.red(`💥  GraphQL API crashed!`)))
+        console.log(chalk.red(`   Waiting for changes...`))
+
+        ipc && ipc.send({
+          vueApollo: {
+            urls: null,
+            error: true,
+          },
+        })
       })
 
       nodemon.on('stdout', (...args) => {
@@ -88,53 +112,57 @@ module.exports = (api, options) => {
   })
 
   api.registerCommand('run-graphql-api', args => {
-    let server = require('./graphql-server')
-    server = server.default || server
+    const run = () => {
+      let server = require('./graphql-server')
+      server = server.default || server
 
-    const port = process.env.VUE_APP_GRAPHQL_PORT || 4000
-    const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
-    const graphqlSubscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
-    const graphqlPlaygroundPath = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
-    const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
-    const graphqlCors = process.env.VUE_APP_GRAPHQL_CORS || '*'
+      const port = process.env.VUE_APP_GRAPHQL_PORT || 4000
+      const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
+      const graphqlSubscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
+      const graphqlPlaygroundPath = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
+      const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
+      const graphqlCors = process.env.VUE_APP_GRAPHQL_CORS || '*'
+      const baseFolder = process.env.VUE_APP_GRAPHQL_API_SRC || './src/graphql-api'
 
-    const opts = {
-      port,
-      graphqlPath,
-      graphqlSubscriptionsPath,
-      graphqlPlaygroundPath,
-      engineKey,
-      graphqlCors,
-      mock: options.pluginOptions.graphqlMock || args.mock,
-      apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
-      timeout: options.pluginOptions.graphqlTimeout || 120000,
-      paths: {
-        typeDefs: api.resolve('./src/graphql-api/type-defs.js'),
-        resolvers: api.resolve('./src/graphql-api/resolvers.js'),
-        context: api.resolve('./src/graphql-api/context.js'),
-        mocks: api.resolve('./src/graphql-api/mocks.js'),
-        pubsub: api.resolve('./src/graphql-api/pubsub.js'),
-        server: api.resolve('./src/graphql-api/server.js'),
-        apollo: api.resolve('./src/graphql-api/apollo.js'),
-        engine: api.resolve('./src/graphql-api/engine.js'),
-        directives: api.resolve('./src/graphql-api/directives.js'),
-      },
-    }
+      const opts = {
+        port,
+        graphqlPath,
+        graphqlSubscriptionsPath,
+        graphqlPlaygroundPath,
+        engineKey,
+        graphqlCors,
+        mock: options.pluginOptions.graphqlMock || args.mock,
+        apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
+        timeout: options.pluginOptions.graphqlTimeout || 120000,
+        paths: {
+          typeDefs: api.resolve(`${baseFolder}/type-defs.js`),
+          resolvers: api.resolve(`${baseFolder}/resolvers.js`),
+          context: api.resolve(`${baseFolder}/context.js`),
+          mocks: api.resolve(`${baseFolder}/mocks.js`),
+          pubsub: api.resolve(`${baseFolder}/pubsub.js`),
+          server: api.resolve(`${baseFolder}/server.js`),
+          apollo: api.resolve(`${baseFolder}/apollo.js`),
+          engine: api.resolve(`${baseFolder}/engine.js`),
+          directives: api.resolve(`${baseFolder}/directives.js`),
+        },
+      }
 
-    server(opts, () => {
-      if (IpcMessenger) {
-        const ipc = new IpcMessenger()
-        ipc.connect()
-        ipc.send({
+      server(opts, () => {
+        ipc && ipc.send({
           vueApollo: {
             urls: {
               playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
             },
           },
         })
-        ipc.disconnect()
-      }
-    })
+      })
+    }
+
+    if (args.delay) {
+      setTimeout(run, 300)
+    } else {
+      run()
+    }
   })
 }
 

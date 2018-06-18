@@ -1,6 +1,11 @@
 <template>
   <div class="graphql-playground">
-    <div v-if="!urls" class="not-running vue-ui-empty">
+    <div v-if="error" class="not-running vue-ui-empty">
+      <VueIcon class="huge" icon="error"/>
+      <div>An error occured</div>
+    </div>
+
+    <div v-else-if="!running" class="not-running vue-ui-empty">
       <VueIcon class="huge" icon="cloud_off"/>
       <div>GraphQL server not running</div>
     </div>
@@ -27,6 +32,8 @@ export default {
   sharedData () {
     return mapSharedData('vue-apollo-', {
       urls: 'urls',
+      error: 'error',
+      running: 'running',
     })
   },
 
@@ -37,25 +44,41 @@ export default {
   },
 
   watch: {
-    '$data.$sharedData.urls': {
-      async handler (data) {
-        window._vm = this
-        if (data) {
-          for (let t = 10; t > 0; t--) {
-            const response = await fetch(data.playground)
+    urls: {
+      handler: 'checkForPlayground',
+      immediate: true,
+      deep: true,
+    },
+    error (value) {
+      if (!value) {
+        this.checkForPlayground()
+      }
+    },
+    running (value) {
+      if (value) {
+        this.checkForPlayground()
+      }
+    },
+  },
+
+  methods: {
+    async checkForPlayground () {
+      window._vm = this
+      if (this.urls) {
+        for (let t = 10; t > 0; t--) {
+          try {
+            const response = await fetch(this.urls.playground)
             if (response.ok) {
               this.ready = true
               break
-            } else {
-              await wait(300)
             }
-          }
-        } else {
-          this.ready = false
+          } catch (e) {}
+
+          await wait(300)
         }
-      },
-      immediate: true,
-      deep: true,
+      } else {
+        this.ready = false
+      }
     },
   },
 }

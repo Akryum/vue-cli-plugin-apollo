@@ -1,15 +1,24 @@
 const path = require('path')
 
+const ifDef = (value, cb) => typeof value !== 'undefined' && cb(value)
+
 module.exports = api => {
-  const { setSharedData, removeSharedData } = api.namespace('vue-apollo-')
+  const { setSharedData } = api.namespace('vue-apollo-')
+
+  function resetData () {
+    setSharedData('running', false)
+    setSharedData('urls', null)
+    setSharedData('error', false)
+  }
 
   api.onProjectOpen(() => {
-    setSharedData('urls', null)
+    resetData()
   })
 
   function onGraphqlServerMessage ({ data }) {
     if (data.vueApollo) {
-      setSharedData('urls', data.vueApollo.urls)
+      ifDef(data.vueApollo.urls, value => setSharedData('urls', value))
+      ifDef(data.vueApollo.error, value => setSharedData('error', value))
     }
   }
 
@@ -26,21 +35,25 @@ module.exports = api => {
     defaultView: 'run-graphlq-api.playground',
     onRun: () => {
       api.ipcOn(onGraphqlServerMessage)
+      setSharedData('running', true)
     },
     onExit: () => {
       api.ipcOff(onGraphqlServerMessage)
-      removeSharedData('urls')
+      resetData()
     },
   }
 
+  const DEV_TASK = /vue-cli-service graphql-api/
+  const RUN_TASK = /vue-cli-service run-graphql-api/
+
   api.describeTask({
-    match: /vue-cli-service graphql-api/,
+    match: DEV_TASK,
     description: 'Run and watch the GraphQL server',
     ...common,
   })
 
   api.describeTask({
-    match: /vue-cli-service run-graphql-api/,
+    match: RUN_TASK,
     description: 'Run the GraphQL server',
     ...common,
   })
@@ -49,4 +62,29 @@ module.exports = api => {
     id: 'vue-apollo',
     path: path.resolve(__dirname, './client-addon-dist'),
   })
+
+  const OPEN_ENGINE = 'vue-apollo-open-engine'
+
+  api.onViewOpen(({ view }) => {
+    if (view.id !== 'vue-project-tasks') {
+      removeTaskSuggestions()
+    }
+  })
+
+  api.onTaskOpen(({ task }) => {
+    if (task.match === DEV_TASK || task.match === RUN_TASK) {
+      api.addSuggestion({
+        id: OPEN_ENGINE,
+        type: 'action',
+        label: 'Open Apollo Engine',
+        actionLink: 'https://engine.apollographql.com/',
+      })
+    } else {
+      removeTaskSuggestions()
+    }
+  })
+
+  function removeTaskSuggestions () {
+    [OPEN_ENGINE].forEach(id => api.removeSuggestion(id))
+  }
 }

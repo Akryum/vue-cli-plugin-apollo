@@ -14,6 +14,7 @@
     "@vue/cli-plugin-babel": "^3.0.0-beta.11",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.11",
     "@vue/cli-service": "^3.0.0-beta.11",
+    "@vue/cli-ui": "^3.0.0-rc.3",
     "@vue/eslint-config-standard": "^3.0.0-beta.11",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
