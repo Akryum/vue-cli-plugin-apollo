@@ -1,6 +1,6 @@
 {
   "name": "vue-cli-plugin-apollo",
-  "version": "0.13.7",
+  "version": "0.13.8",
   "description": "vue-cli 3 plugin to add Apollo and GraphQL",
   "main": "index.js",
   "scripts": {
