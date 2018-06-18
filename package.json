@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec 'npm run build' --watch graphql-client/src",
-    "build": "babel graphql-client/src --out-dir graphql-client/dist",
+    "build": "yarn build:graphql-client && yarn build:client-addon",
+    "build:graphql-client": "babel graphql-client/src --out-dir graphql-client/dist",
+    "build:client-addon": "cd ./client-addon && yarn build && cd ../",
     "prepublishOnly": "npm run test && npm run build",
     "test": "npm run test:eslint && cd ./client-addon npm run lint",
     "test:eslint": "eslint --ext .js ."
@@ -41,6 +43,7 @@
     "apollo-upload-server": "^5.0.0",
     "apollo-utilities": "^1.0.13",
     "body-parser": "^1.18.3",
+    "chalk": "^2.3.1",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
@@ -64,7 +67,6 @@
     "eslint-plugin-vue": "^4.2.2"
   },
   "peerDependencies": {
-    "@vue/cli-shared-utils": "^3.0.0-beta.11",
-    "chalk": "^2.3.1"
+    "@vue/cli-shared-utils": "^3.0.0-rc.3"
   }
 }
