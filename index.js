@@ -4,10 +4,21 @@ const {
 } = require('@vue/cli-shared-utils')
 const chalk = require('chalk')
 
-let ipc
-if (IpcMessenger) {
-  ipc = new IpcMessenger()
-  ipc.connect()
+let ipc, ipcTimer
+
+function sendIpcMessage (message) {
+  if (!ipc && IpcMessenger) {
+    ipc = new IpcMessenger()
+    ipc.connect()
+  }
+  if (ipc) {
+    ipc.send(message)
+    clearTimeout(ipcTimer)
+    ipcTimer = setTimeout(() => {
+      ipc.disconnect()
+      ipc = null
+    }, 3000)
+  }
 }
 
 module.exports = (api, options) => {
@@ -68,7 +79,7 @@ module.exports = (api, options) => {
         ext: 'js mjs json graphql gql',
       })
 
-      ipc && ipc.send({
+      sendIpcMessage({
         vueApollo: {
           error: false,
         },
@@ -77,7 +88,7 @@ module.exports = (api, options) => {
       nodemon.on('restart', () => {
         console.log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
 
-        ipc && ipc.send({
+        sendIpcMessage({
           vueApollo: {
             error: false,
           },
@@ -88,7 +99,7 @@ module.exports = (api, options) => {
         console.log(chalk.bold(chalk.red(`💥  GraphQL API crashed!`)))
         console.log(chalk.red(`   Waiting for changes...`))
 
-        ipc && ipc.send({
+        sendIpcMessage({
           vueApollo: {
             urls: null,
             error: true,
@@ -148,7 +159,7 @@ module.exports = (api, options) => {
       }
 
       server(opts, () => {
-        ipc && ipc.send({
+        sendIpcMessage({
           vueApollo: {
             urls: {
               playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
