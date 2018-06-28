@@ -3,7 +3,7 @@ const path = require('path')
 const ifDef = (value, cb) => typeof value !== 'undefined' && cb(value)
 
 module.exports = api => {
-  const { setSharedData } = api.namespace('vue-apollo-')
+  const { setSharedData, addSuggestion, removeSuggestion } = api.namespace('org.akryum.vue-apollo.')
 
   function resetData () {
     setSharedData('running', false)
@@ -16,9 +16,10 @@ module.exports = api => {
   })
 
   function onGraphqlServerMessage ({ data }) {
-    if (data.vueApollo) {
-      ifDef(data.vueApollo.urls, value => setSharedData('urls', value))
-      ifDef(data.vueApollo.error, value => setSharedData('error', value))
+    let message = data['org.akryum.vue-apollo']
+    if (message) {
+      ifDef(message.urls, value => setSharedData('urls', value))
+      ifDef(message.error, value => setSharedData('error', value))
     }
   }
 
@@ -26,13 +27,13 @@ module.exports = api => {
     link: 'https://github.com/Akryum/vue-cli-plugin-apollo#injected-commands',
     views: [
       {
-        id: 'run-graphlq-api.playground',
+        id: 'org.akryum.vue-apollo.views.playground',
         label: 'Playground',
         icon: 'gamepad',
-        component: 'vue-apollo-playground',
+        component: 'org.akryum.vue-apollo.components.playground',
       },
     ],
-    defaultView: 'run-graphlq-api.playground',
+    defaultView: 'org.akryum.vue-apollo.views.playground',
     onRun: () => {
       api.ipcOn(onGraphqlServerMessage)
       setSharedData('running', true)
@@ -59,11 +60,11 @@ module.exports = api => {
   })
 
   api.addClientAddon({
-    id: 'vue-apollo',
+    id: 'org.akryum.vue-apollo.client-addon',
     path: path.resolve(__dirname, './client-addon-dist'),
   })
 
-  const OPEN_ENGINE = 'vue-apollo-open-engine'
+  const OPEN_ENGINE = 'suggestions.open-engine'
 
   api.onViewOpen(({ view }) => {
     if (view.id !== 'vue-project-tasks') {
@@ -73,7 +74,7 @@ module.exports = api => {
 
   api.onTaskOpen(({ task }) => {
     if (task.match === DEV_TASK || task.match === RUN_TASK) {
-      api.addSuggestion({
+      addSuggestion({
         id: OPEN_ENGINE,
         type: 'action',
         label: 'Open Apollo Engine',
@@ -85,6 +86,6 @@ module.exports = api => {
   })
 
   function removeTaskSuggestions () {
-    [OPEN_ENGINE].forEach(id => api.removeSuggestion(id))
+    [OPEN_ENGINE].forEach(id => removeSuggestion(id))
   }
 }

@@ -12,7 +12,9 @@ function sendIpcMessage (message) {
     ipc.connect()
   }
   if (ipc) {
-    ipc.send(message)
+    ipc.send({
+      'org.akryum.vue-apollo': message,
+    })
     clearTimeout(ipcTimer)
     ipcTimer = setTimeout(() => {
       ipc.disconnect()
@@ -80,18 +82,14 @@ module.exports = (api, options) => {
       })
 
       sendIpcMessage({
-        vueApollo: {
-          error: false,
-        },
+        error: false,
       })
 
       nodemon.on('restart', () => {
         console.log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
 
         sendIpcMessage({
-          vueApollo: {
-            error: false,
-          },
+          error: false,
         })
       })
 
@@ -100,10 +98,8 @@ module.exports = (api, options) => {
         console.log(chalk.red(`   Waiting for changes...`))
 
         sendIpcMessage({
-          vueApollo: {
-            urls: null,
-            error: true,
-          },
+          urls: null,
+          error: true,
         })
       })
 
@@ -160,10 +156,8 @@ module.exports = (api, options) => {
 
       server(opts, () => {
         sendIpcMessage({
-          vueApollo: {
-            urls: {
-              playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
-            },
+          urls: {
+            playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
           },
         })
       })

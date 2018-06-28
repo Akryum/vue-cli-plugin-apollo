@@ -30,7 +30,7 @@ function wait (time) {
 
 export default {
   sharedData () {
-    return mapSharedData('vue-apollo-', {
+    return mapSharedData('org.akryum.vue-apollo.', {
       urls: 'urls',
       error: 'error',
       running: 'running',
