@@ -64,13 +64,15 @@ module.exports = (options, cb = null) => {
     // Resolvers context from POST
     context: async ({ req, connection }) => {
       let contextData
-      if (!connection) {
-        try {
+      try {
+        if (connection) {
+          contextData = await autoCall(context, { connection })
+        } else {
           contextData = await autoCall(context, { req })
-        } catch (e) {
-          console.error(e)
-          throw e
         }
+      } catch (e) {
+        console.error(e)
+        throw e
       }
       contextData = Object.assign({}, contextData, { pubsub })
       return contextData
@@ -90,7 +92,6 @@ module.exports = (options, cb = null) => {
           console.error(e)
           throw e
         }
-
         return contextData
       },
     },
