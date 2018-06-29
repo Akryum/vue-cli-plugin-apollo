@@ -3,7 +3,7 @@ const mkdirp = require('mkdirp')
 const shortid = require('shortid')
 const { db } = require('./db')
 
-const uploadDir = require('path').resolve(__dirname, '../../../live/uploads')
+const uploadDir = require('path').resolve(__dirname, '../../live/uploads')
 
 // Ensure upload directory exists
 mkdirp.sync(uploadDir)
