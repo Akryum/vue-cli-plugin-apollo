@@ -225,6 +225,38 @@ const { apolloClient } = createApolloClient(options)
 
 If you use cookies, you can return `undefined`.
 
+Example `apolloserver/context.js` that validates the token and set `userId` on resolvers context:
+
+```js
+const users = require('./connectors/users')
+
+// Context passed to all resolvers (third argument)
+// req => Query
+// connection => Subscription
+// eslint-disable-next-line no-unused-vars
+module.exports = ({ req, connection }) => {
+  // If the websocket context was already resolved
+  if (connection && connection.context) return connection.context
+
+  let token
+  // HTTP
+  if (req) token = req.get('Authorization')
+  // Websocket
+  if (connection) token = connection.authorization
+
+  // User validation
+  let userId
+  if (token && users.validateToken(token)) {
+    userId = token.userId
+  }
+
+  return {
+    token,
+    userId,
+  }
+}
+```
+
 ### Mocks
 
 You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./apollo-server/mocks.js` file generated in your project.
