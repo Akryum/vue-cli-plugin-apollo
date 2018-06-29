@@ -78,6 +78,7 @@ module.exports = (api, options, rootOptions) => {
         rules: {
           'graphql/template-strings': ['error', {
             env: 'literal',
+            projectName: 'app',
           }],
         },
       },

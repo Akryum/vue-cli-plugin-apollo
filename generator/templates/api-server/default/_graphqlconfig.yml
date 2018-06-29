@@ -1,7 +1,8 @@
 projects:
   app:
-    schemaPath: "./apollo-server/schema.graphql"
-    includes: ["**/*.gql"]
+    schemaPath: apollo-server/schema.graphql
+    includes:
+      - '**/*.gql'
     extensions:
       endpoints:
-        default: http://localhost:4000/graphql
+        default: 'http://localhost:4000/graphql'

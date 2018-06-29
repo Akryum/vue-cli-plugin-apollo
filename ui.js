@@ -1,4 +1,5 @@
 const path = require('path')
+const { openBrowser } = require('@vue/cli-shared-utils')
 
 const ifDef = (value, cb) => typeof value !== 'undefined' && cb(value)
 
@@ -64,6 +65,83 @@ module.exports = api => {
     path: path.resolve(__dirname, './client-addon-dist'),
   })
 
+  const CONFIG = 'org.akryum.vue-apollo.configs.apollo'
+
+  // Config file
+  api.describeConfig({
+    id: CONFIG,
+    name: 'Apollo Server',
+    description: 'Integrated GraphQL server',
+    link: 'https://github.com/Akryum/vue-cli-plugin-apollo#configuration',
+    files: {
+      vue: {
+        js: ['vue.config.js'],
+      },
+      graphql: {
+        yaml: ['.graphqlconfig.yml'],
+      },
+    },
+    onRead: ({ data, cwd }) => {
+      return {
+        prompts: [
+          {
+            name: 'enableMocks',
+            message: 'Mocking',
+            description: 'Enable auto-mocking for quick prototyping',
+            link: 'https://github.com/Akryum/vue-cli-plugin-apollo#mocks',
+            type: 'confirm',
+            file: 'vue',
+            default: false,
+            value: getConfigData(data).enableMocks,
+          },
+          {
+            name: 'enableEngine',
+            message: 'Apollo Engine',
+            description: 'Enable Apollo Engine, a cloud monitoring service',
+            link: 'https://github.com/Akryum/vue-cli-plugin-apollo#apollo-engine',
+            type: 'confirm',
+            file: 'vue',
+            default: false,
+            value: getConfigData(data).enableEngine,
+          },
+          {
+            name: 'integratedEngine',
+            message: 'Integrated Engine layer',
+            description: 'Uncheck this if you want to use an external Engine container/layer',
+            link: 'https://www.apollographql.com/docs/apollo-server/v2/migration-engine.html#With-a-Running-Engine-Proxy',
+            type: 'confirm',
+            file: 'vue',
+            default: false,
+            value: getConfigData(data).integratedEngine,
+          },
+          {
+            name: 'serverFolder',
+            message: 'Server folder',
+            description: 'Folder containing the server source files',
+            type: 'input',
+            file: 'vue',
+            default: './apollo-server',
+            value: getConfigData(data).serverFolder,
+          },
+        ],
+      }
+    },
+    onWrite: async ({ api, prompts, cwd }) => {
+      const result = {}
+      for (const prompt of prompts.filter(p => p.raw.file === 'vue')) {
+        result[`pluginOptions.apollo.${prompt.id}`] = await api.getAnswer(prompt.id)
+      }
+      api.setData('vue', result)
+
+      // Update app manifest
+
+      const serverFolder = result['pluginOptions.apollo.serverFolder'] || prompts.find(p => p.id === 'serverFolder').raw.default
+      api.setData('graphql', {
+        'projects.app.schemaPath': path.join(serverFolder, 'schema.graphql'),
+      })
+    },
+  })
+
   const OPEN_ENGINE = 'suggestions.open-engine'
 
   api.onViewOpen(({ view }) => {
@@ -78,7 +156,13 @@ module.exports = api => {
         id: OPEN_ENGINE,
         type: 'action',
         label: 'Open Apollo Engine',
-        actionLink: 'https://engine.apollographql.com/',
+        // actionLink: 'https://engine.apollographql.com/',
+        handler () {
+          openBrowser('https://engine.apollographql.com/')
+          return {
+            keep: true,
+          }
+        },
       })
     } else {
       removeTaskSuggestions()
@@ -88,4 +172,8 @@ module.exports = api => {
   function removeTaskSuggestions () {
     [OPEN_ENGINE].forEach(id => removeSuggestion(id))
   }
+}
+
+function getConfigData (data) {
+  return (data.vue && data.vue.pluginOptions && data.vue.pluginOptions.apollo) || {}
 }

@@ -28,6 +28,8 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - Websocket subscriptions support
   - Optional automatic mocking
   - Optional [Apollo Engine](https://www.apollographql.com/engine) support
+  - GraphQL playground in the CLI UI
+  - Configuration screen in the CLI UI
 - Included optional example component with:
   - Watched query
   - Mutation
