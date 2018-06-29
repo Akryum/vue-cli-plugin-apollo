@@ -95,7 +95,37 @@ module.exports = api => {
             value: getConfigData(data).enableMocks,
           },
           {
+            name: 'serverFolder',
+            message: 'Server folder',
+            description: 'Folder containing the server source files',
+            type: 'input',
+            file: 'vue',
+            default: './apollo-server',
+            value: getConfigData(data).serverFolder,
+          },
+          {
+            name: 'cors',
+            message: 'CORS',
+            description: 'Allow access to other origins',
+            type: 'input',
+            file: 'vue',
+            default: '*',
+            value: stringOnly(getConfigData(data).cors),
+          },
+          {
+            name: 'timeout',
+            message: 'Response timeout',
+            description: 'Time before a Query request is timed out (in ms)',
+            type: 'input',
+            file: 'vue',
+            default: '120000',
+            transformer: value => value.toString(),
+            filter: value => parseInt(value),
+            value: getConfigData(data).timeout,
+          },
+          {
             name: 'enableEngine',
+            group: 'Apollo Engine',
             message: 'Apollo Engine',
             description: 'Enable Apollo Engine, a cloud monitoring service',
             link: 'https://github.com/Akryum/vue-cli-plugin-apollo#apollo-engine',
@@ -106,22 +136,15 @@ module.exports = api => {
           },
           {
             name: 'integratedEngine',
+            group: 'Apollo Engine',
             message: 'Integrated Engine layer',
             description: 'Uncheck this if you want to use an external Engine container/layer',
             link: 'https://www.apollographql.com/docs/apollo-server/v2/migration-engine.html#With-a-Running-Engine-Proxy',
             type: 'confirm',
             file: 'vue',
+            when: answers => answers.enableEngine,
             default: true,
             value: getConfigData(data).integratedEngine,
-          },
-          {
-            name: 'serverFolder',
-            message: 'Server folder',
-            description: 'Folder containing the server source files',
-            type: 'input',
-            file: 'vue',
-            default: './apollo-server',
-            value: getConfigData(data).serverFolder,
           },
         ],
       }
@@ -176,4 +199,8 @@ module.exports = api => {
 
 function getConfigData (data) {
   return (data.vue && data.vue.pluginOptions && data.vue.pluginOptions.apollo) || {}
+}
+
+function stringOnly (value) {
+  return typeof value === 'string' ? value : undefined
 }
