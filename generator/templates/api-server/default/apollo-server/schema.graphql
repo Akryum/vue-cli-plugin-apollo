@@ -1,16 +1,18 @@
+# Included scalars
 scalar JSON
+scalar Upload
 
-<% if (addApolloEngine) { _%>
+# Included directives
+
+# Cache control
 directive @cacheControl(
   maxAge: Int,
   scope: CacheControlScope
 ) on OBJECT | FIELD_DEFINITION
-
 enum CacheControlScope {
   PUBLIC
   PRIVATE
 }
-<%_ } %>
 
 <% if (addExamples) { _%>
 # It will increment!
@@ -33,8 +35,6 @@ input MessageInput {
   # Message content
   text: String!
 }
-
-scalar Upload
 
 type File {
   id: ID!

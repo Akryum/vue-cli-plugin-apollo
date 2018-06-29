@@ -44,8 +44,8 @@ module.exports = api => {
     },
   }
 
-  const DEV_TASK = /vue-cli-service graphql-api/
-  const RUN_TASK = /vue-cli-service run-graphql-api/
+  const DEV_TASK = /vue-cli-service apollo:watch/
+  const RUN_TASK = /vue-cli-service apollo:run/
 
   api.describeTask({
     match: DEV_TASK,

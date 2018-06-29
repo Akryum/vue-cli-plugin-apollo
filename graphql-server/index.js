@@ -1,39 +1,23 @@
+const http = require('http')
 const chalk = require('chalk')
 const express = require('express')
-const cors = require('cors')
-const bodyParser = require('body-parser')
-const { graphqlExpress } = require('apollo-server-express')
-const { makeExecutableSchema } = require('graphql-tools')
-const { default: expressPlayground } = require('graphql-playground-middleware-express')
-const { createServer } = require('http')
-const { execute, subscribe, print } = require('graphql')
-const { SubscriptionServer } = require('subscriptions-transport-ws')
-const { apolloUploadExpress, GraphQLUpload } = require('apollo-upload-server')
+const { ApolloServer, gql } = require('apollo-server-express')
 const { PubSub } = require('graphql-subscriptions')
+const merge = require('deepmerge')
 
-const { autoCall } = require('./utils')
-
-function load (file) {
-  const module = require(file)
-  if (module.default) {
-    return module.default
-  }
-  return module
-}
+const { defaultValue, autoCall } = require('../utils')
 
 module.exports = (options, cb = null) => {
-  // Config
-  const {
-    port,
-    graphqlPath,
-    graphqlSubscriptionsPath,
-    graphqlPlaygroundPath,
-    engineKey,
-    graphqlCors,
-  } = options
+  // Default options
+  options = merge({}, options, {
+    integratedEngine: false,
+  })
+
+  // Express app
+  const app = express()
 
   // Customize those files
-  const typeDefs = load(options.paths.typeDefs)
+  let typeDefs = load(options.paths.typeDefs)
   const resolvers = load(options.paths.resolvers)
   const context = load(options.paths.context)
   const schemaDirectives = load(options.paths.directives)
@@ -43,7 +27,7 @@ module.exports = (options, cb = null) => {
   } catch (e) {
     if (process.env.NODE_ENV !== 'production' && !options.quiet) {
       console.log(chalk.yellow('Using default PubSub implementation for subscriptions.'))
-      console.log(chalk.grey(`You should provide a different implementation in production (for example with Redis) by exporting it in 'src/graphql-api/pubsub.js'.`))
+      console.log(chalk.grey(`You should provide a different implementation in production (for example with Redis) by exporting it in 'apollo-server/pubsub.js'.`))
     }
   }
 
@@ -52,32 +36,70 @@ module.exports = (options, cb = null) => {
   // Realtime subscriptions
   if (!pubsub) pubsub = new PubSub()
 
-  const typeDefsString = buildTypeDefsString(typeDefs)
+  // Customize server
+  try {
+    const serverModule = load(options.paths.server)
+    serverModule(app)
+  } catch (e) {
+    // No file found
+  }
 
-  const uploadMixin = typeDefsString.includes('scalar Upload')
-    ? { Upload: GraphQLUpload }
-    : {}
+  // Apollo server options
 
-  // Executable schema
-  const schema = makeExecutableSchema({
+  if (typeof typeDefs === 'string') {
+    // Convert schema to AST
+    typeDefs = gql(typeDefs)
+  }
+
+  // Remove upload scalar (it's already included in Apollo Server)
+  removeFromSchema(typeDefs, 'ScalarTypeDefinition', 'Upload')
+
+  let apolloServerOptions = {
     typeDefs,
-    resolvers: {
-      ...resolvers,
-      ...uploadMixin,
-    },
+    resolvers,
     schemaDirectives,
-  })
+    tracing: true,
+    cacheControl: true,
+    engine: !options.integratedEngine,
+    // Resolvers context from POST
+    context: async ({ req, connection }) => {
+      let contextData
+      if (!connection) {
+        try {
+          contextData = await autoCall(context, { req })
+        } catch (e) {
+          console.error(e)
+          throw e
+        }
+      }
+      contextData = Object.assign({}, contextData, { pubsub })
+      return contextData
+    },
+    // Resolvers context from WebSocket
+    subscriptions: {
+      path: options.subscriptionsPath,
+      onConnect: async (connection, websocket) => {
+        let contextData = {}
+        try {
+          contextData = await autoCall(context, {
+            connection,
+            websocket,
+          })
+          contextData = Object.assign({}, contextData, { pubsub })
+        } catch (e) {
+          console.error(e)
+          throw e
+        }
+
+        return contextData
+      },
+    },
+  }
 
   // Automatic mocking
   if (options.mock) {
-    const { addMockFunctionsToSchema } = require('graphql-tools')
     // Customize this file
-    const mocks = load(options.paths.mocks)
-    addMockFunctionsToSchema({
-      schema,
-      mocks,
-      preserveResolvers: true,
-    })
+    apolloServerOptions.mocks = load(options.paths.mocks)
 
     if (!options.quiet) {
       if (process.env.NODE_ENV === 'production') {
@@ -88,170 +110,11 @@ module.exports = (options, cb = null) => {
     }
   }
 
-  const app = express()
-
-  // Cross-Origin
-  app.use(cors({
-    origin: graphqlCors,
-  }))
-
-  // Customize server
-  try {
-    const serverModule = load(options.paths.server)
-    serverModule(app)
-  } catch (e) {
-    // No file found
-  }
-
-  // Uploads
-  app.post(graphqlPath, apolloUploadExpress())
-
-  // Queries
-
-  let apolloOptions
-  try {
-    apolloOptions = load(options.paths.apollo)
-  } catch (e) {}
-
-  app.use(graphqlPath,
-    bodyParser.json(),
-    graphqlExpress(async req => {
-      let contextData
-      try {
-        contextData = await autoCall(context, req)
-        contextData = Object.assign({}, contextData, { pubsub })
-      } catch (e) {
-        console.error(e)
-        throw e
-      }
-
-      let moreOptions = {}
-      if (apolloOptions) {
-        moreOptions = await apolloOptions(req)
-      }
-
-      return {
-        schema,
-        tracing: true,
-        cacheControl: true,
-        context: contextData,
-        ...moreOptions,
-      }
-    })
-  )
-
-  // Playground
-  const playgroundOptions = {
-    endpoint: graphqlPath,
-    subscriptionEndpoint: graphqlSubscriptionsPath,
-  }
-  app.get(graphqlPlaygroundPath, expressPlayground(playgroundOptions))
-
-  // HTTP server
-  const server = createServer(app)
-  server.setTimeout(options.timeout)
-
-  // Subscriptions
-  // eslint-disable-next-line no-new
-  new SubscriptionServer({
-    execute,
-    subscribe,
-    schema,
-    onConnect: async (connectionParams) => {
-      let contextData = {}
-      try {
-        contextData = await autoCall(context, null, connectionParams)
-        contextData = Object.assign({}, contextData, { pubsub })
-      } catch (e) {
-        console.error(e)
-        throw e
-      }
-
-      return contextData
-    },
-  }, {
-    server,
-    path: graphqlSubscriptionsPath,
-  })
-
-  const doneCallback = () => {
-    if (!options.quiet) {
-      console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${port}/`)}`)
-      if (process.env.NODE_ENV !== 'production' && !process.env.VUE_CLI_API_MODE) {
-        console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
-      }
-    }
-
-    cb && cb()
-  }
-
   // Apollo Engine
-  let apolloEngineEnabled = false
-  if (options.apolloEngine) {
-    if (engineKey) {
-      const { ApolloEngine } = require('apollo-engine')
-
-      let userOptions = {}
-
-      try {
-        userOptions = load(options.paths.engine)
-      } catch (e) {}
-
-      const engine = new ApolloEngine({
-        apiKey: engineKey,
-        logging: {
-          level: 'WARN',
-        },
-        stores: [
-          {
-            'name': 'publicResponseCache',
-            'inMemory': {
-              'cacheSize': 10485760,
-            },
-          },
-          {
-            'name': 'privateResponseCache',
-            'inMemory': {
-              'cacheSize': 10485760,
-            },
-          },
-          {
-            'name': 'persistedQueries',
-            'inMemory': {
-              'cacheSize': 5000000,
-            },
-          },
-        ],
-        sessionAuth: {
-          header: 'Authorization',
-        },
-        queryCache: {
-          publicFullQueryStore: 'publicResponseCache',
-          privateFullQueryStore: 'privateResponseCache',
-        },
-        persistedQueries: {
-          store: 'persistedQueries',
-        },
-        frontends: [
-          {
-            overrideGraphqlResponseHeaders: {
-              'Access-Control-Allow-Origin': graphqlCors,
-            },
-          },
-        ],
-        // dumpTraffic: process.env.NODE_ENV !== 'production',
-        ...userOptions,
-      })
-
-      engine.listen({
-        port,
-        httpServer: server,
-        graphqlPaths: [graphqlPath, graphqlSubscriptionsPath],
-      }, doneCallback)
-
-      apolloEngineEnabled = true
-      if (!options.quiet) {
-        console.log(`✔️  Apollo Engine is enabled (open dashboard on https://engine.apollographql.com/)`)
+  if (options.enableEngine && options.integratedEngine) {
+    if (options.engineKey) {
+      apolloServerOptions.engine = {
+        apiKey: options.engineKey,
       }
     } else if (!options.quiet) {
       console.log(chalk.yellow('Apollo Engine key not found.') + `To enable Engine, set the ${chalk.cyan('VUE_APP_APOLLO_ENGINE_KEY')} env variable.`)
@@ -260,31 +123,56 @@ module.exports = (options, cb = null) => {
     }
   }
 
-  if (!apolloEngineEnabled) {
-    server.listen(port, doneCallback)
-  }
+  // Final options
+  apolloServerOptions = merge({}, apolloServerOptions, defaultValue(options.serverOptions, {}))
+
+  // Apollo Server
+  const server = new ApolloServer(apolloServerOptions)
+
+  // Express middleware
+  server.applyMiddleware({
+    app,
+    path: options.graphqlPath,
+    cors: options.cors,
+    // gui: {
+    //   endpoint: graphqlPath,
+    //   subscriptionEndpoint: graphqlSubscriptionsPath,
+    // },
+  })
+
+  // Start server
+  const httpServer = http.createServer(app)
+  httpServer.setTimeout(options.timeout)
+  server.installSubscriptionHandlers(httpServer)
+
+  httpServer.listen({
+    port: options.port,
+  }, () => {
+    if (!options.quiet) {
+      console.log(`✔️  GraphQL Server is running on ${chalk.cyan(`http://localhost:${options.port}${options.graphqlPath}`)}`)
+      if (process.env.NODE_ENV !== 'production' && !process.env.VUE_CLI_API_MODE) {
+        console.log(`✔️  Type ${chalk.cyan('rs')} to restart the server`)
+      }
+    }
+
+    cb && cb()
+  })
 }
 
-function buildTypeDefsString (typeDefs) {
-  return mergeTypeDefs(typeDefs)
+function load (file) {
+  const module = require(file)
+  if (module.default) {
+    return module.default
+  }
+  return module
 }
 
-function mergeTypeDefs (typeDefs) {
-  if (typeof typeDefs === 'string') {
-    return typeDefs
+function removeFromSchema (document, kind, name) {
+  const definitions = document.definitions
+  const index = definitions.findIndex(
+    def => def.kind === kind && def.name.kind === 'Name' && def.name.value === name
+  )
+  if (index !== -1) {
+    definitions.splice(index, 1)
   }
-
-  if (typeof typeDefs === 'function') {
-    typeDefs = typeDefs()
-  }
-
-  if (isDocumentNode(typeDefs)) {
-    return print(typeDefs)
-  }
-
-  return typeDefs.reduce((acc, t) => acc + '\n' + mergeTypeDefs(t), '')
-}
-
-function isDocumentNode (node) {
-  return node.kind === 'Document'
 }

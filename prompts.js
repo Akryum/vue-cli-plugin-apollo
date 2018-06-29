@@ -10,7 +10,7 @@ module.exports = [
     type: 'confirm',
     name: 'addServer',
     message: 'Add a GraphQL API Server?',
-    description: 'Generate GraphQL server files in a `graphql-api` folder.',
+    description: 'Generate GraphQL server files in a `apollo-server` folder.',
     group: 'GraphQL Server',
     default: false,
   },

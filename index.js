@@ -1,27 +1,14 @@
+const path = require('path')
 const {
   hasYarn,
   IpcMessenger,
 } = require('@vue/cli-shared-utils')
 const chalk = require('chalk')
+const { defaultValue, nullable } = require('./utils')
+
+const DEFAULT_SERVER_FOLDER = './apollo-server'
 
 let ipc, ipcTimer
-
-function sendIpcMessage (message) {
-  if (!ipc && IpcMessenger) {
-    ipc = new IpcMessenger()
-    ipc.connect()
-  }
-  if (ipc) {
-    ipc.send({
-      'org.akryum.vue-apollo': message,
-    })
-    clearTimeout(ipcTimer)
-    ipcTimer = setTimeout(() => {
-      ipc.disconnect()
-      ipc = null
-    }, 3000)
-  }
-}
 
 module.exports = (api, options) => {
   const cmd = hasYarn() ? 'yarn' : 'npm'
@@ -66,17 +53,25 @@ module.exports = (api, options) => {
     }
   })
 
-  api.registerCommand('graphql-api', args => {
+  api.registerCommand('apollo:watch', {
+    description: 'Run the Apollo server and watch the sources to restart automatically',
+    usage: 'vue-cli-service apollo:watch [options]',
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
+  }, args => {
+    // Plugin options
+    const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
+    const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
+
     const nodemon = require('nodemon')
 
     return new Promise((resolve, reject) => {
       nodemon({
-        exec: `${cmd} run run-graphql-api --delay`,
+        exec: `${cmd} run apollo:run --delay`,
         watch: [
-          api.resolve('./src/graphql-api/'),
+          api.resolve(baseFolder),
         ],
         ignore: [
-          api.resolve('./src/graphql-api/live/'),
+          api.resolve(path.join(baseFolder, 'live')),
         ],
         ext: 'js mjs json graphql gql',
       })
@@ -118,29 +113,41 @@ module.exports = (api, options) => {
     })
   })
 
-  api.registerCommand('run-graphql-api', args => {
+  api.registerCommand('apollo:run', {
+    description: 'Run the Apollo server',
+    usage: 'vue-cli-service apollo:run [options]',
+    options: {
+      '--mock': 'enables mocks',
+      '--enable-engine': 'enables Apollo Engine',
+      '--delay': 'delays run by a small duration',
+    },
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
+  }, args => {
     const run = () => {
       let server = require('./graphql-server')
       server = server.default || server
 
+      // Env
       const port = process.env.VUE_APP_GRAPHQL_PORT || 4000
       const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
-      const graphqlSubscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
-      const graphqlPlaygroundPath = process.env.VUE_APP_GRAPHQL_PLAYGROUND_PATH || '/'
+      const subscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
       const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
-      const graphqlCors = process.env.VUE_APP_GRAPHQL_CORS || '*'
-      const baseFolder = process.env.VUE_APP_GRAPHQL_API_SRC || './src/graphql-api'
+
+      // Plugin options
+      const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
+      const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
 
       const opts = {
         port,
         graphqlPath,
-        graphqlSubscriptionsPath,
-        graphqlPlaygroundPath,
+        subscriptionsPath,
         engineKey,
-        graphqlCors,
-        mock: options.pluginOptions.graphqlMock || args.mock,
-        apolloEngine: options.pluginOptions.apolloEngine || args['apollo-engine'],
-        timeout: options.pluginOptions.graphqlTimeout || 120000,
+        enableMocks: defaultValue(apolloOptions.enableMocks, args.mock),
+        enableEngine: defaultValue(apolloOptions.enableEngine, args['enable-engine']),
+        cors: defaultValue(apolloOptions.cors, '*'),
+        timeout: defaultValue(apolloOptions.timeout, 120000),
+        integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
+        serverOptions: apolloOptions.apolloServer,
         paths: {
           typeDefs: api.resolve(`${baseFolder}/type-defs.js`),
           resolvers: api.resolve(`${baseFolder}/resolvers.js`),
@@ -157,7 +164,7 @@ module.exports = (api, options) => {
       server(opts, () => {
         sendIpcMessage({
           urls: {
-            playground: `http://localhost:${port}${graphqlPlaygroundPath}`,
+            playground: `http://localhost:${port}${graphqlPath}`,
           },
         })
       })
@@ -172,7 +179,7 @@ module.exports = (api, options) => {
 }
 
 module.exports.defaultModes = {
-  'run-graphql-api': 'development',
+  'run-apollo-server': 'development',
 }
 
 function generateCacheIdentifier (context) {
@@ -188,5 +195,22 @@ function generateCacheIdentifier (context) {
     } catch (e) {
       console.error('Invalid .graphqlconfig file')
     }
+  }
+}
+
+function sendIpcMessage (message) {
+  if (!ipc && IpcMessenger) {
+    ipc = new IpcMessenger()
+    ipc.connect()
+  }
+  if (ipc) {
+    ipc.send({
+      'org.akryum.vue-apollo': message,
+    })
+    clearTimeout(ipcTimer)
+    ipcTimer = setTimeout(() => {
+      ipc.disconnect()
+      ipc = null
+    }, 3000)
   }
 }

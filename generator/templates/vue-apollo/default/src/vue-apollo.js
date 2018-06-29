@@ -18,7 +18,7 @@ const defaultOptions = {
   // LocalStorage token
   tokenName: AUTH_TOKEN,
   // Enable Automatic Query persisting with Apollo Engine
-  persisting: <%= typeof addApolloEngine !== 'undefined' ? addApolloEngine : false %>,
+  persisting: false,
   // Use websockets for everything (no HTTP)
   // You need to pass a `wsEndpoint` for this to work
   websocketsOnly: false,

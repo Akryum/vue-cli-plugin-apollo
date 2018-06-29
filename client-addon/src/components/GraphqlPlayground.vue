@@ -67,7 +67,11 @@ export default {
       if (this.urls) {
         for (let t = 10; t > 0; t--) {
           try {
-            const response = await fetch(this.urls.playground)
+            const response = await fetch(this.urls.playground, {
+              headers: {
+                accept: 'text/html',
+              },
+            })
             if (response.ok) {
               this.ready = true
               break

@@ -10,7 +10,7 @@ module.exports = (api, options, rootOptions) => {
       'vue-apollo': '^3.0.0-beta.10',
     },
     devDependencies: {
-      'graphql-tag': '^2.5.0',
+      'graphql-tag': '^2.9.0',
     },
   })
 
@@ -22,13 +22,15 @@ module.exports = (api, options, rootOptions) => {
         'graphql-type-json': '^0.2.1',
       },
       scripts: {
-        'graphql-api': 'vue-cli-service graphql-api',
-        'run-graphql-api': 'vue-cli-service run-graphql-api',
+        'apollo': 'vue-cli-service apollo:watch',
+        'apollo:run': 'vue-cli-service apollo:run',
       },
       vue: {
         pluginOptions: {
-          graphqlMock: options.addMocking,
-          apolloEngine: options.addApolloEngine,
+          apollo: {
+            enableMocks: options.addMocking,
+            enableEngine: options.addApolloEngine,
+          },
         },
       },
     })
@@ -134,7 +136,7 @@ module.exports = (api, options, rootOptions) => {
       if (content.indexOf('VUE_APP_APOLLO_ENGINE_KEY=') === -1) {
         content += `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`
       } else {
-        content = content.replace(/VUE_APP_APOLLO_ENGINE_KEY=(.*)\n/, `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}`)
+        content = content.replace(/VUE_APP_APOLLO_ENGINE_KEY=(.*)\n/, `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`)
       }
       fs.writeFileSync(envPath, content, { encoding: 'utf8' })
     }
@@ -169,9 +171,9 @@ module.exports = (api, options, rootOptions) => {
     }
 
     if (options.addServer) {
-      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run graphql-api`)}`, 'info')
+      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run apollo`)}`, 'info')
       if (options.addMocking) {
-        api.exitLog(`Customize the mocks in ${chalk.cyan('src/graphql-api/mocks.js')}`, 'info')
+        api.exitLog(`Customize the mocks in ${chalk.cyan('apollo-server/mocks.js')}`, 'info')
       }
       if (options.addApolloEngine) {
         api.exitLog(`The Apollo Engine API key has been added to ${chalk.cyan('.local.env')}`, 'info')

@@ -43,7 +43,6 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - [Client state](#client-state)
   - [Authorization Header](#authorization-header)
   - [Plugin options](#plugin-options)
-  - [Apollo Server](#apollo-server)
   - [Mocks](#mocks)
   - [Directives](#directives)
   - [Apollo Engine](#apollo-engine)
@@ -84,6 +83,8 @@ Start your app:
 npm run serve
 ```
 
+[Recommended VS Code extension](https://github.com/prismagraphql/vscode-graphql)
+
 **Updating `vue-cli-plugin-apollo` will also update both Apollo Client and its configuration for you! :+1:**
 
 Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
@@ -93,10 +94,10 @@ Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 If you enabled the GraphQL API Server, open a new terminal and start it:
 
 ```
-npm run graphql-api
+npm run apollo
 ```
 
-You can edit the files generated in the `./src/graphql-api` folder:
+You can edit the files generated in the `./apollo-server` folder:
 
 - `schema.graphql` contains the Schema written with the [schema definition language](https://github.com/facebook/graphql/blob/master/spec/Section%203%20--%20Type%20System.md).
 - `resolvers.js` declares the [Apollo resolvers](https://www.apollographql.com/docs/graphql-tools/resolvers.html).
@@ -116,15 +117,51 @@ npm run run-graphql-api
 
 ## Injected Commands
 
-- **`vue-cli-service graphql-api`**
+- **`vue-cli-service apollo:watch`**
 
-  Run the GraphQL API server with info from `./src/graphql-api` and watch the files to restart itself automatically.
+  Run the GraphQL API server with info from `./apollo-server` and watch the files to restart itself automatically.
 
-- **`vue-cli-service run-graphql-api`**
+- **`vue-cli-service apollo:run`**
 
-  Run the GraphQL API server with info from `./src/graphql-api` once.
+  Run the GraphQL API server with info from `./apollo-server` once.
 
 ## Configuration
+
+### Plugin options
+
+The GraphQL API Server can be configured via the `pluginOptions` in `vue.config.js`:
+
+``` js
+module.exports = {
+  // Other options...
+  pluginOptions: {
+    // Apollo-related options
+    apollo: {
+      // Enable automatic mocking
+      enableMocks: true,
+      // Enable Apollo Engine
+      enableEngine: true,
+
+      /* Other options (with default values) */
+
+      // Cross-Origin options
+      cors: '*',
+      // Requests timeout (ms)
+      timeout: 120000,
+      // Integrated apollo engine
+      integratedEngine: true,
+      // Base folder for the server source files
+      serverFolder: './apollo-server',
+      // Apollo server options (will be merged with the included default options)
+      serverOptions: {
+        // ...
+      },
+    },
+  },
+}
+```
+
+See [Apollo Server options](https://www.apollographql.com/docs/apollo-server/v2/api/apollo-server.html#constructor-options-lt-ApolloServer-gt).
 
 ### Client state
 
@@ -186,49 +223,13 @@ const { apolloClient } = createApolloClient(options)
 
 If you use cookies, you can return `undefined`.
 
-### Plugin options
-
-The GraphQL API Server can be configured via the `pluginOptions` in `vue.config.js`:
-
-``` js
-module.exports = {
-  // Other options...
-  pluginOptions: {
-    // Enable automatic mocking
-    graphqlMock: true,
-    // Enable Apollo Engine
-    apolloEngine: true,
-
-    /* Other options (with default values) */
-
-    // Requests timeout (ms)
-    graphqlTimeout: 120000,
-  },
-}
-```
-
-### Apollo Server
-
-You can set custom Apollo server options in a `src/graphql-api/apollo.js` file:
-
-```js
-module.exports = req => {
-  return {
-    // Custom apollo server options here
-    cacheControl: {
-      defaultMaxAge: 1000,
-    },
-  }
-}
-```
-
 ### Mocks
 
-You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./src/graphql-api/mocks.js` file generated in your project.
+You can enable automatic mocking on the GraphQL API Server. It can be [customized](https://www.apollographql.com/docs/graphql-tools/mocking.html#Customizing-mocks) in the `./apollo-server/mocks.js` file generated in your project.
 
 ### Directives
 
-You can add custom GraphQL directives in the `./src/graphql-api/directives.sjs` file ([documentation](https://www.apollographql.com/docs/graphql-tools/schema-directives.html)).
+You can add custom GraphQL directives in the `./apollo-server/directives.js` file ([documentation](https://www.apollographql.com/docs/graphql-tools/schema-directives.html)).
 
 ```js
 const { SchemaDirectiveVisitor } = require('graphql-tools')
@@ -249,20 +250,9 @@ module.exports = {
 
 Create a key at https://engine.apollographql.com (it's free!).
 
-You can set custom Apollo Engine options in a `src/graphql-api/engine.js` file:
-
-```js
-module.exports = {
-  // Custom apollo engine options here
-  stores: [
-    { /* ... */ },
-  ],
-}
-```
-
 ### Express middlewares
 
-If you need to add express middlewares into the GraphQL server, you can create a `./src/graphql-api/server.js` file:
+If you need to add express middlewares into the GraphQL server, you can create a `./apollo-server/server.js` file:
 
 ```js
 const path = require('path')
@@ -294,18 +284,6 @@ module.exports = app => {
 
   API key for [Apollo Engine](https://engine.apollographql.com)
 
-- **`VUE_APP_GRAPHQL_PLAYGROUND_PATH`**
-
-  Url path to the graphql server playground, default: `'/'`
-
-- **`VUE_APP_GRAPHQL_CORS`**
-
-  Cors rules, default: `'*'`
-
-- **`VUE_APP_GRAPHQL_API_SRC`**
-
-  Base source folder for the GraphQL server, default: `'./src/graphql-api'`
-
 ## Injected webpack-chain Rules
 
 - `config.rule('gql')`
@@ -313,7 +291,7 @@ module.exports = app => {
 ## Running the GraphQL server in production
 
 ```
-cross-env NODE_ENV=production yarn run run-graphql-api --mode production
+cross-env NODE_ENV=production yarn run apollo:run --mode production
 ```
 
 If your project is meant to be used as a package installed from npm, you will need to move `vue-cli-plugin-apollo` from the `devDependencies` field to `dependencies` in your `package.json` file.
