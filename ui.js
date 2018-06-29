@@ -111,7 +111,7 @@ module.exports = api => {
             link: 'https://www.apollographql.com/docs/apollo-server/v2/migration-engine.html#With-a-Running-Engine-Proxy',
             type: 'confirm',
             file: 'vue',
-            default: false,
+            default: true,
             value: getConfigData(data).integratedEngine,
           },
           {
