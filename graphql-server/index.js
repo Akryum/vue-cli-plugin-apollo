@@ -116,6 +116,8 @@ module.exports = (options, cb = null) => {
       console.log('Create a key at https://engine.apollographql.com/')
       console.log('You may see `Error: Must provide document` errors (query persisting tries).')
     }
+  } else {
+    apolloServerOptions.engine = false
   }
 
   // Final options
