@@ -7,6 +7,12 @@ const chalk = require('chalk')
 const { defaultValue, nullable } = require('./utils')
 
 const DEFAULT_SERVER_FOLDER = './apollo-server'
+const COMMAND_OPTIONS = {
+  '--mock': 'enables mocks',
+  '--enable-engine': 'enables Apollo Engine',
+  '--delay': 'delays run by a small duration',
+  '--port': 'specify server port',
+}
 
 let ipc, ipcTimer
 
@@ -56,6 +62,7 @@ module.exports = (api, options) => {
   api.registerCommand('apollo:watch', {
     description: 'Run the Apollo server and watch the sources to restart automatically',
     usage: 'vue-cli-service apollo:watch [options]',
+    options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
     // Plugin options
@@ -64,9 +71,22 @@ module.exports = (api, options) => {
 
     const nodemon = require('nodemon')
 
+    // Pass the args along
+    let flatArgs = []
+    for (const key in COMMAND_OPTIONS) {
+      const shortKey = key.substr(2)
+      if (args.hasOwnProperty(shortKey)) {
+        flatArgs.push(key)
+        const value = args[shortKey]
+        if (value !== true) {
+          flatArgs.push(value)
+        }
+      }
+    }
+
     return new Promise((resolve, reject) => {
       nodemon({
-        exec: `${cmd} run apollo:run --delay`,
+        exec: `${cmd} run apollo:run --delay ${flatArgs.join(' ')}`,
         watch: [
           api.resolve(baseFolder),
         ],
@@ -116,11 +136,7 @@ module.exports = (api, options) => {
   api.registerCommand('apollo:run', {
     description: 'Run the Apollo server',
     usage: 'vue-cli-service apollo:run [options]',
-    options: {
-      '--mock': 'enables mocks',
-      '--enable-engine': 'enables Apollo Engine',
-      '--delay': 'delays run by a small duration',
-    },
+    options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
     const run = () => {
@@ -128,7 +144,7 @@ module.exports = (api, options) => {
       server = server.default || server
 
       // Env
-      const port = process.env.VUE_APP_GRAPHQL_PORT || 4000
+      const port = args.port || process.env.VUE_APP_GRAPHQL_PORT || 4000
       const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
       const subscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
       const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
@@ -142,8 +158,8 @@ module.exports = (api, options) => {
         graphqlPath,
         subscriptionsPath,
         engineKey,
-        enableMocks: defaultValue(apolloOptions.enableMocks, args.mock),
-        enableEngine: defaultValue(apolloOptions.enableEngine, args['enable-engine']),
+        enableMocks: defaultValue(args.mock, apolloOptions.enableMocks),
+        enableEngine: defaultValue(args['enable-engine'], apolloOptions.enableEngine),
         cors: defaultValue(apolloOptions.cors, '*'),
         timeout: defaultValue(apolloOptions.timeout, 120000),
         integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
