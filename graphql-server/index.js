@@ -46,13 +46,7 @@ module.exports = (options, cb = null) => {
 
   // Apollo server options
 
-  if (typeof typeDefs === 'string') {
-    // Convert schema to AST
-    typeDefs = gql(typeDefs)
-  }
-
-  // Remove upload scalar (it's already included in Apollo Server)
-  removeFromSchema(typeDefs, 'ScalarTypeDefinition', 'Upload')
+  processSchema(typeDefs)
 
   let apolloServerOptions = {
     typeDefs,
@@ -166,6 +160,21 @@ function load (file) {
     return module.default
   }
   return module
+}
+
+function processSchema (typeDefs) {
+  if (Array.isArray(typeDefs)) {
+    typeDefs.forEach(processSchema)
+    return
+  }
+
+  if (typeof typeDefs === 'string') {
+    // Convert schema to AST
+    typeDefs = gql(typeDefs)
+  }
+
+  // Remove upload scalar (it's already included in Apollo Server)
+  removeFromSchema(typeDefs, 'ScalarTypeDefinition', 'Upload')
 }
 
 function removeFromSchema (document, kind, name) {
