@@ -92,7 +92,7 @@ module.exports = (options, cb = null) => {
   }
 
   // Automatic mocking
-  if (options.mock) {
+  if (options.enableMocks) {
     // Customize this file
     apolloServerOptions.mocks = load(options.paths.mocks)
 
