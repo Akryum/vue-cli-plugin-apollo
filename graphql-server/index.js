@@ -46,7 +46,7 @@ module.exports = (options, cb = null) => {
 
   // Apollo server options
 
-  processSchema(typeDefs)
+  typeDefs = processSchema(typeDefs)
 
   let apolloServerOptions = {
     typeDefs,
@@ -166,8 +166,7 @@ function load (file) {
 
 function processSchema (typeDefs) {
   if (Array.isArray(typeDefs)) {
-    typeDefs.forEach(processSchema)
-    return
+    return typeDefs.map(processSchema)
   }
 
   if (typeof typeDefs === 'string') {
@@ -177,6 +176,8 @@ function processSchema (typeDefs) {
 
   // Remove upload scalar (it's already included in Apollo Server)
   removeFromSchema(typeDefs, 'ScalarTypeDefinition', 'Upload')
+
+  return typeDefs
 }
 
 function removeFromSchema (document, kind, name) {
