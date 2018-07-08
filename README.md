@@ -23,7 +23,7 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - Websockets
   - Client state with [apollo-link-state](https://github.com/apollographql/apollo-link-state)
 - Included optional Graphql API Server (upgradable):
-  - Dead simple GraphQL API sources generated into your project
+  - Dead simple GraphQL API sources generated into your project (with import/export support)
   - Upgradable service running [apollo-server](https://www.apollographql.com/docs/apollo-server/)
   - Websocket subscriptions support
   - Optional automatic mocking
@@ -228,13 +228,13 @@ If you use cookies, you can return `undefined`.
 Example `apolloserver/context.js` that validates the token and set `userId` on resolvers context:
 
 ```js
-const users = require('./connectors/users')
+import users from './connectors/users'
 
 // Context passed to all resolvers (third argument)
 // req => Query
 // connection => Subscription
 // eslint-disable-next-line no-unused-vars
-module.exports = ({ req, connection }) => {
+export default ({ req, connection }) => {
   // If the websocket context was already resolved
   if (connection && connection.context) return connection.context
 
@@ -266,13 +266,13 @@ You can enable automatic mocking on the GraphQL API Server. It can be [customize
 You can add custom GraphQL directives in the `./apollo-server/directives.js` file ([documentation](https://www.apollographql.com/docs/graphql-tools/schema-directives.html)).
 
 ```js
-const { SchemaDirectiveVisitor } = require('graphql-tools')
+import { SchemaDirectiveVisitor } from 'graphql-tools'
 
 class PrivateDirective extends SchemaDirectiveVisitor {
   // ...
 }
 
-module.exports = {
+export default {
   // Now you can use '@private' in the schema
   private: PrivateDirective
 }
@@ -289,11 +289,12 @@ Create a key at https://engine.apollographql.com (it's free!).
 If you need to add express middlewares into the GraphQL server, you can create a `./apollo-server/server.js` file:
 
 ```js
-const path = require('path')
-const express = require('express')
+import path from 'path'
+import express from 'express'
+
 const distPath = path.resolve(__dirname, '../../dist')
 
-module.exports = app => {
+export default app => {
   app.use(express.static(distPath))
 }
 ```
