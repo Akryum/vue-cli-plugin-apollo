@@ -1,9 +1,9 @@
-const GraphQLJSON = require('graphql-type-json')
+import GraphQLJSON from 'graphql-type-json'
 <% if (addExamples) { _%>
-const shortid = require('shortid')
+import shortid from 'shortid'
 <%_ } %>
 
-module.exports = {
+export default {
   JSON: GraphQLJSON,
 
 <% if (addExamples) { _%>

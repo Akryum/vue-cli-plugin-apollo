@@ -1,13 +1,13 @@
 <% if (addExamples) { _%>
-const { db } = require('./utils/db')
-const { processUpload } = require('./utils/upload')
+import { db } from './utils/db'
+import { processUpload } from './utils/upload'
 <%_ } %>
 
 // Context passed to all resolvers (third argument)
 // req => Query
 // connection => Subscription
 // eslint-disable-next-line no-unused-vars
-module.exports = ({ req, connection }) => {
+export default ({ req, connection }) => {
   return {
 <% if (addExamples) { _%>
     db,

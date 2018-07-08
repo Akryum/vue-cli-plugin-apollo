@@ -7,6 +7,9 @@ const merge = require('deepmerge')
 
 const { defaultValue, autoCall } = require('../utils')
 
+// eslint-disable-next-line no-global-assign
+require = require('esm')(module)
+
 module.exports = (options, cb = null) => {
   // Default options
   options = merge({}, options, {
