@@ -122,7 +122,7 @@ module.exports = (api, options) => {
         console.log(chalk.grey(...args))
       })
 
-      nodemon.on('sdterr', (...args) => {
+      nodemon.on('stderr', (...args) => {
         console.log(chalk.grey(...args))
       })
 
