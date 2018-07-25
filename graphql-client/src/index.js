@@ -35,11 +35,15 @@ export function createApolloClient ({
   }
 
   if (!disableHttp) {
+    const httpLink = new HttpLink({
+      // You should use an absolute URL here
+      uri: httpEndpoint,
+    })
+
     if (!link) {
-      link = new HttpLink({
-        // You should use an absolute URL here
-        uri: httpEndpoint,
-      })
+      link = httpLink
+    } else {
+      link = httpLink.concat(link)
     }
 
     // HTTP Auth header injection
