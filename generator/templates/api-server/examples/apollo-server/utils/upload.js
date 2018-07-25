@@ -11,12 +11,14 @@ sync(uploadDir)
 
 const storeUpload = async ({ stream, filename }) => {
   const id = generate()
-  const path = `${uploadDir}/${id}-${filename}`
+  const file = `${id}-${filename}`
+  const path = `${uploadDir}/${file}`
+  const urlPath = `files/${file}`
 
   return new Promise((resolve, reject) =>
     stream
       .pipe(createWriteStream(path))
-      .on('finish', () => resolve({ id, path }))
+      .on('finish', () => resolve({ id, path: urlPath }))
       .on('error', reject),
   )
 }
@@ -28,9 +30,8 @@ const recordFile = file =>
     .last()
     .write()
 
-export async function processUpload (upload) {
-  const { stream, filename, mimetype, encoding } = await upload
+export async function processUpload (file) {
+  const { stream, filename, mimetype, encoding } = await file
   const { id, path } = await storeUpload({ stream, filename })
   return recordFile({ id, filename, mimetype, encoding, path })
 }
-
