@@ -153,7 +153,8 @@ module.exports = (api, options) => {
       // Plugin options
       const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
       const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
-
+      const filesExtension = apolloOptions.typeScript ? 'ts' : 'js'
+      
       const opts = {
         port,
         graphqlPath,
@@ -166,15 +167,15 @@ module.exports = (api, options) => {
         integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
         serverOptions: apolloOptions.apolloServer,
         paths: {
-          typeDefs: api.resolve(`${baseFolder}/type-defs.js`),
-          resolvers: api.resolve(`${baseFolder}/resolvers.js`),
-          context: api.resolve(`${baseFolder}/context.js`),
-          mocks: api.resolve(`${baseFolder}/mocks.js`),
-          pubsub: api.resolve(`${baseFolder}/pubsub.js`),
-          server: api.resolve(`${baseFolder}/server.js`),
-          apollo: api.resolve(`${baseFolder}/apollo.js`),
-          engine: api.resolve(`${baseFolder}/engine.js`),
-          directives: api.resolve(`${baseFolder}/directives.js`),
+          typeDefs: api.resolve(`${baseFolder}/type-defs.${filesExtension}`),
+            resolvers: api.resolve(`${baseFolder}/resolvers.${filesExtension}`),
+            context: api.resolve(`${baseFolder}/context.${filesExtension}`),
+            mocks: api.resolve(`${baseFolder}/mocks.${filesExtension}`),
+            pubsub: api.resolve(`${baseFolder}/pubsub.${filesExtension}`),
+            server: api.resolve(`${baseFolder}/server.${filesExtension}`),
+            apollo: api.resolve(`${baseFolder}/apollo.${filesExtension}`),
+            engine: api.resolve(`${baseFolder}/engine.${filesExtension}`),
+            directives: api.resolve(`${baseFolder}/directives.${filesExtension}`),
         },
       }
 
