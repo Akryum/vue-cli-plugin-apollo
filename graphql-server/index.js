@@ -19,6 +19,8 @@ module.exports = (options, cb = null) => {
   // Express app
   const app = express()
 
+  if (options.typescript) require('ts-node/register/transpile-only')
+
   // Customize those files
   let typeDefs = load(options.paths.typeDefs)
   const resolvers = load(options.paths.resolvers)
