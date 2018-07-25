@@ -14,6 +14,7 @@ import { withClientState } from 'apollo-link-state'
 // Create the apollo client
 export function createApolloClient ({
   httpEndpoint,
+  httpLinkOptions = {},
   wsEndpoint = null,
   uploadEndpoint = null,
   tokenName = 'apollo-token',
@@ -38,6 +39,7 @@ export function createApolloClient ({
     const httpLink = new HttpLink({
       // You should use an absolute URL here
       uri: httpEndpoint,
+      ...httpLinkOptions,
     })
 
     if (!link) {
