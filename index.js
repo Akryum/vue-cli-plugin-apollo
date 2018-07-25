@@ -145,6 +145,7 @@ module.exports = (api, options) => {
 
       // Env
       const port = args.port || process.env.VUE_APP_GRAPHQL_PORT || 4000
+      process.env.VUE_APP_GRAPHQL_PORT = port
       const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
       const subscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
       const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
