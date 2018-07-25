@@ -28,7 +28,6 @@ export function createApolloClient ({
 }) {
   let wsClient, authLink, stateLink
   const disableHttp = websocketsOnly && !ssr && wsEndpoint
-  const authorization = getAuth(tokenName)
 
   // Apollo cache
   if (!cache) {
@@ -45,6 +44,7 @@ export function createApolloClient ({
 
     // HTTP Auth header injection
     authLink = setContext((_, { headers }) => {
+      const authorization = getAuth(tokenName)
       const authorizationHeader = authorization ? { authorization } : {}
       return {
         headers: {
@@ -94,6 +94,7 @@ export function createApolloClient ({
       wsClient = new SubscriptionClient(wsEndpoint, {
         reconnect: true,
         connectionParams: () => {
+          const authorization = getAuth(tokenName)
           return authorization ? { authorization } : {}
         },
       })
