@@ -51,14 +51,25 @@
       </div>
     </ApolloQuery>
 
-    <div class="form">
-      <input
-        v-model="newMessage"
-        placeholder="Type a message"
-        class="input"
-        @keyup.enter="sendMessage"
-      >
-    </div>
+    <ApolloMutation
+      :mutation="require('../graphql/AddMessage.gql')"
+      :variables="{
+        input: {
+          text: newMessage,
+        },
+      }"
+      class="form"
+      @done="newMessage = ''"
+    >
+      <template slot-scope="{ mutate }">
+        <input
+          v-model="newMessage"
+          placeholder="Type a message"
+          class="input"
+          @keyup.enter="formValid && mutate()"
+        >
+      </template>
+    </ApolloMutation>
 
     <div class="images">
       <div
@@ -82,7 +93,6 @@
 </template>
 
 <script>
-import ADD_MESSAGE from '../graphql/AddMessage.gql'
 import FILES from '../graphql/Files.gql'
 import UPLOAD_FILE from '../graphql/UploadFile.gql'
 
@@ -105,21 +115,6 @@ export default {
   },
 
   methods: {
-    sendMessage () {
-      if (this.formValid) {
-        this.$apollo.mutate({
-          mutation: ADD_MESSAGE,
-          variables: {
-            input: {
-              text: this.newMessage,
-            },
-          },
-        })
-
-        this.newMessage = ''
-      }
-    },
-
     onMessageAdded (previousResult, { subscriptionData }) {
       return {
         messages: [
