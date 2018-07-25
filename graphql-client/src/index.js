@@ -1,6 +1,5 @@
 import { ApolloClient } from 'apollo-client'
 import { split, from } from 'apollo-link'
-import { HttpLink } from 'apollo-link-http'
 import { createUploadLink } from 'apollo-upload-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
@@ -36,8 +35,7 @@ export function createApolloClient ({
   }
 
   if (!disableHttp) {
-    const httpLink = new HttpLink({
-      // You should use an absolute URL here
+    const httpLink = createUploadLink({
       uri: httpEndpoint,
       ...httpLinkOptions,
     })
@@ -80,19 +78,6 @@ export function createApolloClient ({
       if (persisting) {
         link = createPersistedQueryLink().concat(link)
       }
-
-      // File upload
-      const uploadLink = authLink.concat(createUploadLink({
-        uri: uploadEndpoint || httpEndpoint,
-      }))
-
-      // using the ability to split links, you can send data to each link
-      // depending on what kind of operation is being sent
-      link = split(
-        operation => operation.getContext().upload,
-        uploadLink,
-        link
-      )
     }
 
     // Web socket
