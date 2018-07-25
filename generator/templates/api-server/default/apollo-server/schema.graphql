@@ -59,7 +59,7 @@ type Mutation {
   myMutation: String!
 <% if (addExamples) { _%>
   # Add a message and publish it on 'messages' subscription channel
-  messageAdd (input: MessageInput!): Message!
+  addMessage (input: MessageInput!): Message!
   singleUpload (file: Upload!): File!
   multipleUpload (files: [Upload!]!): [File!]!
 <%_ } %>

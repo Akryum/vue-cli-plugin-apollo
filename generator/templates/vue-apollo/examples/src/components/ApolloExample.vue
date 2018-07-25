@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import MESSAGE_ADD_MUTATION from '../graphql/MessageAdd.gql'
+import ADD_MESSAGE from '../graphql/AddMessage.gql'
 import FILES from '../graphql/Files.gql'
 import UPLOAD_FILE from '../graphql/UploadFile.gql'
 
@@ -108,7 +108,7 @@ export default {
     sendMessage () {
       if (this.formValid) {
         this.$apollo.mutate({
-          mutation: MESSAGE_ADD_MUTATION,
+          mutation: ADD_MESSAGE,
           variables: {
             input: {
               text: this.newMessage,

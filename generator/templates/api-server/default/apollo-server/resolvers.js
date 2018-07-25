@@ -27,7 +27,7 @@ export default {
       return message
     },
 <% if (addExamples) { _%>
-    messageAdd: (root, { input }, { pubsub, db }) => {
+    addMessage: (root, { input }, { pubsub, db }) => {
       const message = {
         id: shortid.generate(),
         text: input.text,
