@@ -153,14 +153,13 @@ module.exports = (api, options) => {
       // Plugin options
       const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
       const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
-      const filesExtension = apolloOptions.typescript ? 'ts' : 'js'
 
       const opts = {
         port,
         graphqlPath,
         subscriptionsPath,
         engineKey,
-        typescript: apolloOptions.typescript,
+        typescript: api.hasPlugin('typescript') || defaultValue(apolloOptions.typescript, false),
         enableMocks: defaultValue(args.mock, apolloOptions.enableMocks),
         enableEngine: defaultValue(args['enable-engine'], apolloOptions.enableEngine),
         cors: defaultValue(apolloOptions.cors, '*'),
@@ -168,15 +167,15 @@ module.exports = (api, options) => {
         integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
         serverOptions: apolloOptions.apolloServer,
         paths: {
-          typeDefs: api.resolve(`${baseFolder}/type-defs.${filesExtension}`),
-          resolvers: api.resolve(`${baseFolder}/resolvers.${filesExtension}`),
-          context: api.resolve(`${baseFolder}/context.${filesExtension}`),
-          mocks: api.resolve(`${baseFolder}/mocks.${filesExtension}`),
-          pubsub: api.resolve(`${baseFolder}/pubsub.${filesExtension}`),
-          server: api.resolve(`${baseFolder}/server.${filesExtension}`),
-          apollo: api.resolve(`${baseFolder}/apollo.${filesExtension}`),
-          engine: api.resolve(`${baseFolder}/engine.${filesExtension}`),
-          directives: api.resolve(`${baseFolder}/directives.${filesExtension}`),
+          typeDefs: api.resolve(`${baseFolder}/type-defs`),
+          resolvers: api.resolve(`${baseFolder}/resolvers`),
+          context: api.resolve(`${baseFolder}/context`),
+          mocks: api.resolve(`${baseFolder}/mocks`),
+          pubsub: api.resolve(`${baseFolder}/pubsub`),
+          server: api.resolve(`${baseFolder}/server`),
+          apollo: api.resolve(`${baseFolder}/apollo`),
+          engine: api.resolve(`${baseFolder}/engine`),
+          directives: api.resolve(`${baseFolder}/directives`),
         },
       }
 
