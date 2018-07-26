@@ -93,7 +93,7 @@ module.exports = (api, options) => {
         ignore: [
           api.resolve(path.join(baseFolder, 'live')),
         ],
-        ext: 'js mjs json graphql gql',
+        ext: 'js mjs json graphql gql ts',
       })
 
       sendIpcMessage({
