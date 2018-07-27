@@ -46,7 +46,7 @@
     "graphql": "^0.13.2",
     "graphql-subscriptions": "^0.5.8",
     "nodemon": "^1.18.3",
-    "subscriptions-transport-ws": "^0.9.13",
+    "subscriptions-transport-ws": "^0.9.14",
     "ts-node": "^7.0.0"
   },
   "devDependencies": {
