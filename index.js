@@ -93,7 +93,7 @@ module.exports = (api, options) => {
         ignore: [
           api.resolve(path.join(baseFolder, 'live')),
         ],
-        ext: 'js mjs json graphql gql',
+        ext: 'js mjs json graphql gql ts',
       })
 
       sendIpcMessage({
@@ -159,6 +159,7 @@ module.exports = (api, options) => {
         graphqlPath,
         subscriptionsPath,
         engineKey,
+        typescript: api.hasPlugin('typescript') || defaultValue(apolloOptions.typescript, false),
         enableMocks: defaultValue(args.mock, apolloOptions.enableMocks),
         enableEngine: defaultValue(args['enable-engine'], apolloOptions.enableEngine),
         cors: defaultValue(apolloOptions.cors, '*'),
@@ -166,15 +167,15 @@ module.exports = (api, options) => {
         integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
         serverOptions: apolloOptions.apolloServer,
         paths: {
-          typeDefs: api.resolve(`${baseFolder}/type-defs.js`),
-          resolvers: api.resolve(`${baseFolder}/resolvers.js`),
-          context: api.resolve(`${baseFolder}/context.js`),
-          mocks: api.resolve(`${baseFolder}/mocks.js`),
-          pubsub: api.resolve(`${baseFolder}/pubsub.js`),
-          server: api.resolve(`${baseFolder}/server.js`),
-          apollo: api.resolve(`${baseFolder}/apollo.js`),
-          engine: api.resolve(`${baseFolder}/engine.js`),
-          directives: api.resolve(`${baseFolder}/directives.js`),
+          typeDefs: api.resolve(`${baseFolder}/type-defs`),
+          resolvers: api.resolve(`${baseFolder}/resolvers`),
+          context: api.resolve(`${baseFolder}/context`),
+          mocks: api.resolve(`${baseFolder}/mocks`),
+          pubsub: api.resolve(`${baseFolder}/pubsub`),
+          server: api.resolve(`${baseFolder}/server`),
+          apollo: api.resolve(`${baseFolder}/apollo`),
+          engine: api.resolve(`${baseFolder}/engine`),
+          directives: api.resolve(`${baseFolder}/directives`),
         },
       }
 
