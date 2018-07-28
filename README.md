@@ -35,6 +35,7 @@ This is a vue-cli 3.x plugin to add Apollo and GraphQL in your Vue project.
   - [Apollo Engine](https://www.apollographql.com/engine) support
   - GraphQL playground integrated in the CLI UI
   - Configuration screen in the CLI UI
+  - Server-Side Rendering with [@akryum/vue-cli-plugin-ssr](https://github.com/Akryum/vue-cli-plugin-ssr)
 - Included optional example component with:
   - Watched query
   - Mutation
