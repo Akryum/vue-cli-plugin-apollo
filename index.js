@@ -196,10 +196,6 @@ module.exports = (api, options) => {
   })
 }
 
-module.exports.defaultModes = {
-  'run-apollo-server': 'development',
-}
-
 function generateCacheIdentifier (context) {
   const fs = require('fs')
   const path = require('path')
