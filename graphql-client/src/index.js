@@ -43,7 +43,7 @@ export function createApolloClient ({
     if (!link) {
       link = httpLink
     } else {
-      link = httpLink.concat(link)
+      link = from([link, httpLink])
     }
 
     // HTTP Auth header injection
