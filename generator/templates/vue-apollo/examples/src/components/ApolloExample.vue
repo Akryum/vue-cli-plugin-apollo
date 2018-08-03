@@ -5,7 +5,7 @@
       <label for="field-name" class="label">Name</label>
       <input
         v-model="name"
-        placeholder="Type a name"         
+        placeholder="Type a name"
         class="input"
         id="field-name"
       >
