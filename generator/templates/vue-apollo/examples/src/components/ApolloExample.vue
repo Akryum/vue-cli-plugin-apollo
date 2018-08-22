@@ -2,10 +2,12 @@
   <div class="apollo-example">
     <!-- Cute tiny form -->
     <div class="form">
+      <label for="field-name" class="label">Name</label>
       <input
         v-model="name"
         placeholder="Type a name"
         class="input"
+        id="field-name"
       >
     </div>
 
@@ -62,12 +64,15 @@
       @done="newMessage = ''"
     >
       <template slot-scope="{ mutate }">
-        <input
-          v-model="newMessage"
-          placeholder="Type a message"
-          class="input"
-          @keyup.enter="formValid && mutate()"
-        >
+        <form v-on:submit.prevent="formValid && mutate()">
+          <label for="field-message">Message</label>
+          <input
+            id="field-message"
+            v-model="newMessage"
+            placeholder="Type a message"
+            class="input"
+          >
+        </form>
       </template>
     </ApolloMutation>
 
@@ -82,7 +87,9 @@
     </div>
 
     <div class="image-input">
+      <label for="field-image">Image</label>
       <input
+        id="field-image"
         type="file"
         accept="image/*"
         required
@@ -148,6 +155,11 @@ export default {
 .apollo,
 .message {
   padding: 12px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
 }
 
 .input {
