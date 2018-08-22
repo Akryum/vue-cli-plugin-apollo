@@ -29,25 +29,25 @@
   },
   "homepage": "https://github.com/Akryum/vue-cli-plugin-apollo#readme",
   "dependencies": {
-    "apollo-cache-inmemory": "^1.2.6",
-    "apollo-client": "^2.3.7",
+    "apollo-cache-inmemory": "^1.2.8",
+    "apollo-client": "^2.4.0",
     "apollo-link": "^1.2.2",
     "apollo-link-context": "^1.0.8",
     "apollo-link-persisted-queries": "^0.2.1",
     "apollo-link-state": "^0.4.1",
     "apollo-link-ws": "^1.0.8",
-    "apollo-server-express": "^2.0.0",
+    "apollo-server-express": "^2.0.4",
     "apollo-upload-client": "^8.1.0",
-    "apollo-utilities": "^1.0.17",
+    "apollo-utilities": "^1.0.19",
     "chalk": "^2.4.1",
     "deepmerge": "^2.1.1",
-    "esm": "^3.0.72",
+    "esm": "^3.0.79",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
     "graphql-subscriptions": "^0.5.8",
     "nodemon": "^1.18.3",
     "subscriptions-transport-ws": "^0.9.14",
-    "ts-node": "^7.0.0"
+    "ts-node": "^7.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.47",
@@ -63,6 +63,6 @@
     "eslint-plugin-vue": "^4.2.2"
   },
   "peerDependencies": {
-    "@vue/cli-shared-utils": "^3.0.0-rc.3"
+    "@vue/cli-shared-utils": "^3.0.0"
   }
 }

@@ -11,18 +11,17 @@
     "vue": "^2.5.16"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0-beta.11",
-    "@vue/cli-plugin-eslint": "^3.0.0-beta.11",
-    "@vue/cli-service": "^3.0.0-beta.11",
-    "@vue/cli-ui": "^3.0.0-rc.3",
-    "@vue/eslint-config-standard": "^3.0.0-beta.11",
+    "@vue/cli-plugin-babel": "^3.0.0",
+    "@vue/cli-plugin-eslint": "^3.0.0",
+    "@vue/cli-service": "^3.0.0",
+    "@vue/cli-ui": "^3.0.0",
+    "@vue/eslint-config-standard": "^3.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-template-compiler": "^2.5.16"
   },
   "browserslist": [
     "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
+    "last 2 versions"
   ]
 }
