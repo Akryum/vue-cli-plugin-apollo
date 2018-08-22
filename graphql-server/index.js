@@ -12,7 +12,7 @@ require = require('esm')(module)
 
 module.exports = (options, cb = null) => {
   // Default options
-  options = merge({}, options, {
+  options = merge(options, {
     integratedEngine: false,
   })
 
@@ -126,7 +126,7 @@ module.exports = (options, cb = null) => {
   }
 
   // Final options
-  apolloServerOptions = merge({}, apolloServerOptions, defaultValue(options.serverOptions, {}))
+  apolloServerOptions = merge(apolloServerOptions, defaultValue(options.serverOptions, {}))
 
   // Apollo Server
   const server = new ApolloServer(apolloServerOptions)
