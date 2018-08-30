@@ -14,9 +14,7 @@ const httpEndpoint = process.env.VUE_APP_GRAPHQL_HTTP || 'http://localhost:4000/
 // Files URL root
 export const filesRoot = process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
 
-Object.defineProperty(Vue.prototype, '$filesRoot', {
-  get: () => filesRoot,
-})
+Vue.prototype.$filesRoot = filesRoot
 <%_ } %>
 // Config
 const defaultOptions = {
@@ -79,7 +77,9 @@ export function createProvider (options = {}) {
 
 // Manually call this when user log in
 export async function onLogin (apolloClient, token) {
-  localStorage.setItem(AUTH_TOKEN, token)
+  if (typeof localStorage !== 'undefined' && token) {
+    localStorage.setItem(AUTH_TOKEN, token)
+  }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {
     await apolloClient.resetStore()
@@ -91,7 +91,9 @@ export async function onLogin (apolloClient, token) {
 
 // Manually call this when user log out
 export async function onLogout (apolloClient) {
-  localStorage.removeItem(AUTH_TOKEN)
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem(AUTH_TOKEN)
+  }
   if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient)
   try {
     await apolloClient.resetStore()

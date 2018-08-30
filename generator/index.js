@@ -7,7 +7,7 @@ const chalk = require('chalk')
 module.exports = (api, options, rootOptions) => {
   api.extendPackage({
     dependencies: {
-      'vue-apollo': '^3.0.0-beta.10',
+      'vue-apollo': '^3.0.0-beta.11',
     },
     devDependencies: {
       'graphql-tag': '^2.9.0',
@@ -99,7 +99,7 @@ module.exports = (api, options, rootOptions) => {
 
     const file = tsExists ? 'src/main.ts' : 'src/main.js'
     api.injectImports(file, `import { createProvider } from './vue-apollo'`)
-    api.injectRootOptions(file, `provide: createProvider().provide(),`)
+    api.injectRootOptions(file, `apolloProvider: createProvider(),`)
   } catch (e) {
     api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
   }
