@@ -395,6 +395,6 @@ Then in the root instance, set the `provide` option:
 new Vue({
   el: '#app',
   // Add this line
-  provide: createProvider().provide(),
+  apolloProvider: createProvider(),
 })
 ```
