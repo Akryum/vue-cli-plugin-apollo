@@ -7,9 +7,9 @@ scalar Upload
 # Cache control
 directive @cacheControl(
   maxAge: Int,
-  scope: CacheControlScope
+  scope: CacheControlScopeEnum
 ) on OBJECT | FIELD_DEFINITION
-enum CacheControlScope {
+enum CacheControlScopeEnum {
   PUBLIC
   PRIVATE
 }
