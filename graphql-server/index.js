@@ -148,6 +148,7 @@ module.exports = (options, cb = null) => {
   server.installSubscriptionHandlers(httpServer)
 
   httpServer.listen({
+    host: options.host || 'localhost',
     port: options.port,
   }, () => {
     if (!options.quiet) {

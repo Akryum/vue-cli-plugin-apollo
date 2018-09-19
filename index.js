@@ -11,6 +11,7 @@ const COMMAND_OPTIONS = {
   '--mock': 'enables mocks',
   '--enable-engine': 'enables Apollo Engine',
   '--delay': 'delays run by a small duration',
+  '--host': 'specify server host',
   '--port': 'specify server port',
 }
 
@@ -144,6 +145,8 @@ module.exports = (api, options) => {
       server = server.default || server
 
       // Env
+      const host = args.host || process.env.VUE_APP_GRAPHQL_HOST || 'localhost'
+      process.env.VUE_APP_GRAPHQL_HOST = host
       const port = args.port || process.env.VUE_APP_GRAPHQL_PORT || 4000
       process.env.VUE_APP_GRAPHQL_PORT = port
       const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
@@ -155,6 +158,7 @@ module.exports = (api, options) => {
       const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
 
       const opts = {
+        host,
         port,
         graphqlPath,
         subscriptionsPath,
