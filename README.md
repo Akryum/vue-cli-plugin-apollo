@@ -356,6 +356,7 @@ If your project is meant to be used as a package installed from npm, you will ne
 const server = require('vue-cli-plugin-apollo/graphql-server')
 
 const opts = {
+  host: 'localhost',
   port: 4000,
   graphqlPath: '/graphql',
   subscriptionsPath: '/graphql',
