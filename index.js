@@ -58,6 +58,18 @@ module.exports = (api, options) => {
           cacheIdentifier: options.cacheIdentifier + id,
         }))
     }
+
+    config.resolve
+      .extensions
+      .prepend('.mjs')
+
+    config.module
+      .rule('mjs')
+      .test(/\.mjs$/)
+      .include
+      .add(/node_modules/)
+      .end()
+      .type('javascript/auto')
   })
 
   api.registerCommand('apollo:watch', {
