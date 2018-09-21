@@ -2,18 +2,6 @@
 scalar JSON
 scalar Upload
 
-# Included directives
-
-# Cache control
-directive @cacheControl(
-  maxAge: Int,
-  scope: CacheControlScope
-) on OBJECT | FIELD_DEFINITION
-enum CacheControlScope {
-  PUBLIC
-  PRIVATE
-}
-
 <% if (addExamples) { _%>
 # It will increment!
 type Counter {
