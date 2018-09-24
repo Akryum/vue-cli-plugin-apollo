@@ -43,7 +43,7 @@
     "deepmerge": "^2.1.1",
     "esm": "^3.0.84",
     "express": "^4.16.3",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.2",
     "graphql-subscriptions": "^1.0.0",
     "nodemon": "^1.18.4",
     "subscriptions-transport-ws": "^0.9.15",
