@@ -244,3 +244,7 @@ function sendIpcMessage (message) {
     }, 3000)
   }
 }
+
+module.exports.defaultModes = {
+  'apollo:watch': 'development',
+}
