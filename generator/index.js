@@ -177,7 +177,7 @@ module.exports = (api, options, rootOptions) => {
         api.exitLog(`Customize the mocks in ${chalk.cyan('apollo-server/mocks.js')}`, 'info')
       }
       if (options.addApolloEngine) {
-        api.exitLog(`The Apollo Engine API key has been added to ${chalk.cyan('.local.env')}`, 'info')
+        api.exitLog(`The Apollo Engine API key has been added to ${chalk.cyan('.env.local')}`, 'info')
       }
     }
   })
