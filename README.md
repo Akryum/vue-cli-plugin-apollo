@@ -100,7 +100,7 @@ Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 
 ### GraphQL API Server
 
-If you enabled the GraphQL API Server, open a new terminal and start it:
+If you enabled the GraphQL API Server, start it (by default it also runs `servve`):
 
 ```
 npm run apollo

@@ -42,6 +42,7 @@
     "chalk": "^2.4.1",
     "deepmerge": "^2.1.1",
     "esm": "^3.0.84",
+    "execa": "^1.0.0",
     "express": "^4.16.3",
     "graphql": "^14.0.2",
     "graphql-subscriptions": "^1.0.0",

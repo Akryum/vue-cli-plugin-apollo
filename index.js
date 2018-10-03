@@ -11,8 +11,9 @@ const COMMAND_OPTIONS = {
   '--mock': 'enables mocks',
   '--enable-engine': 'enables Apollo Engine',
   '--delay': 'delays run by a small duration',
-  '--host': 'specify server host',
-  '--port': 'specify server port',
+  '-h, --host': 'specify server host',
+  '-p, --port': 'specify server port',
+  '--run [command]': 'run another command in parallel',
 }
 
 let ipc, ipcTimer
@@ -78,6 +79,8 @@ module.exports = (api, options) => {
     options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
+    runParallelCommand(args)
+
     // Plugin options
     const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
     const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
@@ -152,6 +155,8 @@ module.exports = (api, options) => {
     options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
+    runParallelCommand(args)
+
     const run = () => {
       let server = require('./graphql-server')
       server = server.default || server
@@ -242,6 +247,17 @@ function sendIpcMessage (message) {
       ipc.disconnect()
       ipc = null
     }, 3000)
+  }
+}
+
+function runParallelCommand ({ run }) {
+  if (run) {
+    const execa = require('execa')
+    const [file, ...commandArgs] = run.split(' ')
+    execa(file, commandArgs, {
+      cleanup: true,
+      stdio: ['inherit', 'inherit', 'inherit'],
+    })
   }
 }
 

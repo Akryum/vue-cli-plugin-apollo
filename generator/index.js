@@ -22,7 +22,7 @@ module.exports = (api, options, rootOptions) => {
         'graphql-type-json': '^0.2.1',
       },
       scripts: {
-        'apollo': 'vue-cli-service apollo:watch',
+        'apollo': 'vue-cli-service apollo:watch --run "vue-cli-service serve"',
         'apollo:run': 'vue-cli-service apollo:run',
       },
       vue: {
