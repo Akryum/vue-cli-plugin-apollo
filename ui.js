@@ -4,12 +4,14 @@ const { openBrowser } = require('@vue/cli-shared-utils')
 const ifDef = (value, cb) => typeof value !== 'undefined' && cb(value)
 
 module.exports = api => {
-  const { setSharedData, addSuggestion, removeSuggestion } = api.namespace('org.akryum.vue-apollo.')
+  const { getSharedData, setSharedData, addSuggestion, removeSuggestion } = api.namespace('org.akryum.vue-apollo.')
 
   function resetData () {
-    setSharedData('running', false)
-    setSharedData('urls', null)
-    setSharedData('error', false)
+    if (!getSharedData('running')) {
+      setSharedData('running', false)
+      setSharedData('urls', null)
+      setSharedData('error', false)
+    }
   }
 
   api.onProjectOpen(() => {
