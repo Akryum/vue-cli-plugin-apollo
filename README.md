@@ -390,7 +390,7 @@ Import the provider:
 import { createProvider } from './vue-apollo'
 ```
 
-Then in the root instance, set the `provide` option:
+Then in the root instance, set the `apolloProvider` option:
 
 ```js
 new Vue({
