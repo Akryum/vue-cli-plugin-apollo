@@ -192,6 +192,7 @@ module.exports = (api, options) => {
           apollo: api.resolve(`${baseFolder}/apollo`),
           engine: api.resolve(`${baseFolder}/engine`),
           directives: api.resolve(`${baseFolder}/directives`),
+          dataSources: api.resolve(`${baseFolder}/data-sources`),
         },
       }
 
