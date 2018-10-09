@@ -22,6 +22,7 @@ export function createApolloClient ({
   websocketsOnly = false,
   link = null,
   cache = null,
+  inMemoryCacheOptions = null,
   apollo = {},
   clientState = null,
   getAuth = defaultGetAuth,
@@ -31,7 +32,7 @@ export function createApolloClient ({
 
   // Apollo cache
   if (!cache) {
-    cache = new InMemoryCache()
+    cache = new InMemoryCache(inMemoryCacheOptions)
   }
 
   if (!disableHttp) {
