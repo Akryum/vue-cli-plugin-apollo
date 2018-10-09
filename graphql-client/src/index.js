@@ -12,6 +12,7 @@ import { withClientState } from 'apollo-link-state'
 
 // Create the apollo client
 export function createApolloClient ({
+  defaultHttpLink = true,
   httpEndpoint,
   httpLinkOptions = {},
   wsEndpoint = null,
@@ -43,7 +44,7 @@ export function createApolloClient ({
 
     if (!link) {
       link = httpLink
-    } else {
+    } else if (defaultHttpLink) {
       link = from([link, httpLink])
     }
 
