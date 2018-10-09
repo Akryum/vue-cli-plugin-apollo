@@ -26,6 +26,7 @@ module.exports = (options, cb = null) => {
   const resolvers = load(options.paths.resolvers)
   const context = load(options.paths.context)
   const schemaDirectives = load(options.paths.directives)
+  const dataSources = load(options.paths.dataSources)
   let pubsub
   try {
     pubsub = load(options.paths.pubsub)
@@ -57,6 +58,7 @@ module.exports = (options, cb = null) => {
     typeDefs,
     resolvers,
     schemaDirectives,
+    dataSources,
     tracing: true,
     cacheControl: true,
     engine: !options.integratedEngine,

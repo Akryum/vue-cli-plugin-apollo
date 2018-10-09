@@ -372,6 +372,7 @@ const opts = {
     pubsub: require.resolve('some-folder/apollo-server/pubsub.js'),
     server: require.resolve('some-folder/apollo-server/server.js'),
     directives: require.resolve('some-folder/apollo-server/directives.js')
+    dataSources: require.resolve('some-folder/apollo-server/data-sources.js')
   }
 }
 
