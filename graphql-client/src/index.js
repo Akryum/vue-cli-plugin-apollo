@@ -16,7 +16,6 @@ export function createApolloClient ({
   httpEndpoint,
   httpLinkOptions = {},
   wsEndpoint = null,
-  uploadEndpoint = null,
   tokenName = 'apollo-token',
   persisting = false,
   ssr = false,
