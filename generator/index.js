@@ -105,6 +105,15 @@ module.exports = (api, options, rootOptions) => {
   }
 
   api.onCreateComplete(() => {
+    if (options.addExamples) {
+      const appPath = api.resolve('src/App.vue')
+      if (fs.existsSync(appPath)) {
+        let content = fs.readFileSync(appPath, { encoding: 'utf8' })
+        content = content.replace(/HelloWorld/gi, 'ApolloExample')
+        fs.writeFileSync(appPath, content, { encoding: 'utf8' })
+      }
+    }
+
     if (options.addServer) {
       // Git ignore
       {
