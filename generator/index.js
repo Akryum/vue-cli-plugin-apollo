@@ -174,7 +174,11 @@ module.exports = (api, options, rootOptions) => {
       // Lint generated/modified files
       try {
         const lint = require('@vue/cli-plugin-eslint/lint')
-        lint({ silent: true }, api)
+        const files = ['*.js', '.*.js', 'src']
+        if (options.addServer) {
+          files.push('apollo-server')
+        }
+        lint({ silent: true, _: files }, api)
       } catch (e) {
         // No ESLint vue-cli plugin
       }
