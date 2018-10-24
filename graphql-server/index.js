@@ -102,10 +102,11 @@ module.exports = (options, cb = null) => {
   if (options.enableMocks) {
     // Customize this file
     apolloServerOptions.mocks = load(options.paths.mocks)
+    apolloServerOptions.mockEntireSchema = false
 
     if (!options.quiet) {
       if (process.env.NODE_ENV === 'production') {
-        console.warn(`Automatic mocking is enabled, consider disabling it with the 'graphqlMock' option.`)
+        console.warn(`Automatic mocking is enabled, consider disabling it with the 'enableMocks' option.`)
       } else {
         console.log(`✔️  Automatic mocking is enabled`)
       }
