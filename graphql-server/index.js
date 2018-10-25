@@ -26,7 +26,6 @@ module.exports = (options, cb = null) => {
   const resolvers = load(options.paths.resolvers)
   const context = load(options.paths.context)
   const schemaDirectives = load(options.paths.directives)
-  const dataSources = load(options.paths.dataSources)
   let pubsub
   try {
     pubsub = load(options.paths.pubsub)
@@ -36,6 +35,10 @@ module.exports = (options, cb = null) => {
       console.log(chalk.grey(`You should provide a different implementation in production (for example with Redis) by exporting it in 'apollo-server/pubsub.js'.`))
     }
   }
+  let dataSources
+  try {
+    dataSources = load(options.paths.dataSources)
+  } catch (e) {}
 
   // GraphQL API Server
 
