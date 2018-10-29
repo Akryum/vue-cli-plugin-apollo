@@ -1,5 +1,5 @@
 <template>
-  <div class="apollo-engine">
+  <div class="engine-key-metrics">
     Engine
   </div>
 </template>
