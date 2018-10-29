@@ -85,8 +85,9 @@ module.exports = (api, options) => {
     if (args['generate-schema']) {
       const execa = require('execa')
       execa('vue-cli-service apollo:schema:generate', ['--watch'], {
-        cleanup: true,
         stdio: ['inherit', 'inherit', 'inherit'],
+        cleanup: true,
+        shell: true,
       })
     }
 
@@ -134,8 +135,9 @@ module.exports = (api, options) => {
     if (args['generate-schema']) {
       const execa = require('execa')
       execa('vue-cli-service apollo:schema:generate', {
-        cleanup: true,
         stdio: ['inherit', 'inherit', 'inherit'],
+        cleanup: true,
+        shell: true,
       })
     }
 
