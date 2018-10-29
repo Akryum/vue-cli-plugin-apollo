@@ -1,26 +1,26 @@
-# Included scalars
+"Included scalars"
 scalar JSON
 scalar Upload
 
 <% if (addExamples) { _%>
-# It will increment!
+"It will increment!"
 type Counter {
-  # Number of increments
+  "Number of increments"
   count: Int!
-  # Full message for testing
+  "Full message for testing"
   countStr: String
 }
 
-# A text message send by users
+"A text message send by users"
 type Message {
   id: ID!
-  # Message content
+  "Message content"
   text: String!
 }
 
-# Input from user to create a message
+"Input from user to create a message"
 input MessageInput {
-  # Message content
+  "Message content"
   text: String!
 }
 
@@ -34,10 +34,10 @@ type File {
 <%_ } %>
 
 type Query {
-  # Test query with a parameter
+  "Test query with a parameter"
   hello(name: String): String!
 <% if (addExamples) { _%>
-  # List of messages sent by users
+  "List of messages sent by users"
   messages: [Message]
   uploads: [File]
 <%_ } %>
@@ -46,7 +46,7 @@ type Query {
 type Mutation {
   myMutation: String!
 <% if (addExamples) { _%>
-  # Add a message and publish it on 'messages' subscription channel
+  "Add a message and publish it on 'messages' subscription channel"
   addMessage (input: MessageInput!): Message!
   singleUpload (file: Upload!): File!
   multipleUpload (files: [Upload!]!): [File!]!
@@ -56,9 +56,9 @@ type Mutation {
 type Subscription {
   mySub: String!
 <% if (addExamples) { _%>
-  # This will update every 2 seconds
+  "This will update every 2 seconds"
   counter: Counter!
-  # When a new message is added
+  "When a new message is added"
   messageAdded: Message!
 <%_ } %>
 }
