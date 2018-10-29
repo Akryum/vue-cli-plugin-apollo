@@ -157,6 +157,11 @@ function getServerOptions (api, options, args) {
   // Plugin options
   const { apolloOptions, baseFolder } = getBasicServerOptions(api, options, args)
 
+  let engineOptions = Object.assign({}, apolloOptions.engineOptions)
+  if (!engineOptions.endpointUrl && process.env.APOLLO_ENGINE_TRACING_ENDPOINT) {
+    engineOptions.endpointUrl = process.env.APOLLO_ENGINE_TRACING_ENDPOINT
+  }
+
   return {
     host,
     port,
@@ -169,7 +174,7 @@ function getServerOptions (api, options, args) {
     cors: defaultValue(apolloOptions.cors, '*'),
     timeout: defaultValue(apolloOptions.timeout, 120000),
     integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
-    engineOptions: apolloOptions.engineOptions,
+    engineOptions,
     serverOptions: apolloOptions.apolloServer,
     paths: {
       typeDefs: api.resolve(`${baseFolder}/type-defs`),

@@ -215,11 +215,13 @@ module.exports = (api, options) => {
   }, async args => {
     const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+    const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
 
     const publishSchema = require('./utils/publish-schema')
     await publishSchema({
       endpoint,
       key,
+      engineEndpoint,
     })
   })
 }
