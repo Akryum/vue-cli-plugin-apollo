@@ -217,7 +217,13 @@ module.exports = api => {
   })
 
   api.onTaskOpen(({ task }) => {
-    if (task.match === DEV_TASK || task.match === START_TASK) {
+    if ([
+      DEV_TASK,
+      DEV_CLIENT_TASK,
+      START_TASK,
+      GENERATE_SCHEMA_TASK,
+      PUBLISH_SCHEMA_TASK,
+    ].includes(task.match)) {
       addViewTipSuggestion()
       addApolloEngineSuggestion()
     } else {
