@@ -109,6 +109,7 @@ module.exports = api => {
   const DEV_TASK = /vue-cli-service apollo:watch/
   const RUN_TASK = /vue-cli-service apollo:run/
   const GENERATE_TASK = /vue-cli-service apollo:generate-schema/
+  const PUBLISH_SCHEMA_TASK = /vue-cli-service apollo:publish-schema/
 
   api.describeTask({
     match: DEV_TASK,
@@ -142,6 +143,34 @@ module.exports = api => {
     onBeforeRun: async ({ answers, args }) => {
       // Args
       if (answers.watch) args.push('--watch')
+    },
+  })
+
+  api.describeTask({
+    match: PUBLISH_SCHEMA_TASK,
+    description: 'Publish schema to Apollo Engine',
+    link: 'https://github.com/Akryum/vue-cli-plugin-apollo#injected-commands',
+    prompts: [
+      {
+        name: 'endpoint',
+        type: 'input',
+        default: '',
+        message: 'Endpoint',
+        description: 'URL to running GraphQL server or path to JSON schema file',
+      },
+      {
+        name: 'key',
+        type: 'input',
+        default: '',
+        message: 'Engine service key',
+        description: 'The unique API key associated with the Engine service of your project',
+        link: 'https://engine.apollographql.com',
+      },
+    ],
+    onBeforeRun: async ({ answers, args }) => {
+      // Args
+      if (answers.endpoint) args.push('--endpoint', args.endpoint)
+      if (answers.key) args.push('--key', args.key)
     },
   })
 

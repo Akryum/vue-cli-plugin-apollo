@@ -26,6 +26,7 @@ module.exports = (api, options, rootOptions) => {
         'apollo': 'vue-cli-service apollo:watch --run "vue-cli-service serve" --generate',
         'apollo:run': 'vue-cli-service apollo:run',
         'apollo:generate-schema': 'vue-cli-service apollo:generate-schema',
+        'apollo:publish-schema': 'vue-cli-service apollo:publish-schema',
       },
       vue: {
         pluginOptions: {

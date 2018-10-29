@@ -196,6 +196,20 @@ module.exports = (api, options) => {
       })
     }
   })
+
+  api.registerCommand('apollo:publish-schema', {
+    '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
+    '--key [key]': 'Engine service key',
+  }, async args => {
+    const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
+    const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+
+    const publishSchema = require('./utils/publish-schema')
+    await publishSchema({
+      endpoint,
+      key,
+    })
+  })
 }
 
 module.exports.defaultModes = {
