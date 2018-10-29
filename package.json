@@ -47,6 +47,7 @@
     "fs-extra": "^7.0.0",
     "graphql": "^14.0.2",
     "graphql-subscriptions": "^1.0.0",
+    "graphql-tag": "^2.10.0",
     "graphql-tools": "^4.0.2",
     "nodemon": "^1.18.4",
     "subscriptions-transport-ws": "^0.9.15",
