@@ -144,6 +144,14 @@ npm run run-graphql-api
 
   Run the GraphQL API server with info from `./apollo-server` once.
 
+- **`vue-cli-service apollo:schema:generate`**
+
+  Generate full JSON and GraphQL files from `./apollo-server`. They can be used by dev tools and Apollo Engine.
+
+- **`vue-cli-service apollo:schema:publish`**
+
+  Publish the schema on Apollo Engine. Run `vue-cli-service apollo:schema:generate` first!
+
 ## Configuration
 
 ### Plugin options

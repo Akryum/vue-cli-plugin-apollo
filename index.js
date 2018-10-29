@@ -162,8 +162,13 @@ module.exports = (api, options) => {
   })
 
   api.registerCommand('apollo:schema:generate', {
-    '--watch': 'Watch server files and re-generate schema JSON',
-    '--output [path]': 'Path to the output files',
+    description: 'Generates full schema JSON and GraphQL files',
+    usage: 'vue-cli-service apollo:schema:generate [options]',
+    options: {
+      '--watch': 'Watch server files and re-generate schema JSON',
+      '--output [path]': 'Path to the output files',
+    },
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, async args => {
     if (args.watch) {
       const {
@@ -198,8 +203,13 @@ module.exports = (api, options) => {
   })
 
   api.registerCommand('apollo:schema:publish', {
-    '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
-    '--key [key]': 'Engine service key',
+    description: 'Publish schema to Apollo Engine',
+    usage: 'vue-cli-service apollo:schema:publish [options]',
+    options: {
+      '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
+      '--key [key]': 'Engine service key',
+    },
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, async args => {
     const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
