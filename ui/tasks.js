@@ -106,29 +106,38 @@ module.exports = api => {
     },
   })
 
-  const DEV_TASK = /vue-cli-service apollo:watch/
-  const RUN_TASK = /vue-cli-service apollo:run/
-  const GENERATE_TASK = /vue-cli-service apollo:generate-schema/
-  const PUBLISH_SCHEMA_TASK = /vue-cli-service apollo:publish-schema/
+  const DEV_TASK = /vue-cli-service apollo:dev/
+  const DEV_CLIENT_TASK = /vue-cli-service apollo:dev.*vue-cli-service serve/
+  const START_TASK = /vue-cli-service apollo:start/
+  const GENERATE_SCHEMA_TASK = /vue-cli-service apollo:schema:generate/
+  const PUBLISH_SCHEMA_TASK = /vue-cli-service apollo:schema:publish/
+
+  const devOptions = commonOptions({
+    onBeforeRun: async ({ answers, args }) => {
+      console.log(args)
+    },
+  })
 
   api.describeTask({
     match: DEV_TASK,
     description: 'Run and watch the GraphQL server',
-    ...commonOptions({
-      onBeforeRun: async ({ answers, args }) => {
-        console.log(args)
-      },
-    }),
+    ...devOptions,
   })
 
   api.describeTask({
-    match: RUN_TASK,
+    match: DEV_CLIENT_TASK,
+    description: 'Run and watch the GraphQL server (with client webpack dev server)',
+    ...devOptions,
+  })
+
+  api.describeTask({
+    match: START_TASK,
     description: 'Run the GraphQL server',
     ...commonOptions(),
   })
 
   api.describeTask({
-    match: GENERATE_TASK,
+    match: GENERATE_SCHEMA_TASK,
     description: 'Generates full schema JSON and GraphQL files',
     link: 'https://github.com/Akryum/vue-cli-plugin-apollo#injected-commands',
     prompts: [
@@ -208,7 +217,7 @@ module.exports = api => {
   })
 
   api.onTaskOpen(({ task }) => {
-    if (task.match === DEV_TASK || task.match === RUN_TASK) {
+    if (task.match === DEV_TASK || task.match === START_TASK) {
       addViewTipSuggestion()
       addApolloEngineSuggestion()
     } else {

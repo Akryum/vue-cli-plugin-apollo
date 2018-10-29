@@ -136,11 +136,11 @@ npm run run-graphql-api
 
 ## Injected Commands
 
-- **`vue-cli-service apollo:watch`**
+- **`vue-cli-service apollo:dev`**
 
   Run the GraphQL API server with info from `./apollo-server` and watch the files to restart itself automatically.
 
-- **`vue-cli-service apollo:run`**
+- **`vue-cli-service apollo:start`**
 
   Run the GraphQL API server with info from `./apollo-server` once.
 
@@ -382,7 +382,7 @@ export default app => {
 ### Production app
 
 ```
-cross-env NODE_ENV=production yarn run apollo:run --mode production
+cross-env NODE_ENV=production yarn run apollo:start --mode production
 ```
 
 If you deploy on now.sh, add the following script to your `package.json`:
@@ -390,7 +390,7 @@ If you deploy on now.sh, add the following script to your `package.json`:
 ```json
 {
   "scripts": {
-    "start": "cross-env NODE_ENV=production yarn run apollo:run --mode production" 
+    "start": "cross-env NODE_ENV=production yarn run apollo:start --mode production" 
   }
 }
 ```

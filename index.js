@@ -67,9 +67,9 @@ module.exports = (api, options) => {
       .type('javascript/auto')
   })
 
-  api.registerCommand('apollo:watch', {
+  api.registerCommand('apollo:dev', {
     description: 'Run the Apollo server and watch the sources to restart automatically',
-    usage: 'vue-cli-service apollo:watch [options]',
+    usage: 'vue-cli-service apollo:dev [options]',
     options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
@@ -84,7 +84,7 @@ module.exports = (api, options) => {
 
     if (args['generate-schema']) {
       const execa = require('execa')
-      execa('vue-cli-service apollo:generate-schema', ['--watch'], {
+      execa('vue-cli-service apollo:schema:generate', ['--watch'], {
         cleanup: true,
         stdio: ['inherit', 'inherit', 'inherit'],
       })
@@ -94,7 +94,7 @@ module.exports = (api, options) => {
     const flatArgs = getFlatArgs(args, ['_', 'run', 'delay', 'generate-schema'])
 
     return runWatch(api, options, {
-      script: 'apollo:run',
+      script: 'apollo:start',
       args: ['--delay', ...flatArgs],
       onStart: () => {
         sendIpcMessage({
@@ -117,9 +117,9 @@ module.exports = (api, options) => {
     })
   })
 
-  api.registerCommand('apollo:run', {
+  api.registerCommand('apollo:start', {
     description: 'Run the Apollo server',
-    usage: 'vue-cli-service apollo:run [options]',
+    usage: 'vue-cli-service apollo:start [options]',
     options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
@@ -133,7 +133,7 @@ module.exports = (api, options) => {
 
     if (args['generate-schema']) {
       const execa = require('execa')
-      execa('vue-cli-service apollo:generate-schema', {
+      execa('vue-cli-service apollo:schema:generate', {
         cleanup: true,
         stdio: ['inherit', 'inherit', 'inherit'],
       })
@@ -161,7 +161,7 @@ module.exports = (api, options) => {
     }
   })
 
-  api.registerCommand('apollo:generate-schema', {
+  api.registerCommand('apollo:schema:generate', {
     '--watch': 'Watch server files and re-generate schema JSON',
     '--output [path]': 'Path to the output files',
   }, async args => {
@@ -173,7 +173,7 @@ module.exports = (api, options) => {
 
       const flatArgs = getFlatArgs(args, ['watch'])
       return runWatch(api, options, {
-        script: 'apollo:generate-schema',
+        script: 'apollo:schema:generate',
         args: flatArgs,
       })
     } else {
@@ -197,7 +197,7 @@ module.exports = (api, options) => {
     }
   })
 
-  api.registerCommand('apollo:publish-schema', {
+  api.registerCommand('apollo:schema:publish', {
     '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
     '--key [key]': 'Engine service key',
   }, async args => {
@@ -213,5 +213,5 @@ module.exports = (api, options) => {
 }
 
 module.exports.defaultModes = {
-  'apollo:watch': 'development',
+  'apollo:dev': 'development',
 }
