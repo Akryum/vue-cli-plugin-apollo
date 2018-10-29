@@ -169,6 +169,7 @@ function getServerOptions (api, options, args) {
     cors: defaultValue(apolloOptions.cors, '*'),
     timeout: defaultValue(apolloOptions.timeout, 120000),
     integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
+    engineOptions: apolloOptions.engineOptions,
     serverOptions: apolloOptions.apolloServer,
     paths: {
       typeDefs: api.resolve(`${baseFolder}/type-defs`),

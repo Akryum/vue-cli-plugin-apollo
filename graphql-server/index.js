@@ -121,7 +121,9 @@ module.exports = (options, cb = null) => {
     if (options.engineKey) {
       apolloServerOptions.engine = {
         apiKey: options.engineKey,
+        ...options.engineOptions || {},
       }
+      console.log(`✔️  Apollo Engine is enabled`)
     } else if (!options.quiet) {
       console.log(chalk.yellow('Apollo Engine key not found.') + `To enable Engine, set the ${chalk.cyan('VUE_APP_APOLLO_ENGINE_KEY')} env variable.`)
       console.log('Create a key at https://engine.apollographql.com/')
