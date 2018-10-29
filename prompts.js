@@ -40,4 +40,12 @@ module.exports = [
     validate: input => !!input,
     when: answers => answers.addApolloEngine,
   },
+  {
+    type: 'confirm',
+    name: 'publishSchema',
+    message: 'Publish schema on Apollo Engine',
+    group: 'GraphQL Server',
+    default: true,
+    when: answers => answers.addApolloEngine,
+  },
 ]

@@ -108,7 +108,9 @@ module.exports = (api, options, rootOptions) => {
     api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
   }
 
-  api.onCreateComplete(() => {
+  api.onCreateComplete(async () => {
+    const execa = require('execa')
+
     if (options.addExamples) {
       const appPath = api.resolve('src/App.vue')
       if (fs.existsSync(appPath)) {
@@ -136,6 +138,10 @@ module.exports = (api, options, rootOptions) => {
           fs.writeFileSync(gitignorePath, content, { encoding: 'utf8' })
         }
       }
+
+      await execa('vue-cli-service', [
+        'apollo:schema:generate',
+      ])
     }
 
     if (options.addApolloEngine) {
@@ -185,6 +191,13 @@ module.exports = (api, options, rootOptions) => {
         lint({ silent: true, _: files }, api)
       } catch (e) {
         // No ESLint vue-cli plugin
+      }
+
+      // Schema publish
+      if (options.publishSchema) {
+        await execa('vue-cli-service', [
+          'apollo:schema:publish',
+        ])
       }
     }
 

@@ -1,6 +1,6 @@
 projects:
   app:
-    schemaPath: apollo-server/schema.graphql
+    schemaPath: node_modules/.temp/graphql/schema.graphql
     includes:
       - '**/*.gql'
     extensions:
