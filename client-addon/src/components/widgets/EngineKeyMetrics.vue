@@ -94,6 +94,8 @@ export default {
         })
         if (errors.length && errors[0]) throw new Error(errors[0])
         this.data = results[0]
+
+        this.widget.customTitle = `Apollo Engine (${this.data.service.name})`
       } catch (e) {
         this.error = true
         console.error(e)
