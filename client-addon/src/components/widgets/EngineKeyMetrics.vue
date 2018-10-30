@@ -110,6 +110,9 @@ export default {
 <style lang="stylus" scoped>
 @import '~@vue/cli-ui/src/style/imports'
 
+.vue-ui-loading-bar
+  opacity .5
+
 .content,
 .engine-key-metrics-view
   height 100%
