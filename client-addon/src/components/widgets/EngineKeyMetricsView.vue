@@ -73,6 +73,7 @@ export default {
     },
 
     number (value) {
+      if (Number.isNaN(value) || value == null) return 0
       let result = value
       const units = ['B', 'M', 'k']
       const l = units.length
