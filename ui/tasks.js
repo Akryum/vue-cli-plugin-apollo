@@ -187,6 +187,8 @@ module.exports = api => {
   const WELCOME_DISABLED = 'suggestions.welcome.disabled'
   const OPEN_ENGINE = 'suggestions.open-engine'
   const VIEW_TIP = 'suggestions.view-tip'
+  const PUBLISH_SCHEMA_TIP = 'suggestions.publish-schema'
+  const PUBLISH_SCHEMA_TIP_DISABLED = 'suggestions.publish-schema.disabled'
 
   if (!storageGet(WELCOME_DISABLED)) {
     addSuggestion({
@@ -197,7 +199,6 @@ module.exports = api => {
       <ul>
       <li>You can configure the Apollo Server by going to 'Configurations'.</li>
       <li>Run the Apollo Server in the 'Tasks' page.</li>
-      <li>The 'Apollo GraphQL' page has even more info and tools for you!</li>
       <li>An Apollo Engine analytics widget is also available in the Dashboard.</li>
       </ul>`,
       image: '/_plugin/vue-cli-plugin-apollo/vue-apollo-graphql.png',
@@ -224,27 +225,30 @@ module.exports = api => {
       GENERATE_SCHEMA_TASK,
       PUBLISH_SCHEMA_TASK,
     ].includes(task.match)) {
-      addViewTipSuggestion()
+      // addViewTipSuggestion()
       addApolloEngineSuggestion()
+      if (task.match !== PUBLISH_SCHEMA_TASK && !storageGet(PUBLISH_SCHEMA_TIP_DISABLED)) {
+        addPublishSchemaSuggestion()
+      }
     } else {
       removeTaskSuggestions()
     }
   })
 
-  function addViewTipSuggestion () {
-    addSuggestion({
-      id: VIEW_TIP,
-      type: 'action',
-      label: 'Apollo GraphQL page',
-      message: 'Check out the Apollo GraphQL page for more tools and info!',
-      image: '/_plugin/vue-cli-plugin-apollo/view-tip.png',
-      handler () {
-        api.requestRoute({
-          name: 'org.akryum.vue-apollo.routes.apollo',
-        })
-      },
-    })
-  }
+  // function addViewTipSuggestion () {
+  //   addSuggestion({
+  //     id: VIEW_TIP,
+  //     type: 'action',
+  //     label: 'Apollo GraphQL page',
+  //     message: 'Check out the Apollo GraphQL page for more tools and info!',
+  //     image: '/_plugin/vue-cli-plugin-apollo/view-tip.png',
+  //     handler () {
+  //       api.requestRoute({
+  //         name: 'org.akryum.vue-apollo.routes.apollo',
+  //       })
+  //     },
+  //   })
+  // }
 
   function addApolloEngineSuggestion () {
     addSuggestion({
@@ -264,7 +268,20 @@ module.exports = api => {
     })
   }
 
+  function addPublishSchemaSuggestion () {
+    addSuggestion({
+      id: PUBLISH_SCHEMA_TIP,
+      type: 'action',
+      label: 'Publish your schema',
+      message: `You can publish your schema to Apollo Engine with the 'apollo:schema:publish' task.`,
+      image: '/_plugin/vue-cli-plugin-apollo/publish-task.png',
+      handler () {
+        storageSet(PUBLISH_SCHEMA_TIP_DISABLED, true)
+      },
+    })
+  }
+
   function removeTaskSuggestions () {
-    [OPEN_ENGINE, VIEW_TIP].forEach(id => removeSuggestion(id))
+    [OPEN_ENGINE, VIEW_TIP, PUBLISH_SCHEMA_TIP].forEach(id => removeSuggestion(id))
   }
 }

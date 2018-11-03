@@ -15,6 +15,6 @@ module.exports = api => {
 
   require('./configs')(api)
   require('./tasks')(api)
-  require('./views')(api)
   require('./widgets')(api)
+  // require('./views')(api)
 }
