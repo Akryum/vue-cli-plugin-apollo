@@ -4,6 +4,7 @@
     :class="{
       'small-width': widget.data.width === 2,
       'small-height': widget.data.height === 1,
+      'show-queries': showQueries,
     }"
   >
     <div class="top">
@@ -34,6 +35,14 @@
       <Queries
         :queries="queries"
         :unit="unit"
+      />
+    </div>
+
+    <div class="floating-actions">
+      <VueButton
+        :icon-left="showQueries ? 'expand_less' : 'expand_more'"
+        class="icon-button round primary"
+        @click="showQueries = !showQueries"
       />
     </div>
   </div>
@@ -92,6 +101,12 @@ export default {
     },
   },
 
+  data () {
+    return {
+      showQueries: false,
+    }
+  },
+
   computed: {
     timeRangeLabel () {
       return ({
@@ -144,19 +159,60 @@ export default {
     margin-bottom ($padding-item / 2)
     opacity .7
 
-.small-width
-  .top
-    flex-direction column
-  
-  .infos
-    display flex
-    .title
-      flex 1
-  
-  .secondary-infos
-    display none
+.floating-actions
+  position absolute
+  left 0
+  bottom 0
+  width 100%
+  display flex
+  box-center()
+  padding 4px
+  opacity 0
+  &:hover
+    opacity 1
 
-  .main-graph
-    height auto
-    margin-left 0
+.engine-key-metrics-view
+  position relative
+
+  &.small-width
+    .top
+      flex-direction column
+    
+    .infos
+      display flex
+      .title
+        flex 1
+    
+    .secondary-infos
+      display none
+
+    .main-graph
+      height auto
+      margin-left 0
+
+  &:not(.small-height)
+    .floating-actions
+      display none
+
+  &.small-height
+    .top,
+    .queries
+      transition opacity .15s, transform .15s
+
+    .queries
+      margin-top 12px
+      .title
+        display none
+
+    &.show-queries
+      .floating-actions
+        bottom auto
+        top 0
+
+      .top,
+      .queries
+        transform translateY(-100%)
+
+      .top
+        opacity 0
 </style>
