@@ -9,7 +9,7 @@ module.exports = api => {
   } else {
     api.addClientAddon({
       id: 'org.akryum.vue-apollo.client-addon',
-      path: path.resolve(__dirname, './client-addon-dist'),
+      path: path.resolve(__dirname, '../client-addon-dist'),
     })
   }
 
