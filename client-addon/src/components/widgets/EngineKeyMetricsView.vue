@@ -5,7 +5,7 @@
         <div class="title">{{ title }}</div>
 
         <div class="main-stat">
-          <span class="value">{{ number(mainStat.value) }}</span>
+          <span class="value">{{ formatNumber(mainStat.value) }}</span>
           <span class="unit">{{ unit }}</span>
         </div>
 
@@ -19,15 +19,28 @@
         class="main-graph"
       />
     </div>
+
+    <div class="queries">
+      <div class="title">{{ queriesTitle }}</div>
+      <Queries
+        v-if="widget.data.height >= 2"
+        :queries="queries"
+        :unit="unit"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import SimpleGraph from '../SimpleGraph.vue'
+import Queries from './EngineKeyMetricsQueries.vue'
+
+import { formatNumber } from '../../utils/math'
 
 export default {
   components: {
     SimpleGraph,
+    Queries,
   },
 
   inject: [
@@ -54,6 +67,21 @@ export default {
       type: Array,
       required: true,
     },
+
+    queriesTitle: {
+      type: String,
+      required: true,
+    },
+
+    queries: {
+      type: Array,
+      required: true,
+    },
+
+    rawData: {
+      type: Object,
+      required: true,
+    },
   },
 
   computed: {
@@ -68,24 +96,7 @@ export default {
   },
 
   methods: {
-    round (value) {
-      return Math.round(value * 1000) / 1000
-    },
-
-    number (value) {
-      if (Number.isNaN(value) || value == null) return 0
-      let result = value
-      const units = ['B', 'M', 'k']
-      const l = units.length
-      for (let i = 0; i < l; i++) {
-        const j = l - i
-        if (result > 1000 ** j) {
-          result /= 1000 ** j
-          return `${this.round(result)}${units[i]}`
-        }
-      }
-      return this.round(result)
-    }
+    formatNumber,
   },
 }
 </script>
@@ -97,8 +108,9 @@ export default {
   display flex
   height 120px
 
-.title
-  font-size 18px
+.infos
+  .title
+    font-size 18px
 
 .main-stat
   .value
@@ -117,4 +129,10 @@ export default {
   flex 1
   height 100%
   margin-left $padding-item
+
+.queries
+  margin-top ($padding-item * 2)
+  .title
+    margin-bottom ($padding-item / 2)
+    opacity .7
 </style>

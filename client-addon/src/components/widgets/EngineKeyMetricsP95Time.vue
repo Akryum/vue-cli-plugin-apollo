@@ -31,6 +31,16 @@ export default {
     median () {
       return median(this.points.map(p => p.value))
     },
+
+    queries () {
+      return this.stats.queriesStats.map(
+        stat => ({
+          id: stat.group.queryId,
+          name: stat.group.queryName,
+          value: stat.metrics.totalLatencyHistogram.p95Time,
+        })
+      ).sort((a, b) => b.value - a.value)
+    },
   },
 
   render (h) {
@@ -41,6 +51,9 @@ export default {
         value: this.median,
       }}
       points={this.points}
+      queriesTitle="Slowest p95 Service Time"
+      queries={this.queries}
+      rawData={this.data}
     />
   }
 }

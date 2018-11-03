@@ -43,6 +43,17 @@ export default {
         })
       )
     },
+
+    queries () {
+      return this.stats.queriesStats.map(
+        stat => ({
+          id: stat.group.queryId,
+          name: stat.group.queryName,
+          value: (stat.metrics.uncachedRequestsCount +
+            stat.metrics.cachedRequestsCount) * this.timeRatio,
+        })
+      )
+    },
   },
 
   render (h) {
@@ -53,6 +64,9 @@ export default {
         value: this.median,
       }}
       points={this.points}
+      queriesTitle="Highest Request Rate"
+      queries={this.queries}
+      rawData={this.data}
     />
   }
 }
