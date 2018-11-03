@@ -217,6 +217,27 @@ module.exports = (api, options) => {
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
     const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
 
+    // Auto-generate if json file doesn't exist
+    if (endpoint.match(/\.json$/i)) {
+      const fs = require('fs')
+      const file = api.resolve(endpoint)
+      if (!fs.existsSync(file)) {
+        const path = require('path')
+        const output = path.join(path.dirname(file), path.basename(file, path.extname(file)))
+        const execa = require('execa')
+        await execa('vue-cli-service apollo:schema:generate', [
+          '--output',
+          output,
+        ], {
+          stdio: ['inherit', 'inherit', 'inherit'],
+          cleanup: true,
+          shell: true,
+        })
+        const { info } = require('@vue/cli-shared-utils')
+        info(`The JSON schema was automatically generated in '${file}'.`, 'apollo')
+      }
+    }
+
     const publishSchema = require('./utils/publish-schema')
     await publishSchema({
       endpoint,
