@@ -59,7 +59,13 @@ export default {
 <style lang="stylus" scoped>
 @import '~@vue/cli-ui/src/style/imports'
 
+.simple-graph
+  position relative
+
 .render
+  position absolute
+  top 0
+  left 0
   width 100%
   height 100%
 

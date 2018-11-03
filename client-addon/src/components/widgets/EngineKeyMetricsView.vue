@@ -1,10 +1,19 @@
 <template>
-  <div class="engine-key-metrics-view">
+  <div
+    class="engine-key-metrics-view"
+    :class="{
+      'small-width': widget.data.width === 2,
+      'small-height': widget.data.height === 1,
+    }"
+  >
     <div class="top">
       <div class="infos">
         <div class="title">{{ title }}</div>
 
-        <div class="main-stat">
+        <div
+          class="main-stat"
+          v-tooltip="`${timeRangeLabel} median`"
+        >
           <span class="value">{{ formatNumber(mainStat.value) }}</span>
           <span class="unit">{{ unit }}</span>
         </div>
@@ -23,7 +32,6 @@
     <div class="queries">
       <div class="title">{{ queriesTitle }}</div>
       <Queries
-        v-if="widget.data.height >= 2"
         :queries="queries"
         :unit="unit"
       />
@@ -135,4 +143,20 @@ export default {
   .title
     margin-bottom ($padding-item / 2)
     opacity .7
+
+.small-width
+  .top
+    flex-direction column
+  
+  .infos
+    display flex
+    .title
+      flex 1
+  
+  .secondary-infos
+    display none
+
+  .main-graph
+    height auto
+    margin-left 0
 </style>
