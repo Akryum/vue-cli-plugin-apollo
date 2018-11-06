@@ -110,6 +110,7 @@ module.exports = api => {
   const DEV_CLIENT_TASK = /vue-cli-service apollo:dev.*vue-cli-service serve/
   const START_TASK = /vue-cli-service apollo:start/
   const GENERATE_SCHEMA_TASK = /vue-cli-service apollo:schema:generate/
+  const CHECK_SCHEMA_TASK = /vue-cli-service apollo:schema:check/
   const PUBLISH_SCHEMA_TASK = /vue-cli-service apollo:schema:publish/
 
   const devOptions = commonOptions({
@@ -152,6 +153,34 @@ module.exports = api => {
     onBeforeRun: async ({ answers, args }) => {
       // Args
       if (answers.watch) args.push('--watch')
+    },
+  })
+
+  api.describeTask({
+    match: CHECK_SCHEMA_TASK,
+    description: 'Check schema and compare it to the published schema on Apollo Engine',
+    link: 'https://github.com/Akryum/vue-cli-plugin-apollo#injected-commands',
+    prompts: [
+      {
+        name: 'endpoint',
+        type: 'input',
+        default: '',
+        message: 'Endpoint',
+        description: 'URL to running GraphQL server or path to JSON schema file',
+      },
+      {
+        name: 'key',
+        type: 'input',
+        default: '',
+        message: 'Engine service key',
+        description: 'The unique API key associated with the Engine service of your project',
+        link: 'https://engine.apollographql.com',
+      },
+    ],
+    onBeforeRun: async ({ answers, args }) => {
+      // Args
+      if (answers.endpoint) args.push('--endpoint', args.endpoint)
+      if (answers.key) args.push('--key', args.key)
     },
   })
 

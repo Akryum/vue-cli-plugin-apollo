@@ -204,6 +204,29 @@ module.exports = (api, options) => {
     }
   })
 
+  api.registerCommand('apollo:schema:check', {
+    description: 'Compare schema from Apollo Engine',
+    usage: 'vue-cli-service apollo:schema:check [options]',
+    options: {
+      '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
+      '--key [key]': 'Engine service key',
+    },
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
+  }, async args => {
+    const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
+    const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+    const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
+
+    await autoGenerateSchema(endpoint)
+
+    const checkSchema = require('./utils/check-schema')
+    await checkSchema({
+      endpoint,
+      key,
+      engineEndpoint,
+    })
+  })
+
   api.registerCommand('apollo:schema:publish', {
     description: 'Publish schema to Apollo Engine',
     usage: 'vue-cli-service apollo:schema:publish [options]',
@@ -217,6 +240,17 @@ module.exports = (api, options) => {
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
     const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
 
+    await autoGenerateSchema(endpoint)
+
+    const publishSchema = require('./utils/publish-schema')
+    await publishSchema({
+      endpoint,
+      key,
+      engineEndpoint,
+    })
+  })
+
+  async function autoGenerateSchema (endpoint) {
     // Auto-generate if json file doesn't exist
     if (endpoint.match(/\.json$/i)) {
       const fs = require('fs')
@@ -237,14 +271,7 @@ module.exports = (api, options) => {
         info(`The JSON schema was automatically generated in '${file}'.`, 'apollo')
       }
     }
-
-    const publishSchema = require('./utils/publish-schema')
-    await publishSchema({
-      endpoint,
-      key,
-      engineEndpoint,
-    })
-  })
+  }
 }
 
 module.exports.defaultModes = {

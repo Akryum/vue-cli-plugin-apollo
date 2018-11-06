@@ -27,6 +27,7 @@ module.exports = (api, options, rootOptions) => {
         'apollo:dev:client': 'vue-cli-service apollo:dev --run "vue-cli-service serve" --generate-schema',
         'apollo:start': 'vue-cli-service apollo:start',
         'apollo:schema:generate': 'vue-cli-service apollo:schema:generate',
+        'apollo:schema:check': 'vue-cli-service apollo:schema:check',
         'apollo:schema:publish': 'vue-cli-service apollo:schema:publish',
       },
       vue: {
