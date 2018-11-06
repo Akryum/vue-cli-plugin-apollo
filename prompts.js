@@ -45,7 +45,7 @@ module.exports = [
     name: 'publishSchema',
     message: 'Publish schema on Apollo Engine',
     group: 'GraphQL Server',
-    default: true,
+    default: false,
     when: answers => answers.addApolloEngine,
   },
 ]
