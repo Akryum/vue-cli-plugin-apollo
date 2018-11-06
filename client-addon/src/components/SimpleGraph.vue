@@ -74,4 +74,6 @@ export default {
   stroke-width 1px
   fill none
   vector-effect non-scaling-stroke
+  .vue-ui-dark-mode &
+    stroke lighten(@stroke, 60%)
 </style>
