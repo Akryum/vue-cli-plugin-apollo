@@ -305,6 +305,12 @@ module.exports = api => {
       message: `You can publish your schema to Apollo Engine with the 'apollo:schema:publish' task.`,
       image: '/_plugin/vue-cli-plugin-apollo/publish-task.png',
       handler () {
+        api.requestRoute({
+          name: 'project-task-details',
+          params: {
+            id: `${api.getCwd()}:apollo:schema:publish`,
+          },
+        })
         storageSet(PUBLISH_SCHEMA_TIP_DISABLED, true)
       },
     })
