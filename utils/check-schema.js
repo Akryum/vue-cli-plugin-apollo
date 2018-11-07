@@ -1,4 +1,4 @@
-module.exports = async ({ endpoint, key, engineEndpoint }) => {
+module.exports = async ({ endpoint, key, tag, engineEndpoint }) => {
   const execa = require('execa')
   const { logWithSpinner, stopSpinner, done } = require('@vue/cli-shared-utils')
 
@@ -7,6 +7,7 @@ module.exports = async ({ endpoint, key, engineEndpoint }) => {
     'schema:check',
     `--endpoint=${endpoint}`,
     `--key=${key}`,
+    ...(tag ? [`--tag=${tag}`] : []),
     ...(engineEndpoint ? [`--engine=${engineEndpoint}`] : []),
   ], {
     stdio: ['inherit', 'inherit', 'inherit'],

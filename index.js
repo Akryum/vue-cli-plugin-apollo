@@ -10,6 +10,12 @@ const COMMAND_OPTIONS = {
   '--generate-schema': 'auto-generate JSON and GraphQL schema files',
 }
 
+const SCHEMA_OPTIONS = {
+  '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
+  '--key [key]': 'Engine service key',
+  '--tag [tag]': 'Schema Tag',
+}
+
 const DEFAULT_GENERATE_OUTPUT = './node_modules/.temp/graphql/schema'
 
 module.exports = (api, options) => {
@@ -207,14 +213,12 @@ module.exports = (api, options) => {
   api.registerCommand('apollo:schema:check', {
     description: 'Compare schema from Apollo Engine',
     usage: 'vue-cli-service apollo:schema:check [options]',
-    options: {
-      '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
-      '--key [key]': 'Engine service key',
-    },
+    options: SCHEMA_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, async args => {
     const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+    const tag = args.tag || process.env.VUE_APP_APOLLO_ENGINE_TAG
     const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
 
     await autoGenerateSchema(endpoint)
@@ -223,6 +227,7 @@ module.exports = (api, options) => {
     await checkSchema({
       endpoint,
       key,
+      tag,
       engineEndpoint,
     })
   })
@@ -230,14 +235,12 @@ module.exports = (api, options) => {
   api.registerCommand('apollo:schema:publish', {
     description: 'Publish schema to Apollo Engine',
     usage: 'vue-cli-service apollo:schema:publish [options]',
-    options: {
-      '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
-      '--key [key]': 'Engine service key',
-    },
+    options: SCHEMA_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, async args => {
     const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+    const tag = args.tag || process.env.VUE_APP_APOLLO_ENGINE_TAG
     const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
 
     await autoGenerateSchema(endpoint)
@@ -246,6 +249,7 @@ module.exports = (api, options) => {
     await publishSchema({
       endpoint,
       key,
+      tag,
       engineEndpoint,
     })
   })

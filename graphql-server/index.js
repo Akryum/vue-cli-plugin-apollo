@@ -121,6 +121,7 @@ module.exports = (options, cb = null) => {
     if (options.engineKey) {
       apolloServerOptions.engine = {
         apiKey: options.engineKey,
+        schemaTag: options.schemaTag,
         ...options.engineOptions || {},
       }
       console.log(`✔️  Apollo Engine is enabled`)

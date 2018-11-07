@@ -6,6 +6,9 @@ module.exports = gql`
     id
     name
     createdAt
+    schemaTags {
+      tag
+    }
   }
 }
 `

@@ -6,12 +6,15 @@ query p95TimeKeyMetrics(
   $timeFrom: Timestamp!
   $timeTo: Timestamp
   $resolution: Resolution
+  $filter: ServiceQueryStatsFilter
 ) {
   service(id: $serviceId) {
     id
     name
     stats(from: $timeFrom, to: $timeTo, resolution: $resolution) {
-      globalStats: queryStats {
+      globalStats: queryStats(
+        filter: $filter
+      ) {
         timestamp
         metrics {
           totalLatencyHistogram {
@@ -21,6 +24,7 @@ query p95TimeKeyMetrics(
       }
       queriesStats: queryStats(
         limit: 4
+        filter: $filter
       ) {
         timestamp
         group: groupBy {

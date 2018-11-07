@@ -6,12 +6,15 @@ query errorPercentageKeyMetrics(
   $timeFrom: Timestamp!
   $timeTo: Timestamp
   $resolution: Resolution
+  $filter: ServiceQueryStatsFilter
 ) {
   service(id: $serviceId) {
     id
     name
     stats(from: $timeFrom, to: $timeTo, resolution: $resolution) {
-      globalStats: queryStats {
+      globalStats: queryStats(
+        filter: $filter
+      ) {
         timestamp
         metrics {
           cachedRequestsCount
@@ -22,6 +25,7 @@ query errorPercentageKeyMetrics(
       queriesStats: queryStats(
         limit: 4
         orderBy: [{ column: REQUESTS_WITH_ERRORS_COUNT, direction: DESCENDING }]
+        filter: $filter
       ) {
         timestamp
         group: groupBy {

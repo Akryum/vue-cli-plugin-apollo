@@ -1,6 +1,12 @@
 module.exports = api => {
   const { registerWidget, onAction } = api.namespace('org.akryum.vue-apollo.widgets.')
 
+  const { loadEnv } = require('../utils/load-env')
+  const env = loadEnv([
+    api.resolve('.env'),
+    api.resolve('.env.local'),
+  ])
+
   function queryEngine ({ query, variables }) {
     const { execute } = require('../utils/engine-api')
     const { loadEnv } = require('../utils/load-env')
@@ -56,7 +62,27 @@ module.exports = api => {
                 name: service.name,
                 value: service.id,
               })),
+              default: env.VUE_APP_APOLLO_ENGINE_SERVICE,
               validate: input => !!input,
+            },
+            {
+              name: 'tag',
+              type: 'list',
+              choices: answers => {
+                const service = allServices.find(s => s.id === answers.service)
+                if (!service) return []
+                return service.schemaTags.map(tag => ({
+                  name: tag.tag,
+                  value: tag.tag,
+                })).concat([
+                  {
+                    name: 'untagged',
+                    value: null,
+                  },
+                ])
+              },
+              message: 'Schema Tag',
+              default: env.VUE_APP_APOLLO_ENGINE_TAG,
             },
             {
               name: 'type',
@@ -110,6 +136,9 @@ module.exports = api => {
           timeFrom: `-${params.timeRange}`,
           timeTo: '-0',
           resolution: resolutions[params.timeRange],
+          filter: {
+            schemaTag: params.tag,
+          },
           ...params.otherVariables || {},
         },
       })

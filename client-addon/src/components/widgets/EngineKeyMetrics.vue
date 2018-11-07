@@ -14,9 +14,20 @@
         <VueIcon icon="error" class="huge"/>
         <div>An error occured while fetching metrics</div>
       </div>
+
+      <div
+        v-else-if="!data || !data.service"
+        class="vue-ui-empty"
+      >
+        <VueIcon
+          icon="cacke"
+          class="big"
+        />
+        <div>No available data</div>
+      </div>
       
       <component
-        v-else-if="data"
+        v-else
         :is="component"
         :data="data"
         class="engine-key-metrics-view"
@@ -109,7 +120,7 @@ export default {
         if (errors.length && errors[0]) throw new Error(errors[0])
         this.data = results[0]
 
-        this.widget.customTitle = `Apollo Engine (${this.data.service.name})`
+        this.widget.customTitle = `Apollo Engine ‧ ${this.data.service.name}@${this.widget.data.config.tag || 'untagged'}`
       } catch (e) {
         this.error = true
         console.error(e)

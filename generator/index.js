@@ -10,7 +10,8 @@ module.exports = (api, options, rootOptions) => {
       'vue-apollo': '^3.0.0-beta.11',
     },
     devDependencies: {
-      'apollo': '^1.9.2',
+      'apollo': '^2.0.1',
+      'dotenv': '6.1.0',
       'graphql-tag': '^2.9.0',
     },
   })
@@ -84,6 +85,7 @@ module.exports = (api, options, rootOptions) => {
           'graphql/template-strings': ['error', {
             env: 'literal',
             projectName: 'app',
+            schemaJsonFilepath: 'node_modules/.temp/graphql/schema.json',
           }],
         },
       },
@@ -146,20 +148,43 @@ module.exports = (api, options, rootOptions) => {
     }
 
     if (options.addApolloEngine) {
-      // Modify .env.local file
-      const envPath = api.resolve('.env.local')
-      let content = ''
-
-      if (fs.existsSync(envPath)) {
-        content = fs.readFileSync(envPath, { encoding: 'utf8' })
+      const updateVariable = (content, key, value) => {
+        if (content.indexOf(`${key}=`) === -1) {
+          content += `${key}=${value}\n`
+        } else {
+          content = content.replace(new RegExp(`${key}=(.*)\\n`), `${key}=${value}\n`)
+        }
+        return content
       }
 
-      if (content.indexOf('VUE_APP_APOLLO_ENGINE_KEY=') === -1) {
-        content += `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`
-      } else {
-        content = content.replace(/VUE_APP_APOLLO_ENGINE_KEY=(.*)\n/, `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`)
+      {
+        // Modify .env.local file
+        const envPath = api.resolve('.env.local')
+        let content = ''
+
+        if (fs.existsSync(envPath)) {
+          content = fs.readFileSync(envPath, { encoding: 'utf8' })
+        }
+
+        content = updateVariable(content, 'VUE_APP_APOLLO_ENGINE_KEY', options.apolloEngineKey)
+
+        fs.writeFileSync(envPath, content, { encoding: 'utf8' })
       }
-      fs.writeFileSync(envPath, content, { encoding: 'utf8' })
+
+      {
+        // Modify .env file
+        const envPath = api.resolve('.env')
+        let content = ''
+
+        if (fs.existsSync(envPath)) {
+          content = fs.readFileSync(envPath, { encoding: 'utf8' })
+        }
+
+        content = updateVariable(content, 'VUE_APP_APOLLO_ENGINE_SERVICE', options.apolloEngineService)
+        content = updateVariable(content, 'VUE_APP_APOLLO_ENGINE_TAG', options.apolloEngineTag)
+
+        fs.writeFileSync(envPath, content, { encoding: 'utf8' })
+      }
     }
 
     // Linting

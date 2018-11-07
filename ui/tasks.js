@@ -10,6 +10,16 @@ module.exports = api => {
     storageSet,
   } = api.namespace('org.akryum.vue-apollo.')
 
+  const ENGINE_FRONTEND = process.env.APOLLO_ENGINE_FRONTEND || 'https://engine.apollographql.com'
+
+  setSharedData('engine.frontend', ENGINE_FRONTEND)
+
+  const { loadEnv } = require('../utils/load-env')
+  const env = loadEnv([
+    api.resolve('.env'),
+    api.resolve('.env.local'),
+  ])
+
   function resetData (force = false) {
     if (force || !getSharedData('running')) {
       setSharedData('running', false)
@@ -156,31 +166,46 @@ module.exports = api => {
     },
   })
 
+  const schemaCommonPrompts = [
+    {
+      name: 'endpoint',
+      type: 'input',
+      default: '',
+      message: 'Endpoint',
+      description: 'URL to running GraphQL server or path to JSON schema file',
+    },
+    {
+      name: 'key',
+      type: 'input',
+      default: '',
+      message: 'Engine service key',
+      description: 'The unique API key associated with the Engine service of your project',
+      link: 'https://engine.apollographql.com',
+    },
+    {
+      name: 'tag',
+      type: 'input',
+      default: '',
+      message: 'Schema Tag',
+      description: 'You can have data over multiples tags, which is useful when having several env like staging and production.',
+    },
+  ]
+
+  const schemaCommonOnBeforeRun = async ({ answers, args }) => {
+    if (answers.endpoint) args.push('--endpoint', answers.endpoint)
+    if (answers.key) args.push('--key', answers.key)
+    if (answers.tag) args.push('--tag', answers.tag)
+  }
+
   api.describeTask({
     match: CHECK_SCHEMA_TASK,
     description: 'Check schema and compare it to the published schema on Apollo Engine',
     link: 'https://github.com/Akryum/vue-cli-plugin-apollo#injected-commands',
     prompts: [
-      {
-        name: 'endpoint',
-        type: 'input',
-        default: '',
-        message: 'Endpoint',
-        description: 'URL to running GraphQL server or path to JSON schema file',
-      },
-      {
-        name: 'key',
-        type: 'input',
-        default: '',
-        message: 'Engine service key',
-        description: 'The unique API key associated with the Engine service of your project',
-        link: 'https://engine.apollographql.com',
-      },
+      ...schemaCommonPrompts,
     ],
     onBeforeRun: async ({ answers, args }) => {
-      // Args
-      if (answers.endpoint) args.push('--endpoint', args.endpoint)
-      if (answers.key) args.push('--key', args.key)
+      await schemaCommonOnBeforeRun({ answers, args })
     },
   })
 
@@ -189,26 +214,10 @@ module.exports = api => {
     description: 'Publish schema to Apollo Engine',
     link: 'https://github.com/Akryum/vue-cli-plugin-apollo#injected-commands',
     prompts: [
-      {
-        name: 'endpoint',
-        type: 'input',
-        default: '',
-        message: 'Endpoint',
-        description: 'URL to running GraphQL server or path to JSON schema file',
-      },
-      {
-        name: 'key',
-        type: 'input',
-        default: '',
-        message: 'Engine service key',
-        description: 'The unique API key associated with the Engine service of your project',
-        link: 'https://engine.apollographql.com',
-      },
+      ...schemaCommonPrompts,
     ],
     onBeforeRun: async ({ answers, args }) => {
-      // Args
-      if (answers.endpoint) args.push('--endpoint', args.endpoint)
-      if (answers.key) args.push('--key', args.key)
+      await schemaCommonOnBeforeRun({ answers, args })
     },
   })
 
@@ -287,7 +296,7 @@ module.exports = api => {
       message: `Apollo Engine is a cloud service that provides deep insights into your GraphQL layer, with performance and error analytics.`,
       image: '/_plugin/vue-cli-plugin-apollo/apollo-engine.png',
       link: 'https://www.apollographql.com/engine',
-      actionLink: 'https://engine.apollographql.com/',
+      actionLink: `${ENGINE_FRONTEND}/service/${env.VUE_APP_APOLLO_ENGINE_SERVICE}`,
       // handler () {
       //   openBrowser('https://engine.apollographql.com/')
       //   return {

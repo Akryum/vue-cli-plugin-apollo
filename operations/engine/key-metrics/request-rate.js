@@ -6,12 +6,15 @@ query requestRateKeyMetrics(
   $timeFrom: Timestamp!
   $timeTo: Timestamp
   $resolution: Resolution
+  $filter: ServiceQueryStatsFilter
 ) {
   service(id: $serviceId) {
     id
     name
     stats(from: $timeFrom, to: $timeTo, resolution: $resolution) {
-      globalStats: queryStats {
+      globalStats: queryStats(
+        filter: $filter
+      ) {
         timestamp
         metrics {
           uncachedRequestsCount
@@ -21,6 +24,7 @@ query requestRateKeyMetrics(
       queriesStats: queryStats(
         limit: 4
         orderBy: [{ column: UNCACHED_REQUESTS_COUNT, direction: DESCENDING }]
+        filter: $filter
       ) {
         timestamp
         group: groupBy {

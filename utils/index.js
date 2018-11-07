@@ -153,6 +153,7 @@ function getServerOptions (api, options, args) {
   const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
   const subscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
   const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
+  const schemaTag = process.env.VUE_APP_APOLLO_ENGINE_TAG
 
   // Plugin options
   const { apolloOptions, baseFolder } = getBasicServerOptions(api, options, args)
@@ -174,6 +175,7 @@ function getServerOptions (api, options, args) {
     cors: defaultValue(apolloOptions.cors, '*'),
     timeout: defaultValue(apolloOptions.timeout, 120000),
     integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
+    schemaTag,
     engineOptions,
     serverOptions: apolloOptions.apolloServer,
     paths: {
