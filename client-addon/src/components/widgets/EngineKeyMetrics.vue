@@ -36,10 +36,18 @@ const COMPONENTS = {
   errorPercentage: ErrorPercentage,
 }
 
+const bus = new Vue()
+
 export default {
   inject: [
     'widget'
   ],
+
+  sharedData () {
+    return mapSharedData('org.akryum.vue-apollo.', {
+      engineFrontend: 'engine.frontend',
+    })
+  },
 
   data () {
     return {
@@ -69,7 +77,7 @@ export default {
       tooltip: 'Refresh',
       disabled: () => this.loading,
       onCalled: () => {
-        this.fetchMetrics()
+        bus.$emit('refresh')
       }
     })
 
@@ -78,9 +86,15 @@ export default {
       icon: 'open_in_new',
       tooltip: 'Open Apollo Engine',
       onCalled: () => {
-        window.open(`https://engine.apollographql.com/service/${this.widget.data.config.service}/metrics`, '_blank')
+        window.open(`${this.engineFrontend}/service/${this.widget.data.config.service}/metrics`, '_blank')
       }
     })
+
+    bus.$on('refresh', this.fetchMetrics)
+  },
+
+  destroyed () {
+    bus.$off('refresh', this.fetchMetrics)
   },
 
   methods: {
