@@ -207,22 +207,27 @@ module.exports = (api, options, rootOptions) => {
 
       // Lint generated/modified files
       try {
-        const lint = require('@vue/cli-plugin-eslint/lint')
         const files = ['*.js', '.*.js', 'src']
-        if (options.addServer) {
+        if (api.hasPlugin('apollo')) {
           files.push('apollo-server')
         }
-        lint({ silent: true, _: files }, api)
+        execa.sync('vue-cli-service lint', [
+          '--silent',
+          ...files,
+        ], {
+          cleanup: true,
+          shell: true,
+        })
       } catch (e) {
         // No ESLint vue-cli plugin
       }
+    }
 
-      // Schema publish
-      if (options.publishSchema) {
-        await execa('vue-cli-service', [
-          'apollo:schema:publish',
-        ])
-      }
+    // Schema publish
+    if (options.publishSchema) {
+      await execa('vue-cli-service', [
+        'apollo:schema:publish',
+      ])
     }
 
     if (options.addServer) {
