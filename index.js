@@ -186,7 +186,7 @@ module.exports = (api, options) => {
         cors: defaultValue(apolloOptions.cors, '*'),
         timeout: defaultValue(apolloOptions.timeout, 120000),
         integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
-        serverOptions: apolloOptions.apolloServer,
+        serverOptions: apolloOptions.serverOptions,
         paths: {
           typeDefs: api.resolve(`${baseFolder}/type-defs`),
           resolvers: api.resolve(`${baseFolder}/resolvers`),
