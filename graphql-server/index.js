@@ -12,9 +12,9 @@ require = require('esm')(module)
 
 module.exports = (options, cb = null) => {
   // Default options
-  options = merge(options, {
+  options = merge({
     integratedEngine: false,
-  })
+  }, options)
 
   // Express app
   const app = express()
