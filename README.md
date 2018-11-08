@@ -163,14 +163,17 @@ module.exports = {
 
       /* Other options (with default values) */
 
+      // Base folder for the server source files
+      serverFolder: './apollo-server',
       // Cross-Origin options
       cors: '*',
       // Requests timeout (ms)
       timeout: 120000,
       // Integrated apollo engine
       integratedEngine: true,
-      // Base folder for the server source files
-      serverFolder: './apollo-server',
+      // For enable typescript server files
+      // if you don't have @vue/cli-plugin-typescript
+      typescript: true,
       // Apollo server options (will be merged with the included default options)
       serverOptions: {
         // ...
