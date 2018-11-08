@@ -10,8 +10,6 @@ module.exports = (api, options, rootOptions) => {
       'vue-apollo': '^3.0.0-beta.11',
     },
     devDependencies: {
-      'apollo': '^2.0.1',
-      'dotenv': '6.1.0',
       'graphql-tag': '^2.9.0',
     },
   })
