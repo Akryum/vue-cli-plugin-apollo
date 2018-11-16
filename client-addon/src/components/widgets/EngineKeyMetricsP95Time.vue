@@ -37,6 +37,7 @@ export default {
         stat => ({
           id: stat.group.queryId,
           name: stat.group.queryName,
+          signature: stat.group.querySignature,
           value: stat.metrics.totalLatencyHistogram.p95Time,
         })
       ).sort((a, b) => b.value - a.value)

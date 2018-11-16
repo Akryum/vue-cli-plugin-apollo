@@ -49,6 +49,7 @@ export default {
         stat => ({
           id: stat.group.queryId,
           name: stat.group.queryName,
+          signature: stat.group.querySignature,
           value: (stat.metrics.uncachedRequestsCount +
             stat.metrics.cachedRequestsCount) * this.timeRatio,
         })

@@ -1,7 +1,7 @@
 <template>
   <div class="engine-key-metrics-query">
     <div class="id">{{ id }}</div>
-    <div class="name">{{ query.name }}</div>
+    <div class="name">{{ query.name || query.signature }}</div>
     <div class="metric">
       <span class="value">{{ formatNumber(query.value) }}</span>
       <span class="unit">{{ unit }}</span>
@@ -45,10 +45,13 @@ export default {
   align-items baseline
   padding ($padding-item / 2) 0
   font-size 14px
-
-.id
   font-family monospace
   font-size .8em
+
+  &:hover
+    background rgba($vue-ui-color-primary, .1)
+
+.id
   margin-right $padding-item
   opacity .7
 

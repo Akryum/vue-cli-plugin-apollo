@@ -30,6 +30,7 @@ query p95TimeKeyMetrics(
         group: groupBy {
           queryId
           queryName
+          querySignature
         }
         metrics {
           totalLatencyHistogram {

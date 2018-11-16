@@ -31,6 +31,7 @@ query errorPercentageKeyMetrics(
         group: groupBy {
           queryId
           queryName
+          querySignature
         }
         metrics {
           cachedRequestsCount

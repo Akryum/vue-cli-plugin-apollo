@@ -30,6 +30,7 @@ query requestRateKeyMetrics(
         group: groupBy {
           queryId
           queryName
+          querySignature
         }
         metrics {
           uncachedRequestsCount
