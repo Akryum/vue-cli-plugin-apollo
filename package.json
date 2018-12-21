@@ -10,7 +10,9 @@
     "build:client-addon": "cd ./client-addon && yarn build && cd ../",
     "prepublishOnly": "npm run test && npm run build",
     "test": "npm run test:eslint && cd ./client-addon npm run lint",
-    "test:eslint": "eslint --ext .js ."
+    "test:eslint": "eslint --ext .js .",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "repository": {
     "type": "git",
@@ -61,7 +63,8 @@
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^4.2.2"
+    "eslint-plugin-vue": "^4.2.2",
+    "vuepress": "^0.14.8"
   },
   "peerDependencies": {
     "@vue/cli-shared-utils": "^3.0.0"
