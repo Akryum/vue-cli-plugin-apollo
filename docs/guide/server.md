@@ -1,6 +1,6 @@
 # Server Usage
 
-If you enabled the GraphQL API Server, start it (by default it also runs `serve`):
+If you enabled the GraphQL API Server, start it alongside the client:
 
 ```
 npm run apollo
