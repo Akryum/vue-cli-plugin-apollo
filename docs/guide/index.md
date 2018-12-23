@@ -25,3 +25,31 @@ npm run serve
 **Updating `vue-cli-plugin-apollo` will also update both Apollo Client and its configuration for you! :+1:**
 
 Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
+
+## Sponsors
+
+### Silver
+
+<p style="text-align: center;">
+  <a href="https://vueschool.io/" target="_blank">
+    <img src="https://vueschool.io/img/logo/vueschool_logo_multicolor.svg" alt="VueSchool logo" class="silver-sponsor">
+  </a>
+</p>
+
+### Bronze
+
+<p align="center">
+  <a href="https://vuetifyjs.com" target="_blank" title="Vuetify">
+    <img src="https://cdn.vuetifyjs.com/images/logos/v-alt.svg" width="48" height="48">
+  </a>
+</p>
+
+## Become a sponsor
+
+Is your company using vue-apollo or vue-cli-plugin-apollo to build awesome apps? Join the other patrons and become a sponsor to add your logo on this documentation! Supporting me on Patreon allows me to work less for a job and to work more on Free Open Source Software such as vue-apollo! Thank you!
+
+<p style="text-align: center;">
+  <a href="https://www.patreon.com/akryum" target="_blank">
+    <img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patreon">
+  </a>
+</p>
