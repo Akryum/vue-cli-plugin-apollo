@@ -1,6 +1,6 @@
 {
   "name": "vue-cli-plugin-apollo",
-  "version": "0.17.2",
+  "version": "0.19.1",
   "description": "vue-cli 3 plugin to add Apollo and GraphQL",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,9 @@
     "build:client-addon": "cd ./client-addon && yarn build && cd ../",
     "prepublishOnly": "npm run test && npm run build",
     "test": "npm run test:eslint && cd ./client-addon npm run lint",
-    "test:eslint": "eslint --ext .js ."
+    "test:eslint": "eslint --ext .js .",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "repository": {
     "type": "git",
@@ -53,7 +55,7 @@
     "graphql-tag": "^2.10.0",
     "graphql-tools": "^4.0.2",
     "node-fetch": "^2.2.1",
-    "nodemon": "^1.18.6",
+    "nodemon": "^1.18.9",
     "subscriptions-transport-ws": "^0.9.15",
     "ts-node": "^7.0.1"
   },
@@ -61,14 +63,15 @@
     "@babel/cli": "^7.0.0-beta.47",
     "@babel/core": "^7.0.0-beta.47",
     "@babel/preset-env": "^7.0.0-beta.47",
-    "babel-eslint": "^8.2.1",
-    "eslint": "^4.10.0",
-    "eslint-config-standard": "^10.2.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^6.0.0",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "eslint-plugin-vue": "^4.2.2"
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^4.2.2",
+    "vuepress": "^0.14.8"
   },
   "peerDependencies": {
     "@vue/cli-shared-utils": "^3.0.0"

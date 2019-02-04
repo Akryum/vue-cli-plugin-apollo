@@ -22,7 +22,7 @@ module.exports = (api, options, rootOptions) => {
         'graphql-type-json': '^0.2.1',
       },
       scripts: {
-        'apollo:dev': 'vue-cli-service apollo:dev --generate-schema',
+        'apollo': 'vue-cli-service apollo:dev --generate-schema',
         'apollo:dev:client': 'vue-cli-service apollo:dev --run "vue-cli-service serve" --generate-schema',
         'apollo:start': 'vue-cli-service apollo:start',
         'apollo:schema:generate': 'vue-cli-service apollo:schema:generate',
