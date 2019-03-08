@@ -4094,9 +4094,9 @@ eslint@^5.8.0:
     text-table "^0.2.0"
 
 esm@^3.0.84:
-  version "3.0.84"
-  resolved "https://registry.yarnpkg.com/esm/-/esm-3.0.84.tgz#bb108989f4673b32d4f62406869c28eed3815a63"
-  integrity sha512-SzSGoZc17S7P+12R9cg21Bdb7eybX25RnIeRZ80xZs+VZ3kdQKzqTp2k4hZJjR7p9l0186TTXSgrxzlMDBktlw==
+  version "3.2.12"
+  resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.12.tgz#0744c6fd97ba7150386fda9e834de9df1d52603b"
+  integrity sha512-UlnWVrsUO/Ww+nKkHcZxe+FEv21NUbtX6Bpy+SzVPZ1RPHPzrrPOb+B/aPHGnPjdUKzhwz+eTIyCpWuJSml7CQ==
 
 espree@^3.5.2:
   version "3.5.4"
