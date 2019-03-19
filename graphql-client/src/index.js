@@ -42,6 +42,12 @@ export function createApolloClient ({
   clientState = null,
   // Function returning Authorization header token
   getAuth = defaultGetAuth,
+  // Local Schema
+  typeDefs = undefined,
+  // Local Resolvers
+  resolvers = undefined,
+  // Hook called when you should write local state in the cache
+  onCacheInit = undefined,
 }) {
   let wsClient, authLink, stateLink
   const disableHttp = websocketsOnly && !ssr && wsEndpoint
@@ -128,6 +134,7 @@ export function createApolloClient ({
   }
 
   if (clientState) {
+    console.warn(`clientState is deprecated, see https://vue-cli-plugin-apollo.netlify.com/guide/client-state.html`)
     stateLink = withClientState({
       cache,
       ...clientState,
@@ -148,12 +155,21 @@ export function createApolloClient ({
       // Apollo devtools
       connectToDevTools: process.env.NODE_ENV !== 'production',
     }),
+    typeDefs,
+    resolvers,
     ...apollo,
   })
 
   // Re-write the client state defaults on cache reset
   if (stateLink) {
     apolloClient.onResetStore(stateLink.writeDefaults)
+  }
+
+  if (onCacheInit) {
+    onCacheInit(cache)
+    apolloClient.onResetStore(() => {
+      onCacheInit(cache)
+    })
   }
 
   return {

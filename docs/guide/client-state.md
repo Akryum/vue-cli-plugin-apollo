@@ -1,28 +1,35 @@
 # Client state
 
-You can use [apollo-link-state](https://github.com/apollographql/apollo-link-state) for client-only local data with the `clientState` option of `createApolloClient`:
+You can use [local state](https://www.apollographql.com/docs/react/essentials/local-state.html) for client-only local data with the related options of `createApolloClient`:
 
 ```js
+import gql from 'graphql-tag'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 
 const options = {
   // ...
 
-  clientState: {
-    defaults: {
-      connected: false,
-    },
-    resolvers: {
-      Mutation: {
-        connectedSet: (root, { value }, { cache }) => {
-          const data = {
-            connected: value,
-          }
-          cache.writeData({ data })
-        },
+  typeDefs: gql`
+  type Query {
+    connected: Boolean!
+  }
+  `,
+  resolvers: {
+    Mutation: {
+      connectedSet: (root, { value }, { cache }) => {
+        const data = {
+          connected: value,
+        }
+        cache.writeData({ data })
       },
     },
   },
+  onCacheInit: cache => {
+    cache.writeData({
+      connected: false,
+    })
+  },
+},
 }
 
 const { apolloClient } = createApolloClient(options)
