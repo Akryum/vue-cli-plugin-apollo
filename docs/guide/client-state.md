@@ -10,9 +10,9 @@ const options = {
   // ...
 
   typeDefs: gql`
-  type Query {
-    connected: Boolean!
-  }
+    type Query {
+      connected: Boolean!
+    }
   `,
   resolvers: {
     Mutation: {
@@ -26,7 +26,9 @@ const options = {
   },
   onCacheInit: cache => {
     cache.writeData({
-      connected: false,
+      data: {
+        connected: false
+      }
     })
   },
 },
