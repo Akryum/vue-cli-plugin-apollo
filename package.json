@@ -46,7 +46,7 @@
     "esm": "^3.2.18",
     "execa": "^1.0.0",
     "express": "^4.16.4",
-    "graphql": "^14.1.1",
+    "graphql": "^14.2.1",
     "graphql-subscriptions": "^1.0.0",
     "nodemon": "^1.18.10",
     "subscriptions-transport-ws": "^0.9.16",
