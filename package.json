@@ -3,6 +3,7 @@
   "version": "0.19.2",
   "description": "vue-cli 3 plugin to add Apollo and GraphQL",
   "main": "index.js",
+  "types": "./types.d.ts",
   "scripts": {
     "dev": "nodemon --exec 'npm run build' --watch graphql-client/src",
     "build": "yarn build:graphql-client && yarn build:client-addon",
