@@ -25,11 +25,11 @@ const options = {
     },
   },
   onCacheInit: cache => {
-    cache.writeData({
+    const data = {
       connected: false,
-    })
+    }
+    cache.writeData({ data })
   },
-},
 }
 
 const { apolloClient } = createApolloClient(options)
