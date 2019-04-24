@@ -28,6 +28,14 @@ Read the [vue-apollo doc](https://github.com/Akryum/vue-apollo).
 
 ## Sponsors
 
+### Gold
+
+<p style="text-align: center;">
+  <a href="https://www.sumcumo.com/en/" target="_blank">
+    <img src="https://cdn.discordapp.com/attachments/258614093362102272/570728242399674380/logo-sumcumo.png" alt="sum.cumo logo" class="gold-sponsor">
+  </a>
+</p>
+
 ### Silver
 
 <p style="text-align: center;">
