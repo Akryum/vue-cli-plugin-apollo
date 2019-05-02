@@ -54,10 +54,13 @@ module.exports = (api, options) => {
         .rule('eslint')
         .test(/\.(vue|(j|t)sx?|gql|graphql)$/)
         .use('eslint-loader')
-        .tap(options => ({
-          ...options,
-          cacheIdentifier: options.cacheIdentifier + id,
-        }))
+        .tap(options => {
+          options.extensions.push('.gql', '.graphql')
+          return {
+            ...options,
+            cacheIdentifier: options.cacheIdentifier + id,
+          }
+        })
     }
 
     config.resolve
