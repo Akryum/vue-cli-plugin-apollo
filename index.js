@@ -71,6 +71,18 @@ module.exports = (api, options) => {
       .add(/node_modules/)
       .end()
       .type('javascript/auto')
+
+    // Add string template tag transform to Bublé
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .loader('vue-loader')
+      .tap(options => {
+        options.transpileOptions = options.transpileOptions || {}
+        options.transpileOptions.transforms = options.transpileOptions.transforms || {}
+        options.transpileOptions.transforms.dangerousTaggedTemplateString = true
+        return options
+      })
   })
 
   api.registerCommand('apollo:watch', {
