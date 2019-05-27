@@ -35,7 +35,7 @@ export function createApolloClient ({
   // Custom Apollo cache implementation (default is apollo-cache-inmemory)
   cache = null,
   // Options for the default cache
-  inMemoryCacheOptions = null,
+  inMemoryCacheOptions = {},
   // Additional Apollo client options
   apollo = {},
   // apollo-link-state options
