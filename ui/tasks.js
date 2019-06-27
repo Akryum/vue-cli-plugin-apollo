@@ -117,7 +117,6 @@ module.exports = api => {
   })
 
   const DEV_TASK = /vue-cli-service apollo:dev/
-  const DEV_CLIENT_TASK = /vue-cli-service apollo:dev.*vue-cli-service serve/
   const START_TASK = /vue-cli-service apollo:start/
   const GENERATE_SCHEMA_TASK = /vue-cli-service apollo:schema:generate/
   const CHECK_SCHEMA_TASK = /vue-cli-service apollo:schema:check/
@@ -132,12 +131,6 @@ module.exports = api => {
   api.describeTask({
     match: DEV_TASK,
     description: 'Run and watch the GraphQL server',
-    ...devOptions,
-  })
-
-  api.describeTask({
-    match: DEV_CLIENT_TASK,
-    description: 'Run and watch the GraphQL server (with client webpack dev server)',
     ...devOptions,
   })
 
