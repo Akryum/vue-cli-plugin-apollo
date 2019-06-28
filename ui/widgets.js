@@ -87,7 +87,7 @@ module.exports = api => {
                   }
                   `,
                   variables: {
-                    id: service.id
+                    id: service.id,
                   },
                 })
 

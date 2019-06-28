@@ -233,6 +233,8 @@ module.exports = (api, options) => {
   }, async args => {
     throw new Error(`Not implemented yet`)
 
+    /* eslint-disable no-unreachable */
+
     const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
     const tag = args.tag || process.env.VUE_APP_APOLLO_ENGINE_TAG

@@ -40,11 +40,3 @@ module.exports = async (options) => {
   stopSpinner()
   done(`Generated ${options.graphqlOutput}`)
 }
-
-function load (file) {
-  const module = require(file)
-  if (module.default) {
-    return module.default
-  }
-  return module
-}
