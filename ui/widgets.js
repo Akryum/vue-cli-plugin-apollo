@@ -1,4 +1,5 @@
 module.exports = api => {
+  const gql = require('graphql-tag')
   const { registerWidget, onAction } = api.namespace('org.akryum.vue-apollo.widgets.')
 
   const { loadEnv } = require('../utils/load-env')
@@ -7,7 +8,7 @@ module.exports = api => {
     api.resolve('.env.local'),
   ])
 
-  function queryEngine ({ query, variables }) {
+  async function queryEngine ({ query, variables }) {
     const { execute } = require('../utils/engine-api')
     const { loadEnv } = require('../utils/load-env')
     const env = loadEnv([
@@ -39,18 +40,20 @@ module.exports = api => {
       defaultHeight: 2,
       needsUserConfig: true,
       onConfigOpen: async ({ context }) => {
-        const ALL_SERVICES = require('../operations/engine/all-services')
-
         let allServices = []
 
-        try {
-          const { data } = await queryEngine({
-            query: ALL_SERVICES,
-          })
-          allServices = data.allServices
-        } catch (e) {
-          console.log(e)
-        }
+        const { data } = await queryEngine({
+          query: gql`
+          {
+            allServices {
+              id
+              name
+              createdAt
+            }
+          }
+          `,
+        })
+        allServices = data.allServices
 
         return {
           prompts: [
@@ -68,10 +71,27 @@ module.exports = api => {
             {
               name: 'tag',
               type: 'list',
-              choices: answers => {
+              choices: async answers => {
                 const service = allServices.find(s => s.id === answers.service)
                 if (!service) return []
-                return service.schemaTags.map(tag => ({
+
+                const { data } = await queryEngine({
+                  query: gql`
+                  query ($id: ID!) {
+                    service (id: $id) {
+                      id
+                      schemaTags {
+                        tag
+                      }
+                    }
+                  }
+                  `,
+                  variables: {
+                    id: service.id
+                  },
+                })
+
+                return data.service.schemaTags.map(tag => ({
                   name: tag.tag,
                   value: tag.tag,
                 })).concat([
