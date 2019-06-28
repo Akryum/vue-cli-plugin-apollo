@@ -12,6 +12,8 @@ import { withClientState } from 'apollo-link-state'
 
 // Create the apollo client
 export function createApolloClient ({
+  // Client ID if using multiple Clients
+  clientId = 'defaultClient',
   // URL to the HTTP API
   httpEndpoint,
   // Url to the Websocket API
@@ -91,9 +93,9 @@ export function createApolloClient ({
     if (typeof window !== 'undefined') {
       // eslint-disable-next-line no-underscore-dangle
       const state = window.__APOLLO_STATE__
-      if (state) {
-        // If you have multiple clients, use `state.<client_id>`
-        cache.restore(state.defaultClient)
+      if (state && state[clientId]) {
+        // Restore state
+        cache.restore(state[clientId])
       }
     }
 
