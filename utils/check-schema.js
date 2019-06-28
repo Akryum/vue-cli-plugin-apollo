@@ -4,7 +4,7 @@ module.exports = async ({ endpoint, key, tag, engineEndpoint }) => {
 
   logWithSpinner('📡', `Comparing schema from Engine...`)
   await execa('apollo', [
-    'schema:check',
+    'client:check',
     `--endpoint=${endpoint}`,
     `--key=${key}`,
     ...(tag ? [`--tag=${tag}`] : []),

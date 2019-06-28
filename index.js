@@ -225,12 +225,14 @@ module.exports = (api, options) => {
     }
   })
 
-  api.registerCommand('apollo:schema:check', {
+  api.registerCommand('apollo:client:check', {
     description: 'Compare schema from Apollo Engine',
-    usage: 'vue-cli-service apollo:schema:check [options]',
+    usage: 'vue-cli-service apollo:client:check [options]',
     options: SCHEMA_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, async args => {
+    throw new Error(`Not implemented yet`)
+
     const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
     const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
     const tag = args.tag || process.env.VUE_APP_APOLLO_ENGINE_TAG

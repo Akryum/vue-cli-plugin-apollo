@@ -119,7 +119,7 @@ module.exports = api => {
   const DEV_TASK = /vue-cli-service apollo:dev/
   const START_TASK = /vue-cli-service apollo:start/
   const GENERATE_SCHEMA_TASK = /vue-cli-service apollo:schema:generate/
-  const CHECK_SCHEMA_TASK = /vue-cli-service apollo:schema:check/
+  const CHECK_SCHEMA_TASK = /vue-cli-service apollo:client:check/
   const PUBLISH_SCHEMA_TASK = /vue-cli-service apollo:schema:publish/
 
   const devOptions = commonOptions({
@@ -251,7 +251,7 @@ module.exports = api => {
   api.onTaskOpen(({ task }) => {
     if ([
       DEV_TASK,
-      DEV_CLIENT_TASK,
+      // DEV_CLIENT_TASK,
       START_TASK,
       GENERATE_SCHEMA_TASK,
       PUBLISH_SCHEMA_TASK,
