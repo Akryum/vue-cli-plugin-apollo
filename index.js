@@ -1,27 +1,27 @@
-const path = require('path')
-const {
-  hasYarn,
-  IpcMessenger,
-} = require('@vue/cli-shared-utils')
 const chalk = require('chalk')
-const { defaultValue, nullable } = require('./utils')
 
-const DEFAULT_SERVER_FOLDER = './apollo-server'
 const COMMAND_OPTIONS = {
-  '--mock': 'enables mocks',
-  '--enable-engine': 'enables Apollo Engine',
-  '--delay': 'delays run by a small duration',
   '-h, --host': 'specify server host',
   '-p, --port': 'specify server port',
   '--run [command]': 'run another command in parallel',
+  '--mock': 'enables mocks',
+  '--engine': 'enables Apollo Engine',
+  '--delay': 'delays run by a small duration',
+  '--generate-schema': 'auto-generate JSON and GraphQL schema files',
 }
 
-let ipc, ipcTimer
+const SCHEMA_OPTIONS = {
+  '--endpoint [endpoint]': 'URL of running server or path to JSON schema file',
+  '--key [key]': 'Engine service key',
+  '--tag [tag]': 'Schema Tag',
+}
+
+const DEFAULT_GENERATE_OUTPUT = './node_modules/.temp/graphql/schema'
 
 module.exports = (api, options) => {
-  const cmd = hasYarn() ? 'yarn' : 'npm'
   const useThreads = process.env.NODE_ENV === 'production' && options.parallel
   const cacheDirectory = api.resolve('node_modules/.cache/cache-loader')
+  const { generateCacheIdentifier } = require('./utils')
 
   api.chainWebpack(config => {
     const rule = config.module
@@ -88,138 +88,90 @@ module.exports = (api, options) => {
       })
   })
 
-  api.registerCommand('apollo:watch', {
+  api.registerCommand('apollo:dev', {
     description: 'Run the Apollo server and watch the sources to restart automatically',
-    usage: 'vue-cli-service apollo:watch [options]',
+    usage: 'vue-cli-service apollo:dev [options]',
     options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
+    const {
+      runParallelCommand,
+      getFlatArgs,
+      runWatch,
+      sendIpcMessage,
+    } = require('./utils')
+
     runParallelCommand(args)
 
-    // Plugin options
-    const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
-    const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
-
-    const nodemon = require('nodemon')
-
-    // Pass the args along
-    let flatArgs = []
-    for (const key in COMMAND_OPTIONS) {
-      const shortKey = key.substr(2)
-      if (args.hasOwnProperty(shortKey)) {
-        flatArgs.push(key)
-        const value = args[shortKey]
-        if (value !== true) {
-          flatArgs.push(value)
-        }
-      }
+    if (args['generate-schema']) {
+      const execa = require('execa')
+      execa('vue-cli-service apollo:schema:generate', ['--watch'], {
+        stdio: ['inherit', 'inherit', 'inherit'],
+        cleanup: true,
+        shell: true,
+      })
     }
 
-    return new Promise((resolve, reject) => {
-      nodemon({
-        exec: `${cmd} run apollo:run --delay ${flatArgs.join(' ')}`,
-        watch: [
-          api.resolve(baseFolder),
-        ],
-        ignore: [
-          api.resolve(path.join(baseFolder, 'live')),
-        ],
-        ext: 'js mjs json graphql gql ts',
-      })
+    // Pass the args along
+    const flatArgs = getFlatArgs(args, ['_', 'run', 'delay', 'generate-schema'])
 
-      sendIpcMessage({
-        error: false,
-      })
-
-      nodemon.on('restart', () => {
-        console.log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
-
+    return runWatch(api, options, {
+      script: 'apollo:start',
+      args: ['--delay', ...flatArgs],
+      onStart: () => {
         sendIpcMessage({
           error: false,
         })
-      })
-
-      nodemon.on('crash', () => {
+      },
+      onCrash: () => {
         console.log(chalk.bold(chalk.red(`💥  GraphQL API crashed!`)))
-        console.log(chalk.red(`   Waiting for changes...`))
-
         sendIpcMessage({
           urls: null,
           error: true,
         })
-      })
-
-      nodemon.on('stdout', (...args) => {
-        console.log(chalk.grey(...args))
-      })
-
-      nodemon.on('stderr', (...args) => {
-        console.log(chalk.grey(...args))
-      })
-
-      nodemon.on('quit', () => {
-        resolve()
-        process.exit()
-      })
+      },
+      onRestart: () => {
+        console.log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
+        sendIpcMessage({
+          error: false,
+        })
+      },
     })
   })
 
-  api.registerCommand('apollo:run', {
+  api.registerCommand('apollo:start', {
     description: 'Run the Apollo server',
-    usage: 'vue-cli-service apollo:run [options]',
+    usage: 'vue-cli-service apollo:start [options]',
     options: COMMAND_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, args => {
+    const {
+      runParallelCommand,
+      sendIpcMessage,
+      getServerOptions,
+    } = require('./utils')
+
     runParallelCommand(args)
+
+    if (args['generate-schema']) {
+      const execa = require('execa')
+      execa('vue-cli-service apollo:schema:generate', {
+        stdio: ['inherit', 'inherit', 'inherit'],
+        cleanup: true,
+        shell: true,
+      })
+    }
 
     const run = () => {
       let server = require('./graphql-server')
       server = server.default || server
 
-      // Env
-      const host = args.host || process.env.VUE_APP_GRAPHQL_HOST || 'localhost'
-      process.env.VUE_APP_GRAPHQL_HOST = host
-      const port = args.port || process.env.VUE_APP_GRAPHQL_PORT || 4000
-      process.env.VUE_APP_GRAPHQL_PORT = port
-      const graphqlPath = process.env.VUE_APP_GRAPHQL_PATH || '/graphql'
-      const subscriptionsPath = process.env.VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH || '/graphql'
-      const engineKey = process.env.VUE_APP_APOLLO_ENGINE_KEY || null
-
-      // Plugin options
-      const apolloOptions = nullable(nullable(options.pluginOptions).apollo)
-      const baseFolder = defaultValue(apolloOptions.serverFolder, DEFAULT_SERVER_FOLDER)
-
-      const opts = {
-        host,
-        port,
-        graphqlPath,
-        subscriptionsPath,
-        engineKey,
-        typescript: api.hasPlugin('typescript') || defaultValue(apolloOptions.typescript, false),
-        enableMocks: defaultValue(args.mock, apolloOptions.enableMocks),
-        enableEngine: defaultValue(args['enable-engine'], apolloOptions.enableEngine),
-        cors: defaultValue(apolloOptions.cors, '*'),
-        timeout: defaultValue(apolloOptions.timeout, 120000),
-        integratedEngine: defaultValue(apolloOptions.integratedEngine, true),
-        serverOptions: apolloOptions.serverOptions,
-        paths: {
-          typeDefs: api.resolve(`${baseFolder}/type-defs`),
-          resolvers: api.resolve(`${baseFolder}/resolvers`),
-          context: api.resolve(`${baseFolder}/context`),
-          mocks: api.resolve(`${baseFolder}/mocks`),
-          pubsub: api.resolve(`${baseFolder}/pubsub`),
-          server: api.resolve(`${baseFolder}/server`),
-          apollo: api.resolve(`${baseFolder}/apollo`),
-          engine: api.resolve(`${baseFolder}/engine`),
-          directives: api.resolve(`${baseFolder}/directives`),
-          dataSources: api.resolve(`${baseFolder}/data-sources`),
-        },
-      }
+      const opts = getServerOptions(api, options, args)
 
       server(opts, () => {
         sendIpcMessage({
           urls: {
-            playground: `http://localhost:${port}${graphqlPath}`,
+            playground: `http://localhost:${opts.port}${opts.graphqlPath}`,
           },
         })
       })
@@ -231,52 +183,118 @@ module.exports = (api, options) => {
       run()
     }
   })
-}
 
-function generateCacheIdentifier (context) {
-  const fs = require('fs')
-  const path = require('path')
+  api.registerCommand('apollo:schema:generate', {
+    description: 'Generates full schema JSON and GraphQL files',
+    usage: 'vue-cli-service apollo:schema:generate [options]',
+    options: {
+      '--watch': 'Watch server files and re-generate schema JSON',
+      '--output [path]': 'Path to the output files',
+    },
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
+  }, async args => {
+    if (args.watch) {
+      const {
+        getFlatArgs,
+        runWatch,
+      } = require('./utils')
 
-  const graphqlConfigFile = path.join(context, '.graphqlconfig')
-  if (fs.existsSync(graphqlConfigFile)) {
-    try {
-      const graphqlConfig = JSON.parse(fs.readFileSync(graphqlConfigFile, { encoding: 'utf8' }))
-      const schemaFile = path.join(context, graphqlConfig.schemaPath)
-      return fs.statSync(schemaFile).mtimeMs
-    } catch (e) {
-      console.error('Invalid .graphqlconfig file')
+      const flatArgs = getFlatArgs(args, ['watch'])
+      return runWatch(api, options, {
+        script: 'apollo:schema:generate',
+        args: flatArgs,
+      })
+    } else {
+      const {
+        getServerOptions,
+      } = require('./utils')
+
+      const opts = getServerOptions(api, options, args)
+
+      const output = args.output || DEFAULT_GENERATE_OUTPUT
+      const jsonOutput = `${output}.json`
+      const graphqlOutput = `${output}.graphql`
+
+      const generateSchema = require('./utils/generate-schema')
+      await generateSchema({
+        paths: opts.paths,
+        jsonOutput,
+        graphqlOutput,
+        typescript: opts.typescript,
+      })
+    }
+  })
+
+  api.registerCommand('apollo:client:check', {
+    description: 'Compare schema from Apollo Engine',
+    usage: 'vue-cli-service apollo:client:check [options]',
+    options: SCHEMA_OPTIONS,
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
+  }, async args => {
+    throw new Error(`Not implemented yet`)
+
+    const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
+    const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+    const tag = args.tag || process.env.VUE_APP_APOLLO_ENGINE_TAG
+    const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
+
+    await autoGenerateSchema(endpoint)
+
+    const checkSchema = require('./utils/check-schema')
+    await checkSchema({
+      endpoint,
+      key,
+      tag,
+      engineEndpoint,
+    })
+  })
+
+  api.registerCommand('apollo:schema:publish', {
+    description: 'Publish schema to Apollo Engine',
+    usage: 'vue-cli-service apollo:schema:publish [options]',
+    options: SCHEMA_OPTIONS,
+    details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
+  }, async args => {
+    const endpoint = args.endpoint || `${DEFAULT_GENERATE_OUTPUT}.json`
+    const key = args.key || process.env.VUE_APP_APOLLO_ENGINE_KEY
+    const tag = args.tag || process.env.VUE_APP_APOLLO_ENGINE_TAG
+    const engineEndpoint = process.env.APOLLO_ENGINE_API_ENDPOINT
+
+    await autoGenerateSchema(endpoint)
+
+    const publishSchema = require('./utils/publish-schema')
+    await publishSchema({
+      endpoint,
+      key,
+      tag,
+      engineEndpoint,
+    })
+  })
+
+  async function autoGenerateSchema (endpoint) {
+    // Auto-generate if json file doesn't exist
+    if (endpoint.match(/\.json$/i)) {
+      const fs = require('fs')
+      const file = api.resolve(endpoint)
+      if (!fs.existsSync(file)) {
+        const path = require('path')
+        const output = path.join(path.dirname(file), path.basename(file, path.extname(file)))
+        const execa = require('execa')
+        await execa('vue-cli-service apollo:schema:generate', [
+          '--output',
+          output,
+        ], {
+          stdio: ['inherit', 'inherit', 'inherit'],
+          cleanup: true,
+          shell: true,
+        })
+        const { info } = require('@vue/cli-shared-utils')
+        info(`The JSON schema was automatically generated in '${file}'.`, 'apollo')
+      }
     }
   }
 }
 
-function sendIpcMessage (message) {
-  if (!ipc && IpcMessenger) {
-    ipc = new IpcMessenger()
-    ipc.connect()
-  }
-  if (ipc) {
-    ipc.send({
-      'org.akryum.vue-apollo': message,
-    })
-    clearTimeout(ipcTimer)
-    ipcTimer = setTimeout(() => {
-      ipc.disconnect()
-      ipc = null
-    }, 3000)
-  }
-}
-
-function runParallelCommand ({ run }) {
-  if (run) {
-    const execa = require('execa')
-    const [file, ...commandArgs] = run.split(' ')
-    execa(file, commandArgs, {
-      cleanup: true,
-      stdio: ['inherit', 'inherit', 'inherit'],
-    })
-  }
-}
-
 module.exports.defaultModes = {
-  'apollo:watch': 'development',
+  'apollo:dev': 'development',
 }

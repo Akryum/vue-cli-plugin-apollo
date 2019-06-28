@@ -11,13 +11,19 @@
     </div>
 
     <div v-else-if="!ready" class="not-running vue-ui-empty">
-      <VueIcon class="huge" icon="refresh"/>
-      <div>Readying playground...</div>
+      <VueLoadingIndicator
+        class="accent big"
+      />
+      <div>Starting server...</div>
     </div>
 
-    <template v-else>
-      <iframe class="iframe" :src="urls.playground"/>
-    </template>
+    <div v-else class="iframe-container">
+      <iframe
+        ref="iframe"
+        class="iframe"
+        :src="urls.playground"
+      />
+    </div>
   </div>
 </template>
 
@@ -63,6 +69,8 @@ export default {
 
   methods: {
     async checkForPlayground () {
+      if (this.$_checking) return
+      this.$_checking = true
       window._vm = this
       if (this.urls) {
         for (let t = 10; t > 0; t--) {
@@ -83,15 +91,25 @@ export default {
       } else {
         this.ready = false
       }
+      this.$_checking = false
     },
   },
 }
 </script>
 
 <style lang="stylus" scoped>
+@import '~@vue/cli-ui/src/style/imports'
+
 .graphql-playground
   height 100%
   overflow hidden
+
+.iframe-container
+  height 100%
+  border-radius $br
+  background rgba($vue-ui-color-primary, .4)
+  padding 4px
+  box-sizing border-box
 
 .iframe
   width 100%
@@ -101,4 +119,7 @@ export default {
 .not-running
   margin-top 42px
   font-size 18px
+
+.vue-ui-loading-indicator
+  margin-bottom $padding-item
 </style>
