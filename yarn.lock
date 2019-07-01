@@ -5580,9 +5580,9 @@ graphql-upload@^8.0.2:
     object-path "^0.11.4"
 
 "graphql@14.0.2 - 14.2.0 || ^14.3.1", graphql@^14.4.0:
-  version "14.4.0"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.4.0.tgz#e97086acfc0338e4fdc8f7dba519c6b8a6badfd9"
-  integrity sha512-E55z1oK6e4cGxCqlSsRWytYDPcIUxky3XkbuQUf6TIjCmn6C7CuBJpmkMF1066q95yPAGOZVPTVT7jABKbRFSA==
+  version "14.4.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.4.1.tgz#7a7818d3f63f66b9528ba5416b6c88460db62280"
+  integrity sha512-g4HUH26CohlMjaHneXMAtvG3QtO6peJIUTFxrPW4g5LNnXkUuFoBI6Bk1c14Q5kW8+FyjM/tTbePTgpiVB/2hQ==
   dependencies:
     iterall "^1.2.2"
 
