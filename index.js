@@ -27,10 +27,6 @@ module.exports = (api, options) => {
     const rule = config.module
       .rule('gql')
       .test(/\.(gql|graphql)$/)
-      .include
-      .add(api.resolve('src'))
-      .add(api.resolve('tests'))
-      .end()
       .use('cache-loader')
       .loader('cache-loader')
       .options({ cacheDirectory })
