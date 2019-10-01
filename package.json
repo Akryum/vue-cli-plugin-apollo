@@ -72,7 +72,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^5.2.3",
-    "vuepress": "^0.14.8"
+    "vuepress": "^1.1.0"
   },
   "peerDependencies": {
     "@vue/cli-shared-utils": "^3.0.0 || ^4.0.0-0"
