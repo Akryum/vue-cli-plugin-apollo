@@ -111,7 +111,7 @@ export function createApolloClient ({
         reconnect: true,
         connectionParams: () => {
           const authorization = getAuth(tokenName)
-          return authorization ? { authorization } : {}
+          return authorization ? { authorization, headers: { authorization } } : {}
         },
       })
 
