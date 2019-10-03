@@ -169,9 +169,7 @@ export function createApolloClient ({
 
   if (onCacheInit) {
     onCacheInit(cache)
-    apolloClient.onResetStore(() => {
-      onCacheInit(cache)
-    })
+    apolloClient.onResetStore(() => onCacheInit(cache))
   }
 
   return {
