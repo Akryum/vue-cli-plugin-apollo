@@ -47,7 +47,7 @@ export default {
   methods: {
     getErrorRate (metrics) {
       if (metrics.requestsWithErrorsCount === 0) return 0
-      return metrics.requestsWithErrorsCount /  
+      return metrics.requestsWithErrorsCount /
         (metrics.uncachedRequestsCount +
         metrics.cachedRequestsCount)
     },
@@ -65,7 +65,7 @@ export default {
       queries={this.queries}
       rawData={this.data}
     />
-  }
+  },
 }
 </script>
 

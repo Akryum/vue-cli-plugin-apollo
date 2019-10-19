@@ -177,12 +177,12 @@ export default {
   &.small-width
     .top
       flex-direction column
-    
+
     .infos
       display flex
       .title
         flex 1
-    
+
     .secondary-infos
       display none
 

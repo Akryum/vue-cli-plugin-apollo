@@ -69,7 +69,7 @@ export default {
       queries={this.queries}
       rawData={this.data}
     />
-  }
+  },
 }
 </script>
 

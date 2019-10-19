@@ -46,7 +46,7 @@ export default {
       const l = points.length
       for (const point of points) {
         const operator = path ? 'L' : 'M'
-        const position = `${index / l * 100},${100 - this.scale(point.value)}`
+        const position = `${index / l * 100},${100 - scale(point.value)}`
         path += `${operator}${position}`
         index++
       }

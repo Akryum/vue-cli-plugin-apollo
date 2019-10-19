@@ -25,7 +25,7 @@
         />
         <div>No available data</div>
       </div>
-      
+
       <component
         v-else
         :is="component"
@@ -51,7 +51,7 @@ const bus = new Vue()
 
 export default {
   inject: [
-    'widget'
+    'widget',
   ],
 
   sharedData () {
@@ -71,7 +71,7 @@ export default {
   computed: {
     component () {
       return COMPONENTS[this.widget.data.config.type]
-    }
+    },
   },
 
   watch: {
@@ -89,7 +89,7 @@ export default {
       disabled: () => this.loading,
       onCalled: () => {
         bus.$emit('refresh')
-      }
+      },
     })
 
     this.widget.addHeaderAction({
@@ -98,7 +98,7 @@ export default {
       tooltip: 'Open Apollo Engine',
       onCalled: () => {
         window.open(`${this.engineFrontend}/service/${this.widget.data.config.service}/metrics`, '_blank')
-      }
+      },
     })
 
     bus.$on('refresh', this.fetchMetrics)
@@ -127,7 +127,7 @@ export default {
       }
 
       this.loading = false
-    }
+    },
   },
 }
 </script>
