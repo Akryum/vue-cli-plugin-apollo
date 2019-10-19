@@ -100,8 +100,12 @@ export function createApolloClient ({
     }
 
     if (!disableHttp) {
-      if (persisting) {
-        link = createPersistedQueryLink().concat(link)
+      let persistingOpts = {}
+      if (typeof persisting === 'object' && persisting != null) {
+        persistingOpts = persisting
+      }
+      if (persistingOpts.enabled) {
+        link = createPersistedQueryLink(persistingOpts).concat(link)
       }
     }
 
