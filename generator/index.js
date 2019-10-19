@@ -111,6 +111,12 @@ module.exports = (api, options, rootOptions) => {
   api.onCreateComplete(async () => {
     const execa = require('execa')
 
+    function run (program, args) {
+      return execa(program, args, {
+        preferLocal: true,
+      })
+    }
+
     if (options.addExamples) {
       const appPath = api.resolve('src/App.vue')
       if (fs.existsSync(appPath)) {
@@ -139,7 +145,7 @@ module.exports = (api, options, rootOptions) => {
         }
       }
 
-      await execa('vue-cli-service', [
+      await run('vue-cli-service', [
         'apollo:schema:generate',
       ])
     }
@@ -184,47 +190,9 @@ module.exports = (api, options, rootOptions) => {
       }
     }
 
-    // Linting
-    if (api.hasPlugin('eslint')) {
-      // ESlint ignore
-      if (options.addServer) {
-        const filePath = api.resolve('.eslintignore')
-        let content
-
-        if (fs.existsSync(filePath)) {
-          content = fs.readFileSync(filePath, { encoding: 'utf8' })
-        } else {
-          content = ''
-        }
-
-        if (content.indexOf('schema.graphql') === -1) {
-          content += '\nschema.graphql\n'
-
-          fs.writeFileSync(filePath, content, { encoding: 'utf8' })
-        }
-      }
-
-      // Lint generated/modified files
-      try {
-        const files = ['*.js', '.*.js', 'src']
-        if (api.hasPlugin('apollo')) {
-          files.push('apollo-server')
-        }
-        execa.sync('vue-cli-service lint', [
-          '--silent',
-          ...files,
-        ], {
-          cleanup: true,
-          shell: true,
-        })
-      } catch (e) {
-        // No ESLint vue-cli plugin
-      }
-    }
-
     // Schema publish
     if (options.publishSchema) {
-      await execa('vue-cli-service', [
+      await run('vue-cli-service', [
         'apollo:schema:publish',
       ])
     }
