@@ -58,6 +58,8 @@ module.exports = {
       enableMocks: true,
       // Enable Apollo Engine
       enableEngine: true,
+      // Enable ESLint for `.gql` files
+      lintGQL: false,
 
       /* Other options (with default values) */
 
