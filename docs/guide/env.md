@@ -10,6 +10,14 @@
 
 ## With the GraphQL server enabled
 
+- **`VUE_APP_GRAPHQL_HOST`**
+
+  Hostname of GraphQL API Server, default: `localhost`
+
+- **`VUE_APP_GRAPHQL_PATH`**
+
+  Path on which to serve graphQL, defaultL `/graphql`
+
 - **`VUE_APP_GRAPHQL_PORT`**
 
   Port of the GraphQL API Server, default: `4000`
@@ -17,3 +25,21 @@
 - **`VUE_APP_APOLLO_ENGINE_KEY`**
 
   API key for [Apollo Engine](https://engine.apollographql.com)
+
+- **`VUE_APP_APOLLO_ENGINE_TAG`**
+
+  Queries made to the API will be marked with this Schema Tag. Useful for segmenting queries (for example 'test', 'staging', 'prod').
+
+- **`VUE_APP_GRAPHQL_SUBSCRIPTIONS_PATH`**
+
+  Subscriptions path, default: `/graphql`
+
+## Advanced
+
+- **`APOLLO_ENGINE_API_ENDPOINT`**
+
+  Endpoint to use to the Engine requests.
+
+- **`APOLLO_ENGINE_FRONTEND`**
+
+  URL to the Engine website.
