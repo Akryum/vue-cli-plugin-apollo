@@ -75,6 +75,12 @@
     "vuepress": "^0.14.8"
   },
   "peerDependencies": {
-    "@vue/cli-shared-utils": "^3.0.0 || ^4.0.0-0"
+    "@vue/cli-shared-utils": "^3.0.0 || ^4.0.0-0",
+    "typescript": ">=2.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }
