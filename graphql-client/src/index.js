@@ -12,6 +12,8 @@ import { withClientState } from 'apollo-link-state'
 
 // Create the apollo client
 export function createApolloClient ({
+  // Client ID if using multiple Clients
+  clientId = 'defaultClient',
   // URL to the HTTP API
   httpEndpoint,
   // Url to the Websocket API
@@ -35,13 +37,19 @@ export function createApolloClient ({
   // Custom Apollo cache implementation (default is apollo-cache-inmemory)
   cache = null,
   // Options for the default cache
-  inMemoryCacheOptions = null,
+  inMemoryCacheOptions = {},
   // Additional Apollo client options
   apollo = {},
   // apollo-link-state options
   clientState = null,
   // Function returning Authorization header token
   getAuth = defaultGetAuth,
+  // Local Schema
+  typeDefs = undefined,
+  // Local Resolvers
+  resolvers = undefined,
+  // Hook called when you should write local state in the cache
+  onCacheInit = undefined,
 }) {
   let wsClient, authLink, stateLink
   const disableHttp = websocketsOnly && !ssr && wsEndpoint
@@ -85,9 +93,9 @@ export function createApolloClient ({
     if (typeof window !== 'undefined') {
       // eslint-disable-next-line no-underscore-dangle
       const state = window.__APOLLO_STATE__
-      if (state) {
-        // If you have multiple clients, use `state.<client_id>`
-        cache.restore(state.defaultClient)
+      if (state && state[clientId]) {
+        // Restore state
+        cache.restore(state[clientId])
       }
     }
 
@@ -107,7 +115,7 @@ export function createApolloClient ({
         reconnect: true,
         connectionParams: () => {
           const authorization = getAuth(tokenName)
-          return authorization ? { authorization } : {}
+          return authorization ? { authorization, headers: { authorization } } : {}
         },
       })
 
@@ -132,6 +140,7 @@ export function createApolloClient ({
   }
 
   if (clientState) {
+    console.warn(`clientState is deprecated, see https://vue-cli-plugin-apollo.netlify.com/guide/client-state.html`)
     stateLink = withClientState({
       cache,
       ...clientState,
@@ -152,12 +161,19 @@ export function createApolloClient ({
       // Apollo devtools
       connectToDevTools: process.env.NODE_ENV !== 'production',
     }),
+    typeDefs,
+    resolvers,
     ...apollo,
   })
 
   // Re-write the client state defaults on cache reset
   if (stateLink) {
     apolloClient.onResetStore(stateLink.writeDefaults)
+  }
+
+  if (onCacheInit) {
+    onCacheInit(cache)
+    apolloClient.onResetStore(() => onCacheInit(cache))
   }
 
   return {

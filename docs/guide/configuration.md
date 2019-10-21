@@ -34,7 +34,7 @@ createApolloClient({
   // Custom Apollo cache implementation (default is apollo-cache-inmemory)
   cache: null,
   // Options for the default cache
-  inMemoryCacheOptions: null,
+  inMemoryCacheOptions: {},
   // Additional Apollo client options
   apollo: {},
   // apollo-link-state options
@@ -58,6 +58,8 @@ module.exports = {
       enableMocks: true,
       // Enable Apollo Engine
       enableEngine: true,
+      // Enable ESLint for `.gql` files
+      lintGQL: false,
 
       /* Other options (with default values) */
 

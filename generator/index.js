@@ -22,8 +22,11 @@ module.exports = (api, options, rootOptions) => {
         'graphql-type-json': '^0.2.1',
       },
       scripts: {
-        'apollo': 'vue-cli-service apollo:watch',
-        'apollo:run': 'vue-cli-service apollo:run',
+        'apollo': 'vue-cli-service apollo:dev --generate-schema',
+        'apollo:start': 'vue-cli-service apollo:start',
+        'apollo:schema:generate': 'vue-cli-service apollo:schema:generate',
+        // 'apollo:client:check': 'vue-cli-service apollo:client:check',
+        'apollo:schema:publish': 'vue-cli-service apollo:schema:publish',
       },
       vue: {
         pluginOptions: {
@@ -79,6 +82,7 @@ module.exports = (api, options, rootOptions) => {
           'graphql/template-strings': ['error', {
             env: 'literal',
             projectName: 'app',
+            schemaJsonFilepath: 'node_modules/.temp/graphql/schema.json',
           }],
         },
       },
@@ -104,7 +108,15 @@ module.exports = (api, options, rootOptions) => {
     api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
   }
 
-  api.onCreateComplete(() => {
+  api.onCreateComplete(async () => {
+    const execa = require('execa')
+
+    function run (program, args) {
+      return execa(program, args, {
+        preferLocal: true,
+      })
+    }
+
     if (options.addExamples) {
       const appPath = api.resolve('src/App.vue')
       if (fs.existsSync(appPath)) {
@@ -132,60 +144,61 @@ module.exports = (api, options, rootOptions) => {
           fs.writeFileSync(gitignorePath, content, { encoding: 'utf8' })
         }
       }
+
+      await run('vue-cli-service', [
+        'apollo:schema:generate',
+      ])
     }
 
     if (options.addApolloEngine) {
-      // Modify .env.local file
-      const envPath = api.resolve('.env.local')
-      let content = ''
-
-      if (fs.existsSync(envPath)) {
-        content = fs.readFileSync(envPath, { encoding: 'utf8' })
+      const updateVariable = (content, key, value) => {
+        if (content.indexOf(`${key}=`) === -1) {
+          content += `${key}=${value}\n`
+        } else {
+          content = content.replace(new RegExp(`${key}=(.*)\\n`), `${key}=${value}\n`)
+        }
+        return content
       }
 
-      if (content.indexOf('VUE_APP_APOLLO_ENGINE_KEY=') === -1) {
-        content += `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`
-      } else {
-        content = content.replace(/VUE_APP_APOLLO_ENGINE_KEY=(.*)\n/, `VUE_APP_APOLLO_ENGINE_KEY=${options.apolloEngineKey}\n`)
+      {
+        // Modify .env.local file
+        const envPath = api.resolve('.env.local')
+        let content = ''
+
+        if (fs.existsSync(envPath)) {
+          content = fs.readFileSync(envPath, { encoding: 'utf8' })
+        }
+
+        content = updateVariable(content, 'VUE_APP_APOLLO_ENGINE_KEY', options.apolloEngineKey)
+
+        fs.writeFileSync(envPath, content, { encoding: 'utf8' })
       }
-      fs.writeFileSync(envPath, content, { encoding: 'utf8' })
+
+      {
+        // Modify .env file
+        const envPath = api.resolve('.env')
+        let content = ''
+
+        if (fs.existsSync(envPath)) {
+          content = fs.readFileSync(envPath, { encoding: 'utf8' })
+        }
+
+        content = updateVariable(content, 'VUE_APP_APOLLO_ENGINE_SERVICE', options.apolloEngineService)
+        content = updateVariable(content, 'VUE_APP_APOLLO_ENGINE_TAG', options.apolloEngineTag)
+
+        fs.writeFileSync(envPath, content, { encoding: 'utf8' })
+      }
     }
 
-    // Linting
-    if (api.hasPlugin('eslint')) {
-      // ESlint ignore
-      if (options.addServer) {
-        const filePath = api.resolve('.eslintignore')
-        let content
-
-        if (fs.existsSync(filePath)) {
-          content = fs.readFileSync(filePath, { encoding: 'utf8' })
-        } else {
-          content = ''
-        }
-
-        if (content.indexOf('schema.graphql') === -1) {
-          content += '\nschema.graphql\n'
-
-          fs.writeFileSync(filePath, content, { encoding: 'utf8' })
-        }
-      }
-
-      // Lint generated/modified files
-      try {
-        const lint = require('@vue/cli-plugin-eslint/lint')
-        const files = ['*.js', '.*.js', 'src']
-        if (options.addServer) {
-          files.push('apollo-server')
-        }
-        lint({ silent: true, _: files }, api)
-      } catch (e) {
-        // No ESLint vue-cli plugin
-      }
+    // Schema publish
+    if (options.publishSchema) {
+      await run('vue-cli-service', [
+        'apollo:schema:publish',
+      ])
     }
 
     if (options.addServer) {
-      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run apollo`)}`, 'info')
+      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run apollo:dev`)}`, 'info')
       if (options.addMocking) {
         api.exitLog(`Customize the mocks in ${chalk.cyan('apollo-server/mocks.js')}`, 'info')
       }

@@ -8,14 +8,20 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vue/cli-ui": "^3.0.0",
+    "@vue/ui": "^0.5.6",
+    "core-js": "^3.1.2",
+    "d3": "^5.7.0",
     "vue": "^2.5.16"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0",
-    "@vue/cli-plugin-eslint": "^3.0.0",
-    "@vue/cli-service": "^3.0.0",
+    "@vue/cli-plugin-babel": "^4.0.4",
+    "@vue/cli-plugin-eslint": "^4.0.4",
+    "@vue/cli-service": "^4.0.4",
     "@vue/cli-ui": "^3.0.0",
     "@vue/eslint-config-standard": "^4.0.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-vue": "^5.2.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-template-compiler": "^2.5.16"
