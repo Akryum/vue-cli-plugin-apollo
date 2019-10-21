@@ -106,7 +106,6 @@ export function createApolloClient ({
         persisting = true
       }
       if (persisting === true) {
-        delete persistingOpts.enabled
         link = createPersistedQueryLink(persistingOpts).concat(link)
       }
     }
