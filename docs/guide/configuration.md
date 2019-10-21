@@ -13,8 +13,8 @@ createApolloClient({
   // Enable this if you use Query persisting with Apollo Engine
   persisting: false,
   // Or, advanced persisting options, see https://github.com/apollographql/apollo-link-persisted-queries#options
+  // Example:
   // persisting: {
-  //  enabled: false,
   //  generateHash: query => sha256()
   //    .update(print(query))
   //    .digest('hex'),
