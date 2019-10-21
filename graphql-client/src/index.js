@@ -22,6 +22,8 @@ export function createApolloClient ({
   tokenName = 'apollo-token',
   // Enable this if you use Query persisting with Apollo Engine
   persisting = false,
+  // Persisting options
+  persistingOptions = {},
   // Is currently Server-Side Rendering or not
   ssr = false,
   // Only use Websocket for all requests (including queries and mutations)
@@ -100,12 +102,8 @@ export function createApolloClient ({
     }
 
     if (!disableHttp) {
-      let persistingOpts = {}
-      if (typeof persisting === 'object' && persisting != null) {
-        persistingOpts = persisting
-      }
-      if (persistingOpts.enabled) {
-        link = createPersistedQueryLink(persistingOpts).concat(link)
+      if (persisting) {
+        link = createPersistedQueryLink(persistingOptions).concat(link)
       }
     }
 

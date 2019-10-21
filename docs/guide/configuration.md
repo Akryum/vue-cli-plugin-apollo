@@ -12,9 +12,10 @@ createApolloClient({
   tokenName: 'apollo-token',
   // Enable this if you use Query persisting with Apollo Engine
   persisting: false,
-  // Or, advanced persisting options, see https://github.com/apollographql/apollo-link-persisted-queries#options
-  // persisting: {
-  //  enabled: false,
+  // Additional Apollo Link persisting options, see https://github.com/apollographql/apollo-link-persisted-queries#options
+  // Requires `persisting` set to true 
+  persistingOptions: {},
+  // persistingOptions: {
   //  generateHash: query => sha256()
   //    .update(print(query))
   //    .digest('hex'),
