@@ -1,6 +1,6 @@
 # Client state
 
-You can use [local state](https://www.apollographql.com/docs/react/essentials/local-state.html) for client-only local data with the related options of `createApolloClient`:
+You can use [local state](https://www.apollographql.com/docs/tutorial/local-state/) for client-only local data with the related options of `createApolloClient`:
 
 ```js
 import gql from 'graphql-tag'
