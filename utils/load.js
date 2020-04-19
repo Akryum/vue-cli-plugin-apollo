@@ -1,7 +1,15 @@
 // eslint-disable-next-line no-global-assign
 require = require('esm')(module)
 
-exports.load = function (file) {
+module.exports = function (options) {
+  if (options.typescript) require('ts-node/register/transpile-only')
+
+  return {
+    load: load,
+  }
+}
+
+function load (file) {
   const module = require(file)
   if (module.default) {
     return module.default
