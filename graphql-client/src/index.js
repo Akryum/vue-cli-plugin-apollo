@@ -124,7 +124,7 @@ export function createApolloClient ({
       const wsLink = new WebSocketLink(wsClient)
 
       if (disableHttp) {
-        link = wsLink
+        link = link ? link.concat(wsLink) : wsLink
       } else {
         link = split(
           // split based on operation type
