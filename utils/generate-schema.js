@@ -23,6 +23,9 @@ module.exports = async (options) => {
   logWithSpinner('📄', 'Generating JSON file...')
   await fs.ensureDir(path.dirname(options.jsonOutput))
   const result = await graphql(schema, introspectionQuery)
+  if (result.errors) {
+    throw new Error(`Generating JSON failed: ${result.errors.map(e => e.message).join(' | ')}`)
+  }
   fs.writeFileSync(
     options.jsonOutput,
     JSON.stringify(result, null, 2),
