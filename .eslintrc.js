@@ -5,10 +5,10 @@ module.exports = {
   parser: 'vue-eslint-parser',
   parserOptions: {
     // Use babel-eslint for JavaScript
-    'parser': 'babel-eslint',
-    'ecmaVersion': 2017,
+    parser: 'babel-eslint',
+    ecmaVersion: 2017,
     // With import/export syntax
-    'sourceType': 'module'
+    sourceType: 'module',
   },
   // Environment global objects
   env: {
@@ -27,22 +27,22 @@ module.exports = {
 
     // Vue
 
-   // Error
-   'vue/html-closing-bracket-newline': ['error', {
-      'singleline': 'never',
-      'multiline': 'always',
+    // Error
+    'vue/html-closing-bracket-newline': ['error', {
+      singleline: 'never',
+      multiline: 'always',
     }],
     'vue/html-closing-bracket-spacing': ['error', {
-      'startTag': 'never',
-      'endTag': 'never',
-      'selfClosingTag': 'never',
+      startTag: 'never',
+      endTag: 'never',
+      selfClosingTag: 'never',
     }],
     'vue/max-attributes-per-line': ['error', {
-      "singleline": 2,
-      "multiline": {
-        "max": 1,
-        "allowFirstLine": false
-      }
+      singleline: 2,
+      multiline: {
+        max: 1,
+        allowFirstLine: false,
+      },
     }],
     // Warn
     'vue/require-default-prop': 'warn',

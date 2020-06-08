@@ -33,7 +33,7 @@ module.exports = api => {
   })
 
   function onGraphqlServerMessage ({ data }) {
-    let message = data['org.akryum.vue-apollo']
+    const message = data['org.akryum.vue-apollo']
     if (message) {
       ifDef(message.urls, value => setSharedData('urls', value))
       ifDef(message.error, value => setSharedData('error', value))
@@ -286,7 +286,7 @@ module.exports = api => {
       id: OPEN_ENGINE,
       type: 'action',
       label: 'Open Apollo Engine',
-      message: `Apollo Engine is a cloud service that provides deep insights into your GraphQL layer, with performance and error analytics.`,
+      message: 'Apollo Engine is a cloud service that provides deep insights into your GraphQL layer, with performance and error analytics.',
       image: '/_plugin/vue-cli-plugin-apollo/apollo-engine.png',
       link: 'https://www.apollographql.com/engine',
       actionLink: `${ENGINE_FRONTEND}/service/${env.VUE_APP_APOLLO_ENGINE_SERVICE}`,
@@ -304,7 +304,7 @@ module.exports = api => {
       id: PUBLISH_SCHEMA_TIP,
       type: 'action',
       label: 'Publish your schema',
-      message: `You can publish your schema to Apollo Engine with the 'apollo:schema:publish' task.`,
+      message: 'You can publish your schema to Apollo Engine with the \'apollo:schema:publish\' task.',
       image: '/_plugin/vue-cli-plugin-apollo/publish-task.png',
       handler () {
         api.requestRoute({

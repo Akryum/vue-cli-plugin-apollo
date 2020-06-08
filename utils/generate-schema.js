@@ -20,22 +20,22 @@ module.exports = async (options) => {
   })
 
   // JSON schema
-  logWithSpinner(`📄`, 'Generating JSON file...')
+  logWithSpinner('📄', 'Generating JSON file...')
   await fs.ensureDir(path.dirname(options.jsonOutput))
   const result = await graphql(schema, introspectionQuery)
   fs.writeFileSync(
     options.jsonOutput,
-    JSON.stringify(result, null, 2)
+    JSON.stringify(result, null, 2),
   )
   stopSpinner()
   done(`Generated ${options.jsonOutput}`)
 
   // GraphQL schema
-  logWithSpinner(`📄`, 'Generating GraphQL file...')
+  logWithSpinner('📄', 'Generating GraphQL file...')
   await fs.ensureDir(path.dirname(options.graphqlOutput))
   fs.writeFileSync(
     options.graphqlOutput,
-    printSchema(schema)
+    printSchema(schema),
   )
   stopSpinner()
   done(`Generated ${options.graphqlOutput}`)

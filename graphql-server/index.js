@@ -32,7 +32,7 @@ module.exports = (options, cb = null) => {
   } catch (e) {
     if (process.env.NODE_ENV !== 'production' && !options.quiet) {
       console.log(chalk.yellow('Using default PubSub implementation for subscriptions.'))
-      console.log(chalk.grey(`You should provide a different implementation in production (for example with Redis) by exporting it in 'apollo-server/pubsub.js'.`))
+      console.log(chalk.grey('You should provide a different implementation in production (for example with Redis) by exporting it in \'apollo-server/pubsub.js\'.'))
     }
   }
   let dataSources
@@ -112,9 +112,9 @@ module.exports = (options, cb = null) => {
 
     if (!options.quiet) {
       if (process.env.NODE_ENV === 'production') {
-        console.warn(`Automatic mocking is enabled, consider disabling it with the 'enableMocks' option.`)
+        console.warn('Automatic mocking is enabled, consider disabling it with the \'enableMocks\' option.')
       } else {
-        console.log(`✔️  Automatic mocking is enabled`)
+        console.log('✔️  Automatic mocking is enabled')
       }
     }
   }
@@ -127,7 +127,7 @@ module.exports = (options, cb = null) => {
         schemaTag: options.schemaTag,
         ...options.engineOptions || {},
       }
-      console.log(`✔️  Apollo Engine is enabled`)
+      console.log('✔️  Apollo Engine is enabled')
     } else if (!options.quiet) {
       console.log(chalk.yellow('Apollo Engine key not found.') + `To enable Engine, set the ${chalk.cyan('VUE_APP_APOLLO_ENGINE_KEY')} env variable.`)
       console.log('Create a key at https://engine.apollographql.com/')
@@ -201,7 +201,7 @@ function processSchema (typeDefs) {
 function removeFromSchema (document, kind, name) {
   const definitions = document.definitions
   const index = definitions.findIndex(
-    def => def.kind === kind && def.name.kind === 'Name' && def.name.value === name
+    def => def.kind === kind && def.name.kind === 'Name' && def.name.value === name,
   )
   if (index !== -1) {
     definitions.splice(index, 1)

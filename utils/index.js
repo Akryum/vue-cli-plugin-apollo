@@ -55,7 +55,7 @@ function sendIpcMessage (message) {
 }
 
 function getFlatArgs (args, ignore) {
-  let flatArgs = []
+  const flatArgs = []
   for (const key in args) {
     if (ignore.includes(key)) continue
     const value = args[key]
@@ -117,7 +117,7 @@ function runWatch (api, options, {
 
     nodemon.on('crash', () => {
       onCrash && onCrash()
-      console.log(chalk.red(`   Waiting for changes...`))
+      console.log(chalk.red('   Waiting for changes...'))
     })
 
     nodemon.on('stdout', (...args) => {
@@ -158,7 +158,7 @@ function getServerOptions (api, options, args) {
   // Plugin options
   const { apolloOptions, baseFolder } = getBasicServerOptions(api, options, args)
 
-  let engineOptions = Object.assign({}, apolloOptions.engineOptions)
+  const engineOptions = Object.assign({}, apolloOptions.engineOptions)
   if (!engineOptions.endpointUrl && process.env.APOLLO_ENGINE_TRACING_ENDPOINT) {
     engineOptions.endpointUrl = process.env.APOLLO_ENGINE_TRACING_ENDPOINT
   }

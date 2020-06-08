@@ -29,7 +29,7 @@ module.exports = api => {
       id: 'engine-key-metrics',
       title: 'Engine Key Metrics',
       description: 'Get Engine analytics at a glance',
-      longDescription: `Displays key metrics of the Apollo Engine metrics. You can choose between different types of metrics.`,
+      longDescription: 'Displays key metrics of the Apollo Engine metrics. You can choose between different types of metrics.',
       link: 'https://www.apollographql.com/engine',
       component: 'org.akryum.vue-apollo.components.widgets.engine-key-metrics',
       minWidth: 2,

@@ -22,7 +22,7 @@ module.exports = (api, options, rootOptions) => {
         'graphql-type-json': '^0.2.1',
       },
       scripts: {
-        'apollo': 'vue-cli-service apollo:dev --generate-schema',
+        apollo: 'vue-cli-service apollo:dev --generate-schema',
         'apollo:start': 'vue-cli-service apollo:start',
         'apollo:schema:generate': 'vue-cli-service apollo:schema:generate',
         // 'apollo:client:check': 'vue-cli-service apollo:client:check',
@@ -57,9 +57,9 @@ module.exports = (api, options, rootOptions) => {
     if (options.addExamples) {
       api.extendPackage({
         dependencies: {
-          'lowdb': '^1.0.0',
-          'mkdirp': '^0.5.1',
-          'shortid': '^2.2.8',
+          lowdb: '^1.0.0',
+          mkdirp: '^0.5.1',
+          shortid: '^2.2.8',
         },
       })
 
@@ -102,10 +102,10 @@ module.exports = (api, options, rootOptions) => {
     }
 
     const file = tsExists ? 'src/main.ts' : 'src/main.js'
-    api.injectImports(file, `import { createProvider } from './vue-apollo'`)
-    api.injectRootOptions(file, `apolloProvider: createProvider(),`)
+    api.injectImports(file, 'import { createProvider } from \'./vue-apollo\'')
+    api.injectRootOptions(file, 'apolloProvider: createProvider(),')
   } catch (e) {
-    api.exitLog(`Your main file couldn't be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes`, 'warn')
+    api.exitLog('Your main file couldn\'t be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes', 'warn')
   }
 
   api.onCreateComplete(async () => {

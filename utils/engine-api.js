@@ -5,7 +5,7 @@ const { print } = require('graphql')
 
 const ENGINE_ENDPOINT = process.env.APOLLO_ENGINE_API_ENDPOINT || 'https://engine-graphql.apollographql.com/api/graphql/'
 
-let engineLink = createHttpLink({
+const engineLink = createHttpLink({
   uri: ENGINE_ENDPOINT,
   fetch,
 })
@@ -21,13 +21,13 @@ exports.execute = async ({ query, variables, key }) => {
           uri: ENGINE_ENDPOINT,
         },
       },
-    })
+    }),
   )
   if (process.env.VUE_APP_CLI_UI_DEBUG) {
-    console.log(`${ENGINE_ENDPOINT}\n`, print(query), `\nKey: ${key}`, `\nVariables:\n`, variables, `\nResponse:\n`, response)
+    console.log(`${ENGINE_ENDPOINT}\n`, print(query), `\nKey: ${key}`, '\nVariables:\n', variables, '\nResponse:\n', response)
   }
   if (response.errors) {
-    const error = new Error(`Errors were returned from API`)
+    const error = new Error('Errors were returned from API')
     error.response = response
     console.log(response.errors)
     throw error

@@ -130,14 +130,14 @@ module.exports = (api, options) => {
         })
       },
       onCrash: () => {
-        console.log(chalk.bold(chalk.red(`💥  GraphQL API crashed!`)))
+        console.log(chalk.bold(chalk.red('💥  GraphQL API crashed!')))
         sendIpcMessage({
           urls: null,
           error: true,
         })
       },
       onRestart: () => {
-        console.log(chalk.bold(chalk.green(`⏳  GraphQL API is restarting...`)))
+        console.log(chalk.bold(chalk.green('⏳  GraphQL API is restarting...')))
         sendIpcMessage({
           error: false,
         })
@@ -237,7 +237,7 @@ module.exports = (api, options) => {
     options: SCHEMA_OPTIONS,
     details: 'For more info, see https://github.com/Akryum/vue-cli-plugin-apollo',
   }, async args => {
-    throw new Error(`Not implemented yet`)
+    throw new Error('Not implemented yet')
 
     /* eslint-disable no-unreachable */
 

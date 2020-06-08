@@ -2,7 +2,7 @@ module.exports = async ({ endpoint, key, tag, engineEndpoint }) => {
   const execa = require('execa')
   const { logWithSpinner, stopSpinner, done } = require('@vue/cli-shared-utils')
 
-  logWithSpinner('📡', `Comparing schema from Engine...`)
+  logWithSpinner('📡', 'Comparing schema from Engine...')
   await execa('apollo', [
     'client:check',
     `--endpoint=${endpoint}`,

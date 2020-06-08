@@ -43,7 +43,7 @@ module.exports = [
     type: 'input',
     name: 'apolloEngineKey',
     message: 'API Key:',
-    description: `It should look like this: 'service:name-xxxx:xxxxxxxxxxxxxxxxxxxxxx'`,
+    description: 'It should look like this: \'service:name-xxxx:xxxxxxxxxxxxxxxxxxxxxx\'',
     group: 'GraphQL Server',
     validate: input => !!input,
     when: answers => answers.addApolloEngine,

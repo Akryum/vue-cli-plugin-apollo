@@ -141,14 +141,14 @@ export function createApolloClient ({
               operation === 'subscription'
           },
           wsLink,
-          link
+          link,
         )
       }
     }
   }
 
   if (clientState) {
-    console.warn(`clientState is deprecated, see https://vue-cli-plugin-apollo.netlify.com/guide/client-state.html`)
+    console.warn('clientState is deprecated, see https://vue-cli-plugin-apollo.netlify.com/guide/client-state.html')
     stateLink = withClientState({
       cache,
       ...clientState,
@@ -206,7 +206,7 @@ export function restartWebsockets (wsClient) {
     wsClient.sendMessage(
       id,
       MessageTypes.GQL_START,
-      operations[id].options
+      operations[id].options,
     )
   })
 }
