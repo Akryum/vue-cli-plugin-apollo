@@ -198,7 +198,7 @@ module.exports = (api, options, rootOptions) => {
     }
 
     if (options.addServer) {
-      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run apollo:dev`)}`, 'info')
+      api.exitLog(`Start the GraphQL API Server with ${chalk.cyan(`${hasYarn() ? 'yarn' : 'npm'} run apollo`)}`, 'info')
       if (options.addMocking) {
         api.exitLog(`Customize the mocks in ${chalk.cyan('apollo-server/mocks.js')}`, 'info')
       }
