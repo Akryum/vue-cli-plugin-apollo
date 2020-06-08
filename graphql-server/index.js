@@ -11,6 +11,8 @@ const { defaultValue, autoCall } = require('../utils')
 require = require('esm')(module)
 
 module.exports = (options, cb = null) => {
+  const { load } = require('../utils/load')(options)
+
   // Default options
   options = merge({
     integratedEngine: false,
@@ -18,8 +20,6 @@ module.exports = (options, cb = null) => {
 
   // Express app
   const app = express()
-
-  if (options.typescript) require('ts-node/register/transpile-only')
 
   // Customize those files
   let typeDefs = load(options.paths.typeDefs)
@@ -172,14 +172,6 @@ module.exports = (options, cb = null) => {
 
     cb && cb()
   })
-}
-
-function load (file) {
-  const module = require(file)
-  if (module.default) {
-    return module.default
-  }
-  return module
 }
 
 function processSchema (typeDefs) {

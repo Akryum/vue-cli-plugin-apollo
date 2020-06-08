@@ -4,9 +4,7 @@ module.exports = async (options) => {
   const { logWithSpinner, stopSpinner, done } = require('@vue/cli-shared-utils')
   const { graphql, getIntrospectionQuery, printSchema } = require('graphql')
   const { makeExecutableSchema } = require('graphql-tools')
-  const { load } = require('./load')
-
-  if (options.typescript) require('ts-node/register/transpile-only')
+  const { load } = require('./load')(options)
 
   // JS Schema
   const typeDefs = load(options.paths.typeDefs)
