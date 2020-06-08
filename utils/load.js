@@ -5,7 +5,7 @@ module.exports = function (options) {
   if (options.typescript) require('ts-node/register/transpile-only')
 
   return {
-    load: load,
+    load,
   }
 }
 
