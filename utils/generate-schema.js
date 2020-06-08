@@ -2,7 +2,7 @@ module.exports = async (options) => {
   const path = require('path')
   const fs = require('fs-extra')
   const { logWithSpinner, stopSpinner, done } = require('@vue/cli-shared-utils')
-  const { graphql, introspectionQuery, printSchema } = require('graphql')
+  const { graphql, getIntrospectionQuery, printSchema } = require('graphql')
   const { makeExecutableSchema } = require('graphql-tools')
   const { load } = require('./load')
 
@@ -22,7 +22,7 @@ module.exports = async (options) => {
   // JSON schema
   logWithSpinner('📄', 'Generating JSON file...')
   await fs.ensureDir(path.dirname(options.jsonOutput))
-  const result = await graphql(schema, introspectionQuery)
+  const result = await graphql(schema, getIntrospectionQuery())
   if (result.errors) {
     throw new Error(`Generating JSON failed: ${result.errors.map(e => e.message).join(' | ')}`)
   }
