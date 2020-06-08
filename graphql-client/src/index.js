@@ -29,6 +29,9 @@ export function createApolloClient ({
   // Custom starting link.
   // If you want to replace the default HttpLink, set `defaultHttpLink` to false
   link = null,
+  // Custom pre-auth links
+  // Useful if you want, for example, to set a custom middleware for refreshing an access token.
+  preAuthLinks = [],
   // If true, add the default HttpLink.
   // Disable it if you want to replace it with a terminating link using `link` option.
   defaultHttpLink = true,
@@ -72,8 +75,8 @@ export function createApolloClient ({
     }
 
     // HTTP Auth header injection
-    authLink = setContext((_, { headers }) => {
-      const Authorization = getAuth(tokenName)
+    authLink = setContext(async (_, { headers }) => {
+      const Authorization = await getAuth(tokenName)
       const authorizationHeader = Authorization ? { Authorization } : {}
       return {
         headers: {
@@ -85,6 +88,10 @@ export function createApolloClient ({
 
     // Concat all the http link parts
     link = authLink.concat(link)
+
+    if (preAuthLinks.length) {
+      link = from(preAuthLinks).concat(authLink)
+    }
   }
 
   // On the server, we don't want WebSockets and Upload links
@@ -124,7 +131,7 @@ export function createApolloClient ({
       const wsLink = new WebSocketLink(wsClient)
 
       if (disableHttp) {
-        link = wsLink
+        link = link ? link.concat(wsLink) : wsLink
       } else {
         link = split(
           // split based on operation type

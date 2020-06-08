@@ -26,6 +26,9 @@ createApolloClient({
   // Custom starting link.
   // If you want to replace the default HttpLink, set `defaultHttpLink` to false
   link: null,
+  // Custom pre-auth links
+  // Useful if you want, for example, to set a custom middleware for refreshing an access token.
+  preAuthLinks: [],
   // If true, add the default HttpLink.
   // Disable it if you want to replace it with a terminating link using `link` option.
   defaultHttpLink: true,

@@ -38,7 +38,9 @@ module.exports = (options, cb = null) => {
   let dataSources
   try {
     dataSources = load(options.paths.dataSources)
-  } catch (e) {}
+  } catch (e) {
+    console.error(e)
+  }
 
   // GraphQL API Server
 
@@ -50,6 +52,7 @@ module.exports = (options, cb = null) => {
     const serverModule = load(options.paths.server)
     serverModule(app)
   } catch (e) {
+    console.error(e)
     // No file found
   }
 
