@@ -72,8 +72,8 @@ export function createApolloClient ({
     }
 
     // HTTP Auth header injection
-    authLink = setContext((_, { headers }) => {
-      const authorization = getAuth(tokenName)
+    authLink = setContext(async (_, { headers }) => {
+      const authorization = await getAuth(tokenName)
       const authorizationHeader = authorization ? { authorization } : {}
       return {
         headers: {
