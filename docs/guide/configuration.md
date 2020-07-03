@@ -44,6 +44,10 @@ createApolloClient({
   clientState: null,
   // Function returning Authorization header token
   getAuth: defaultGetAuth,
+  // subscriptions-transport-ws custom wsProtocols header
+  // it can be undefined, string or string[]
+  // AWS API Gateways does not supports this header, so you can pass []
+  wsProtocols: undefined,
 })
 ```
 
