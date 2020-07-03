@@ -18,6 +18,8 @@ export function createApolloClient ({
   httpEndpoint,
   // Url to the Websocket API
   wsEndpoint = null,
+  // subscriptions-transport-ws custom wsProtocols
+  wsProtocols = undefined,
   // Token used in localstorage
   tokenName = 'apollo-token',
   // Enable this if you use Query persisting with Apollo Engine
@@ -125,7 +127,7 @@ export function createApolloClient ({
           const Authorization = getAuth(tokenName)
           return Authorization ? { Authorization, headers: { Authorization } } : {}
         },
-      })
+      }, undefined, wsProtocols)
 
       // Create the subscription websocket link
       const wsLink = new WebSocketLink(wsClient)
