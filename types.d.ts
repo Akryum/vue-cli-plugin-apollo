@@ -1,6 +1,6 @@
 declare module 'vue-cli-plugin-apollo/graphql-client' {
   import { ApolloClient, ApolloClientOptions, Resolvers } from 'apollo-client'
-  import { DocumentNode } from 'apollo-link'
+  import { DocumentNode, ApolloLink } from 'apollo-link'
   import { SubscriptionClient } from 'subscriptions-transport-ws'
   import { ClientStateConfig } from 'apollo-link-state'
   import { InMemoryCacheConfig } from 'apollo-cache-inmemory'
@@ -20,7 +20,7 @@ declare module 'vue-cli-plugin-apollo/graphql-client' {
     websocketsOnly?: boolean
     // Custom starting link.
     // If you want to replace the default HttpLink, set `defaultHttpLink` to false
-    link?: string
+    link?: ApolloLink
     // If true, add the default HttpLink.
     // Disable it if you want to replace it with a terminating link using `link` option.
     defaultHttpLink?: boolean
