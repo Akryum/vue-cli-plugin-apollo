@@ -103,6 +103,7 @@ module.exports = (api, options, rootOptions) => {
 
     const file = tsExists ? 'src/main.ts' : 'src/main.js'
     api.injectImports(file, 'import { createProvider } from \'./vue-apollo\'')
+    api.injectImports(file, 'import \'regenerator-runtime/runtime\'') //fixes 'regeneratorRuntime is not defined' error
     api.injectRootOptions(file, 'apolloProvider: createProvider(),')
   } catch (e) {
     api.exitLog('Your main file couldn\'t be modified. You will have to edit the code yourself: https://github.com/Akryum/vue-cli-plugin-apollo#manual-code-changes', 'warn')
