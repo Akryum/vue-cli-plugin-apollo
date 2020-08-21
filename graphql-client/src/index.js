@@ -87,10 +87,11 @@ export function createApolloClient ({
     })
 
     // Concat all the http link parts
-    link = authLink.concat(link)
 
     if (preAuthLinks.length) {
-      link = from(preAuthLinks).concat(authLink)
+      link = from([...preAuthLinks, authLink]).concat(link)
+    } else {
+      link = authLink.concat(link)
     }
   }
 
