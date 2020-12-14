@@ -82,7 +82,7 @@ module.exports = (api, options, rootOptions) => {
           'graphql/template-strings': ['error', {
             env: 'literal',
             projectName: 'app',
-            schemaJsonFilepath: 'node_modules/.temp/graphql/schema.json',
+            schemaJsonFilepath: `${__dirname}/node_modules/.temp/graphql/schema.json`,
           }],
         },
       },
