@@ -35,7 +35,7 @@ declare module 'vue-cli-plugin-apollo/graphql-client' {
     // apollo-link-state options
     clientState?: ClientStateConfig
     // Function returning Authorization header token
-    getAuth?: (tokenName: string) => string | void
+    getAuth?: (tokenName: string) => Promise<string> | string | void
     // Local Schema
     typeDefs?: string | string[] | DocumentNode | DocumentNode[]
     // Local Resolvers
