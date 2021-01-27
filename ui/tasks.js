@@ -88,7 +88,7 @@ module.exports = api => {
         name: 'generate-schema',
         type: 'confirm',
         default: false,
-        message: 'Auto-generate schma JSON and GraphQL files',
+        message: 'Auto-generate schema JSON and GraphQL files',
       },
       ...prompts,
     ],
