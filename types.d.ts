@@ -9,7 +9,7 @@ declare module 'vue-cli-plugin-apollo/graphql-client' {
     // URL to the HTTP API
     httpEndpoint?: string
     // Url to the Websocket API
-    wsEndpoint?: string
+    wsEndpoint?: string | null
     // Token used in localstorage
     tokenName?: string
     // Enable this if you use Query persisting with Apollo Engine
