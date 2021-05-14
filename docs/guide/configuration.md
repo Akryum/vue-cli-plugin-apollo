@@ -23,6 +23,8 @@ createApolloClient({
   ssr: false,
   // Only use Websocket for all requests (including queries and mutations)
   websocketsOnly: false,
+  // Additional headers to pass to the websocket connection
+  wsHeaders = {},
   // Custom starting link.
   // If you want to replace the default HttpLink, set `defaultHttpLink` to false
   link: null,

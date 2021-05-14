@@ -11,7 +11,7 @@ import { setContext } from 'apollo-link-context'
 import { withClientState } from 'apollo-link-state'
 
 // Create the apollo client
-export function createApolloClient ({
+export function createApolloClient({
   // Client ID if using multiple Clients
   clientId = 'defaultClient',
   // URL to the HTTP API
@@ -26,6 +26,8 @@ export function createApolloClient ({
   ssr = false,
   // Only use Websocket for all requests (including queries and mutations)
   websocketsOnly = false,
+  // Additional headers to pass to the websocket connection
+  wsHeaders = {},
   // Custom starting link.
   // If you want to replace the default HttpLink, set `defaultHttpLink` to false
   link = null,
@@ -123,7 +125,7 @@ export function createApolloClient ({
         reconnect: true,
         connectionParams: () => {
           const Authorization = getAuth(tokenName)
-          return Authorization ? { Authorization, headers: { Authorization } } : {}
+          return Authorization ? { Authorization, headers: { ...wsHeaders, Authorization } } : wsHeaders
         },
       })
 
@@ -191,7 +193,7 @@ export function createApolloClient ({
   }
 }
 
-export function restartWebsockets (wsClient) {
+export function restartWebsockets(wsClient) {
   // Copy current operations
   const operations = Object.assign({}, wsClient.operations)
 
@@ -211,7 +213,7 @@ export function restartWebsockets (wsClient) {
   })
 }
 
-function defaultGetAuth (tokenName) {
+function defaultGetAuth(tokenName) {
   if (typeof window !== 'undefined') {
     // get the authentication token from local storage if it exists
     const token = window.localStorage.getItem(tokenName)
