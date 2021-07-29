@@ -54,7 +54,7 @@
     "graphql": "^15.1.0",
     "graphql-subscriptions": "^1.1.0",
     "graphql-tag": "^2.10.3",
-    "graphql-tools": "^6.0.9",
+    "graphql-tools": "^8.0.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
     "subscriptions-transport-ws": "^0.9.16",
