@@ -57,6 +57,7 @@
     "graphql-tools": "^6.0.9",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
+    "semver": "^7.3.5",
     "subscriptions-transport-ws": "^0.9.16",
     "ts-node": "^8.10.2"
   },

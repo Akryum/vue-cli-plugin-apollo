@@ -1,4 +1,6 @@
 const chalk = require('chalk')
+const semver = require('semver')
+const webpack = require('webpack')
 
 const COMMAND_OPTIONS = {
   '-h, --host': 'specify server host',
@@ -29,13 +31,18 @@ module.exports = (api, options) => {
   const { generateCacheIdentifier } = require('./utils')
 
   api.chainWebpack(config => {
-    const rule = config.module
+    let rule = config.module
       .rule('gql')
       .test(/\.(gql|graphql)$/)
-      .use('cache-loader')
-      .loader('cache-loader')
-      .options({ cacheDirectory })
-      .end()
+    
+    if (semver.major(webpack.version) !== 4) {
+      rule = rule
+        .use('cache-loader')
+        .loader('cache-loader')
+        .options({ cacheDirectory })
+    }
+
+    rule = rule.end()
 
     if (useThreads) {
       rule
